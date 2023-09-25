@@ -1,0 +1,10 @@
+<clientscript scriptid="customscript_fb_diot_cs">
+  <description></description>
+  <isinactive>F</isinactive>
+  <name>Diot controlador CS</name>
+  <notifyadmins>F</notifyadmins>
+  <notifyemails></notifyemails>
+  <notifyowner>T</notifyowner>
+  <notifyuser>F</notifyuser>
+  <scriptfile>[/SuiteScripts/DIOT/App/UI_Events/fb_diot_cs.js]</scriptfile>
+</clientscript>

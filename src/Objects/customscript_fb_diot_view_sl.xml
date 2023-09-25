@@ -1,0 +1,26 @@
+<suitelet scriptid="customscript_fb_diot_view_sl">
+  <description></description>
+  <isinactive>F</isinactive>
+  <name>DIOT View</name>
+  <notifyadmins>F</notifyadmins>
+  <notifyemails></notifyemails>
+  <notifyowner>T</notifyowner>
+  <notifyuser>F</notifyuser>
+  <scriptfile>[/SuiteScripts/DIOT/App/UI/fb_diot_view.js]</scriptfile>
+  <scriptdeployments>
+    <scriptdeployment scriptid="customdeploy_fb_diot_view_sl">
+      <allemployees>T</allemployees>
+      <allpartners>F</allpartners>
+      <allroles>T</allroles>
+      <audslctrole></audslctrole>
+      <audsubsidiary></audsubsidiary>
+      <eventtype></eventtype>
+      <isdeployed>T</isdeployed>
+      <isonline>F</isonline>
+      <loglevel>DEBUG</loglevel>
+      <runasrole>ADMINISTRATOR</runasrole>
+      <status>RELEASED</status>
+      <title>Pantalla para DIOT</title>
+    </scriptdeployment>
+  </scriptdeployments>
+</suitelet>
