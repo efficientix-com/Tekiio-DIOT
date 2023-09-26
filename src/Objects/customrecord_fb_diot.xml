@@ -25,7 +25,7 @@
   <includeinsearchmenu>T</includeinsearchmenu>
   <includename>F</includename>
   <isinactive>F</isinactive>
-  <isordered>F</isordered>
+  <isordered>T</isordered>
   <numberinginit></numberinginit>
   <numberingmindigits></numberingmindigits>
   <numberingprefix></numberingprefix>
@@ -33,53 +33,14 @@
   <recordname>Historial DIOT</recordname>
   <showcreationdate>T</showcreationdate>
   <showcreationdateonlist>T</showcreationdateonlist>
-  <showid>F</showid>
-  <showlastmodified>F</showlastmodified>
+  <showid>T</showid>
+  <showlastmodified>T</showlastmodified>
   <showlastmodifiedonlist>F</showlastmodifiedonlist>
   <shownotes>T</shownotes>
   <showowner>T</showowner>
   <showownerallowchange>F</showownerallowchange>
   <showowneronlist>T</showowneronlist>
   <customrecordcustomfields>
-    <customrecordcustomfield scriptid="custrecord_fb_id_interno_diot">
-      <accesslevel>2</accesslevel>
-      <allowquickadd>F</allowquickadd>
-      <applyformatting>F</applyformatting>
-      <checkspelling>F</checkspelling>
-      <defaultchecked>F</defaultchecked>
-      <defaultselection></defaultselection>
-      <defaultvalue></defaultvalue>
-      <description></description>
-      <displayheight></displayheight>
-      <displaytype>NORMAL</displaytype>
-      <displaywidth></displaywidth>
-      <dynamicdefault></dynamicdefault>
-      <encryptatrest>F</encryptatrest>
-      <fieldtype>TEXT</fieldtype>
-      <globalsearch>F</globalsearch>
-      <help></help>
-      <isformula>F</isformula>
-      <ismandatory>F</ismandatory>
-      <isparent>F</isparent>
-      <label>ID interno</label>
-      <linktext></linktext>
-      <maxlength></maxlength>
-      <maxvalue></maxvalue>
-      <minvalue></minvalue>
-      <onparentdelete></onparentdelete>
-      <parentsubtab></parentsubtab>
-      <rolerestrict>F</rolerestrict>
-      <searchcomparefield></searchcomparefield>
-      <searchdefault></searchdefault>
-      <searchlevel>2</searchlevel>
-      <selectrecordtype></selectrecordtype>
-      <showinlist>T</showinlist>
-      <sourcefilterby></sourcefilterby>
-      <sourcefrom></sourcefrom>
-      <sourcelist></sourcelist>
-      <storevalue>T</storevalue>
-      <subtab></subtab>
-    </customrecordcustomfield>
     <customrecordcustomfield scriptid="custrecord_fb_subsidiaria_diot">
       <accesslevel>2</accesslevel>
       <allowquickadd>F</allowquickadd>
@@ -90,7 +51,7 @@
       <defaultvalue></defaultvalue>
       <description></description>
       <displayheight></displayheight>
-      <displaytype>NORMAL</displaytype>
+      <displaytype>LOCKED</displaytype>
       <displaywidth></displaywidth>
       <dynamicdefault></dynamicdefault>
       <encryptatrest>F</encryptatrest>
@@ -98,7 +59,7 @@
       <globalsearch>F</globalsearch>
       <help></help>
       <isformula>F</isformula>
-      <ismandatory>F</ismandatory>
+      <ismandatory>T</ismandatory>
       <isparent>F</isparent>
       <label>Subsidiaria</label>
       <linktext></linktext>
@@ -129,7 +90,7 @@
       <defaultvalue></defaultvalue>
       <description></description>
       <displayheight></displayheight>
-      <displaytype>NORMAL</displaytype>
+      <displaytype>LOCKED</displaytype>
       <displaywidth></displaywidth>
       <dynamicdefault></dynamicdefault>
       <encryptatrest>F</encryptatrest>
@@ -137,7 +98,7 @@
       <globalsearch>F</globalsearch>
       <help></help>
       <isformula>F</isformula>
-      <ismandatory>F</ismandatory>
+      <ismandatory>T</ismandatory>
       <isparent>F</isparent>
       <label>Periodo</label>
       <linktext></linktext>
@@ -207,7 +168,7 @@
       <defaultvalue></defaultvalue>
       <description></description>
       <displayheight></displayheight>
-      <displaytype>NORMAL</displaytype>
+      <displaytype>LOCKED</displaytype>
       <displaywidth></displaywidth>
       <dynamicdefault></dynamicdefault>
       <encryptatrest>F</encryptatrest>
@@ -242,32 +203,32 @@
       <applyformatting>F</applyformatting>
       <checkspelling>F</checkspelling>
       <defaultchecked>F</defaultchecked>
-      <defaultselection></defaultselection>
+      <defaultselection>[scriptid=customlist_fb_status_diot.val_621479_t2220309_134]</defaultselection>
       <defaultvalue></defaultvalue>
       <description></description>
       <displayheight></displayheight>
-      <displaytype>NORMAL</displaytype>
+      <displaytype>LOCKED</displaytype>
       <displaywidth></displaywidth>
       <dynamicdefault></dynamicdefault>
       <encryptatrest>F</encryptatrest>
-      <fieldtype>TEXT</fieldtype>
+      <fieldtype>SELECT</fieldtype>
       <globalsearch>F</globalsearch>
       <help></help>
       <isformula>F</isformula>
-      <ismandatory>F</ismandatory>
+      <ismandatory>T</ismandatory>
       <isparent>F</isparent>
       <label>Estado</label>
       <linktext></linktext>
       <maxlength></maxlength>
       <maxvalue></maxvalue>
       <minvalue></minvalue>
-      <onparentdelete></onparentdelete>
+      <onparentdelete>NO_ACTION</onparentdelete>
       <parentsubtab></parentsubtab>
       <rolerestrict>F</rolerestrict>
       <searchcomparefield></searchcomparefield>
       <searchdefault></searchdefault>
       <searchlevel>2</searchlevel>
-      <selectrecordtype></selectrecordtype>
+      <selectrecordtype>[scriptid=customlist_fb_status_diot]</selectrecordtype>
       <showinlist>T</showinlist>
       <sourcefilterby></sourcefilterby>
       <sourcefrom></sourcefrom>
@@ -324,7 +285,7 @@
       <defaultvalue></defaultvalue>
       <description></description>
       <displayheight></displayheight>
-      <displaytype>NORMAL</displaytype>
+      <displaytype>LOCKED</displaytype>
       <displaywidth></displaywidth>
       <dynamicdefault></dynamicdefault>
       <encryptatrest>F</encryptatrest>
@@ -363,7 +324,7 @@
       <defaultvalue>0.0%</defaultvalue>
       <description></description>
       <displayheight></displayheight>
-      <displaytype>NORMAL</displaytype>
+      <displaytype>LOCKED</displaytype>
       <displaywidth></displaywidth>
       <dynamicdefault></dynamicdefault>
       <encryptatrest>F</encryptatrest>
@@ -402,7 +363,7 @@
       <defaultvalue></defaultvalue>
       <description></description>
       <displayheight></displayheight>
-      <displaytype>NORMAL</displaytype>
+      <displaytype>LOCKED</displaytype>
       <displaywidth></displaywidth>
       <dynamicdefault></dynamicdefault>
       <encryptatrest>F</encryptatrest>

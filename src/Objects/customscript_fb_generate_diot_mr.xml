@@ -85,7 +85,7 @@
       <onparentdelete>NO_ACTION</onparentdelete>
       <searchlevel>2</searchlevel>
       <selectrecordtype>[scriptid=customlist_fb_lista_guardado_diot]</selectrecordtype>
-      <setting>COMPANY</setting>
+      <setting></setting>
       <storevalue>T</storevalue>
     </scriptcustomfield>
     <scriptcustomfield scriptid="custscript_fb_diot_nombre_archivo">
@@ -116,7 +116,7 @@ Las palabras válidas son:&#xd;
 Favor de separar las palabras por &apos;_&apos;.&#xd;
 &#xd;
 Ejemplo:&#xd;
-         Subsidiaria_Periodo_DD_MM_YYYY&#xd;
+       Subsidiaria_Periodo_DD_MM_YYYY&#xd;
 </help>
       <isformula>F</isformula>
       <ismandatory>F</ismandatory>
@@ -128,7 +128,7 @@ Ejemplo:&#xd;
       <onparentdelete></onparentdelete>
       <searchlevel>2</searchlevel>
       <selectrecordtype></selectrecordtype>
-      <setting>COMPANY</setting>
+      <setting></setting>
       <storevalue>T</storevalue>
     </scriptcustomfield>
     <scriptcustomfield scriptid="custscript_fb_diot_notificar_correo">
@@ -155,7 +155,7 @@ Ejemplo:&#xd;
       <onparentdelete></onparentdelete>
       <searchlevel>2</searchlevel>
       <selectrecordtype></selectrecordtype>
-      <setting>COMPANY</setting>
+      <setting></setting>
       <storevalue>T</storevalue>
     </scriptcustomfield>
     <scriptcustomfield scriptid="custscript_fb_diot_record_id">
@@ -302,12 +302,12 @@ Ejemplo:&#xd;
       <custscript_fb_busqueda_informes>customsearch_fb_diot_expensereport</custscript_fb_busqueda_informes>
       <custscript_fb_busqueda_pagos_proveedor></custscript_fb_busqueda_pagos_proveedor>
       <custscript_fb_busqueda_polizas>customsearch_fb_diot_journalentry</custscript_fb_busqueda_polizas>
-      <custscript_fb_diot_nombre_archivo></custscript_fb_diot_nombre_archivo>
-      <custscript_fb_diot_notificar_correo>F</custscript_fb_diot_notificar_correo>
+      <custscript_fb_diot_nombre_archivo>Subsidiaria_Periodo_MM_YYYY</custscript_fb_diot_nombre_archivo>
+      <custscript_fb_diot_notificar_correo>T</custscript_fb_diot_notificar_correo>
       <custscript_fb_diot_periodo></custscript_fb_diot_periodo>
       <custscript_fb_diot_record_id></custscript_fb_diot_record_id>
       <custscript_fb_diot_subsidiary></custscript_fb_diot_subsidiary>
-      <custscript_fb_diot_tipo_guardado></custscript_fb_diot_tipo_guardado>
+      <custscript_fb_diot_tipo_guardado>[scriptid=customlist_fb_lista_guardado_diot.val_616604_t2220309_998]</custscript_fb_diot_tipo_guardado>
       <isdeployed>T</isdeployed>
       <loglevel>DEBUG</loglevel>
       <queueallstagesatonce>T</queueallstagesatonce>

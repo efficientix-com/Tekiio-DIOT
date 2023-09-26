@@ -1,12 +1,18 @@
 <centercategory scriptid="custcentercategory_fb_diot_genera_reporte">
   <center>BASIC</center>
   <centertab>[scriptid=custcentertab_fb_ficha_diot]</centertab>
-  <label>Generar Reporte DIOT</label>
+  <label>Reporte DIOT</label>
   <links>
     <link>
       <linklabel>Reporte DIOT</linklabel>
       <linkobject>[scriptid=customscript_fb_diot_view_sl.customdeploy_fb_diot_view_sl]</linkobject>
       <linktasktype>SCRIPT</linktasktype>
+      <shortlist>F</shortlist>
+    </link>
+    <link>
+      <linklabel>Historicos</linklabel>
+      <linkobject>[scriptid=customrecord_fb_diot]</linkobject>
+      <linktasktype>LIST</linktasktype>
       <shortlist>F</shortlist>
     </link>
   </links>

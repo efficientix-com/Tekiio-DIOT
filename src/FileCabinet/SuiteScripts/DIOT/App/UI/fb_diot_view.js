@@ -36,7 +36,7 @@ define(['N/log', 'N/ui/serverWidget', 'N/search', 'N/task', 'N/runtime', '../../
                 });
                 switch(parameters.action){
                     case 'ejecuta':
-                        generaDIOT(parameters.subsidiaria, parameters.periodo);
+                        generaDIOT(parameters);
                         break;
                 }
             } catch (onRequestError) {
@@ -54,7 +54,16 @@ define(['N/log', 'N/ui/serverWidget', 'N/search', 'N/task', 'N/runtime', '../../
             var oneWorldFeature = runtime.isFeatureInEffect({ feature: RUNTIME.FEATURES.SUBSIDIARIES });
             var suitetax = runtime.isFeatureInEffect({ feature: RUNTIME.FEATURES.SUITETAX });
             log.debug('Caracteristicas', {oneWorldFeature: oneWorldFeature, suitetax: suitetax});
-            if (oneWorldFeature == true) {
+            log.debug({ title:'Interface', details:INTERFACE });
+            var configEntorno = form.addField({
+                id: INTERFACE.FORM.FIELDS.ENVIRONMENT.ID,
+                type: serverWidget.FieldType.LONGTEXT,
+                label: INTERFACE.FORM.FIELDS.ENVIRONMENT.LABEL
+            });
+            configEntorno.updateDisplayType({
+                displayType: serverWidget.FieldDisplayType.HIDDEN
+            });
+            if (oneWorldFeature == true && suitetax == true) {
                 try {
                     /**
                      * Creacion de los campos para los filtros de la DIOT
@@ -122,6 +131,15 @@ define(['N/log', 'N/ui/serverWidget', 'N/search', 'N/task', 'N/runtime', '../../
                 } catch (UIError) {
                     log.error({ title: 'Error en createUI', details: UIError })
                 }
+            }else{
+                let msg = ''
+                if (oneWorldFeature == false) {
+                    msg += 'Para utilizar el modulo es necesario que su instancia sea multi-subsidiarias, comuniquese con su administrador.\n';
+                }
+                if (suitetax == false) {
+                    msg += 'Para utilizar el modulo es necesario que su instancia trabaje con SuiteTax, comuniquese con su administrador.';
+                }
+                configEntorno.defaultValue = msg;
             }
             return form;
         }
@@ -193,63 +211,61 @@ define(['N/log', 'N/ui/serverWidget', 'N/search', 'N/task', 'N/runtime', '../../
             return periods;
         }
 
-        function generaDIOT(subsidiaria, periodo) {
+        function generaDIOT(parameters) {
             try {
-
-                var oneWorldFeature = runtime.isFeatureInEffect({ feature: RUNTIME.FEATURES.SUBSIDIARIES });
-
-                //Se obtiene el nombre de la empresa
-                var companyInfo = config.load({
-                    type: config.Type.COMPANY_INFORMATION
-                });
-                
-                compname = companyInfo.getValue({
-                    fieldId: COMPANY_INFORMATION.FIELDS.ID
-                });
-
-                //Crear el registro
-                var customRecord_diot = record.create({
-                    type: RECORD_INFO.DIOT_RECORD.ID,
-                    isDynamic: true
-                });
-
-                if(oneWorldFeature){ //se pone el nombre de la subsidiaria
-                    customRecord_diot.setValue({
-                        fieldId: RECORD_INFO.DIOT_RECORD.FIELDS.SUBSIDIARY,
-                        value: subsidiaria
+                log.debug({ title:'generaDIOT_parameters', details:parameters });
+                const subsidiaria = parameters.subsidiaria;
+                const periodo = parameters.periodo;
+                var recordId_diot;
+                if (parameters.origin) { // si se tiene que reprocesar el registro
+                    recordId_diot = parameters.origin;
+                }else{ // si se tiene que crear el registro
+                    var oneWorldFeature = runtime.isFeatureInEffect({ feature: RUNTIME.FEATURES.SUBSIDIARIES });
+    
+                    //Se obtiene el nombre de la empresa
+                    var companyInfo = config.load({
+                        type: config.Type.COMPANY_INFORMATION
                     });
-                }else{ //si no, se pone el nombre de la empresa
-                    customRecord_diot.setValue({
-                        fieldId: RECORD_INFO.DIOT_RECORD.FIELDS.SUBSIDIARY,
-                        value: compname
+                    
+                    compname = companyInfo.getValue({
+                        fieldId: COMPANY_INFORMATION.FIELDS.ID
                     });
-                }
-
-                customRecord_diot.setValue({
-                    fieldId: RECORD_INFO.DIOT_RECORD.FIELDS.PERIOD,
-                    value: periodo
-                });
-
-                customRecord_diot.setValue({
-                    fieldId: RECORD_INFO.DIOT_RECORD.FIELDS.STATUS,
-                    value: STATUS_LIST_DIOT.PENDING
-                });
-
-                var recordId_diot = customRecord_diot.save({
-                    enableSourcing: true,
-                    ignoreMandatoryFields: true
-                });
-
-                log.audit({title: 'Company', details: compname });
-                log.audit({title: 'ID Record', details: recordId_diot});
-
-                var otherId = record.submitFields({
-                    type: RECORD_INFO.DIOT_RECORD.ID,
-                    id: recordId_diot,
-                    values: {
-                        [RECORD_INFO.DIOT_RECORD.FIELDS.ID]: recordId_diot
+    
+                    //Crear el registro
+                    var customRecord_diot = record.create({
+                        type: RECORD_INFO.DIOT_RECORD.ID,
+                        isDynamic: true
+                    });
+    
+                    if(oneWorldFeature){ //se pone el nombre de la subsidiaria
+                        customRecord_diot.setValue({
+                            fieldId: RECORD_INFO.DIOT_RECORD.FIELDS.SUBSIDIARY,
+                            value: subsidiaria
+                        });
+                    }else{ //si no, se pone el nombre de la empresa
+                        customRecord_diot.setValue({
+                            fieldId: RECORD_INFO.DIOT_RECORD.FIELDS.SUBSIDIARY,
+                            value: compname
+                        });
                     }
-                });
+    
+                    customRecord_diot.setValue({
+                        fieldId: RECORD_INFO.DIOT_RECORD.FIELDS.PERIOD,
+                        value: periodo
+                    });
+    
+                    customRecord_diot.setValue({
+                        fieldId: RECORD_INFO.DIOT_RECORD.FIELDS.STATUS,
+                        value: STATUS_LIST_DIOT.PENDING
+                    });
+    
+                    recordId_diot = customRecord_diot.save({
+                        enableSourcing: true,
+                        ignoreMandatoryFields: true
+                    });
+                    log.audit({title: 'Company', details: compname });
+                }
+                log.audit({title: 'ID Record', details: 8});
 
 
                 //redirigir al registro
@@ -279,8 +295,7 @@ define(['N/log', 'N/ui/serverWidget', 'N/search', 'N/task', 'N/runtime', '../../
                 });
                 
                 log.audit({ title: 'idTask', details: idTask });
-            }
-            catch (e) {
+            }catch (e) {
                 var otherId = record.submitFields({
                     type: RECORD_INFO.DIOT_RECORD.ID,
                     id: recordId_diot,

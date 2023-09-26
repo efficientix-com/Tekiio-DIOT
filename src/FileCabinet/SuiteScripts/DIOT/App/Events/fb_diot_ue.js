@@ -12,6 +12,8 @@ define(['N/record', 'N/runtime', 'N/task', 'N/search', '../../Lib/Enum/fb_diot_c
         const INTERFACE = values.INTERFACE;
         const RECORD_INFO = values.RECORD_INFO;
         const SCRIPTS_INFO = values.SCRIPTS_INFO;
+        const STATUS_LIST_DIOT = values.STATUS_LIST_DIOT;
+        const RUNTIME = values.RUNTIME;
 
         /**
          * Defines the function definition that is executed before record is loaded.
@@ -27,28 +29,44 @@ define(['N/record', 'N/runtime', 'N/task', 'N/search', '../../Lib/Enum/fb_diot_c
                 var nRecord = context.newRecord;
                 var taskId = nRecord.getValue({ fieldId: RECORD_INFO.DIOT_RECORD.FIELDS.TASK_ID });
                 var record_type = nRecord.type;
-    
+                log.debug({ title:'data IF', details:{tipo: context.type, record_type: record_type} });
                 if (context.type == context.UserEventType.VIEW && record_type == RECORD_INFO.DIOT_RECORD.ID) {
                     var form = context.form;
-                    // se agrega el CS para traer funciones de allá
-                    form.clientScriptModulePath = "../UI_Events/fb_diot_cs";
-    
-                    // se agrega el boton de actualizar
-                    form.addButton({
-                        id: INTERFACE.FORM.BUTTONS.ACTUALIZAR.ID,
-                        label: INTERFACE.FORM.BUTTONS.ACTUALIZAR.LABEL,
-                        functionName: INTERFACE.FORM.BUTTONS.ACTUALIZAR.FUNCTION
-                    });
-    
-                    // se quita el boton de editar
-                    form.removeButton({
-                        id: INTERFACE.FORM.BUTTONS.EDITAR.ID
-                    });
+                    const estado = nRecord.getValue({fieldId: RECORD_INFO.DIOT_RECORD.FIELDS.STATUS});
+                    const inactive = nRecord.getValue({fieldId: RECORD_INFO.DIOT_RECORD.FIELDS.INACTIVE});
+                    const recordID = nRecord.getValue({fieldId: 'recordid'});
+                    log.debug({ title:'record', details:{ recordID: recordID, estado: estado, inactive: inactive} });
+                    if (inactive == false) {
+                        // se agrega el CS para traer funciones de allá
+                        form.clientScriptModulePath = "../UI_Events/fb_diot_cs";
+                        if ( estado == STATUS_LIST_DIOT.ERROR ) { // registro en error o en pendiente
+                            let oneWorldFeature = runtime.isFeatureInEffect({ feature: RUNTIME.FEATURES.SUBSIDIARIES });
+                            form.addButton({
+                                id: INTERFACE.FORM.BUTTONS.REGENERAR.ID,
+                                label: INTERFACE.FORM.BUTTONS.REGENERAR.LABEL,
+                                functionName: INTERFACE.FORM.BUTTONS.GENERAR.FUNCTION + '(' + oneWorldFeature + ', ' + recordID +')'
+                            });
+                        // }else if (estado == STATUS_LIST_DIOT.COMPLETE) {
+                        //     form.removeButton({
+                        //         id: INTERFACE.FORM.BUTTONS.EDITAR.ID
+                        //     });
+                        }else{ // procesando registro
+                            // se agrega el boton de actualizar
+                            form.addButton({
+                                id: INTERFACE.FORM.BUTTONS.ACTUALIZAR.ID,
+                                label: INTERFACE.FORM.BUTTONS.ACTUALIZAR.LABEL,
+                                functionName: INTERFACE.FORM.BUTTONS.ACTUALIZAR.FUNCTION
+                            });
+        
+                            //Se va calculando el porcentaje dependiendo la etapa en la que va del map reduce
+                            var percent = updatePercent(taskId, nRecord);
 
-                    //Se va calculando el porcentaje dependiendo la etapa en la que va del map reduce
-                    var percent = updatePercent(taskId, nRecord);
-    
-    
+                            // se quita el boton de editar
+                            form.removeButton({
+                                id: INTERFACE.FORM.BUTTONS.EDITAR.ID
+                            });
+                        }
+                    }
                 }
             }catch(error){
                 log.error({ title: 'Error on beforeLoad', details: error });
