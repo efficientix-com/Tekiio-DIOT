@@ -48,10 +48,7 @@ define(["N/error",'N/runtime', 'N/search', 'N/url', 'N/record', 'N/file', 'N/red
             log.debug('Caracteristicas', {oneWorldFeature: oneWorldFeature, suitetax: suitetax});
 
             if (oneWorldFeature == true && suitetax == true) { // si es suiteTax
-                /* Se realiza la búsqueda de todos los códigos de impuesto */
-                var codigosImpuesto = searchCodigoImpuesto(suitetax);
-    
-                return codigosImpuesto;   
+                
             }else{
                 throw generateError('ERROR DE ENTORNO', 'Error de configuración DIOT, contacte a su administrador.', 'Su instancia no esta configurada para trabajar con el modulo DIOT.');
             }
