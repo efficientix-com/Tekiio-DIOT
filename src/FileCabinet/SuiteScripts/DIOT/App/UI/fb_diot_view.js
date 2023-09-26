@@ -265,7 +265,7 @@ define(['N/log', 'N/ui/serverWidget', 'N/search', 'N/task', 'N/runtime', '../../
                     });
                     log.audit({title: 'Company', details: compname });
                 }
-                log.audit({title: 'ID Record', details: 8});
+                log.audit({title: 'ID Record', details: recordId_diot});
 
 
                 //redirigir al registro
@@ -280,8 +280,6 @@ define(['N/log', 'N/ui/serverWidget', 'N/search', 'N/task', 'N/runtime', '../../
                     scriptId: SCRIPTS_INFO.MAP_REDUCE.SCRIPT_ID,
                     deploymentId: SCRIPTS_INFO.MAP_REDUCE.DEPLOYMENT_ID,
                     params: {
-                        [SCRIPTS_INFO.MAP_REDUCE.PARAMETERS.SUBSIDIARY]: subsidiaria,
-                        [SCRIPTS_INFO.MAP_REDUCE.PARAMETERS.PERIOD]: periodo,
                         [SCRIPTS_INFO.MAP_REDUCE.PARAMETERS.RECORD_DIOT_ID]: recordId_diot
                     }
                 });
