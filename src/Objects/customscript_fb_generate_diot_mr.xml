@@ -7,60 +7,6 @@
   <notifyowner>T</notifyowner>
   <scriptfile>[/SuiteScripts/DIOT/App/Batch/fb_genera_diot.js]</scriptfile>
   <scriptcustomfields>
-    <scriptcustomfield scriptid="custscript_fb_diot_subsidiary">
-      <accesslevel>2</accesslevel>
-      <applyformatting>F</applyformatting>
-      <checkspelling>F</checkspelling>
-      <defaultchecked>F</defaultchecked>
-      <defaultselection></defaultselection>
-      <defaultvalue></defaultvalue>
-      <description></description>
-      <displayheight></displayheight>
-      <displaytype>NORMAL</displaytype>
-      <displaywidth></displaywidth>
-      <dynamicdefault></dynamicdefault>
-      <fieldtype>SELECT</fieldtype>
-      <help></help>
-      <isformula>F</isformula>
-      <ismandatory>F</ismandatory>
-      <label>Subsidiaria</label>
-      <linktext></linktext>
-      <maxlength></maxlength>
-      <maxvalue></maxvalue>
-      <minvalue></minvalue>
-      <onparentdelete>NO_ACTION</onparentdelete>
-      <searchlevel>2</searchlevel>
-      <selectrecordtype>-117</selectrecordtype>
-      <setting></setting>
-      <storevalue>T</storevalue>
-    </scriptcustomfield>
-    <scriptcustomfield scriptid="custscript_fb_diot_periodo">
-      <accesslevel>2</accesslevel>
-      <applyformatting>F</applyformatting>
-      <checkspelling>F</checkspelling>
-      <defaultchecked>F</defaultchecked>
-      <defaultselection></defaultselection>
-      <defaultvalue></defaultvalue>
-      <description></description>
-      <displayheight></displayheight>
-      <displaytype>NORMAL</displaytype>
-      <displaywidth></displaywidth>
-      <dynamicdefault></dynamicdefault>
-      <fieldtype>SELECT</fieldtype>
-      <help></help>
-      <isformula>F</isformula>
-      <ismandatory>F</ismandatory>
-      <label>Periodo</label>
-      <linktext></linktext>
-      <maxlength></maxlength>
-      <maxvalue></maxvalue>
-      <minvalue></minvalue>
-      <onparentdelete>NO_ACTION</onparentdelete>
-      <searchlevel>2</searchlevel>
-      <selectrecordtype>-105</selectrecordtype>
-      <setting></setting>
-      <storevalue>T</storevalue>
-    </scriptcustomfield>
     <scriptcustomfield scriptid="custscript_fb_diot_tipo_guardado">
       <accesslevel>2</accesslevel>
       <applyformatting>F</applyformatting>
@@ -304,9 +250,7 @@ Ejemplo:&#xd;
       <custscript_fb_busqueda_polizas>customsearch_fb_diot_journalentry</custscript_fb_busqueda_polizas>
       <custscript_fb_diot_nombre_archivo>Subsidiaria_Periodo_MM_YYYY</custscript_fb_diot_nombre_archivo>
       <custscript_fb_diot_notificar_correo>T</custscript_fb_diot_notificar_correo>
-      <custscript_fb_diot_periodo></custscript_fb_diot_periodo>
       <custscript_fb_diot_record_id></custscript_fb_diot_record_id>
-      <custscript_fb_diot_subsidiary></custscript_fb_diot_subsidiary>
       <custscript_fb_diot_tipo_guardado>[scriptid=customlist_fb_lista_guardado_diot.val_616604_t2220309_998]</custscript_fb_diot_tipo_guardado>
       <isdeployed>T</isdeployed>
       <loglevel>DEBUG</loglevel>
