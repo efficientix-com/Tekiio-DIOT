@@ -2,9 +2,9 @@
  * @NApiVersion 2.1
  * @NScriptType MapReduceScript
  */
-define(['N/runtime', 'N/search', 'N/url', 'N/record', 'N/file', 'N/redirect', 'N/config', 'N/email', 'N/query', '../../Lib/Enum/fb_diot_constants_lib', '../../Lib/Mod/moment_diot'],
+define(["N/error",'N/runtime', 'N/search', 'N/url', 'N/record', 'N/file', 'N/redirect', 'N/config', 'N/email', 'N/query', '../../Lib/Enum/fb_diot_constants_lib', '../../Lib/Mod/moment_diot'],
 
- (runtime, search, url, record, file, redirect, config, email, query, values, moment) => {
+ (newError, runtime, search, url, record, file, redirect, config, email, query, values, moment) => {
 
     /**
      * Defines the function that is executed at the beginning of the map/reduce process and generates the input data.
@@ -47,14 +47,18 @@ define(['N/runtime', 'N/search', 'N/url', 'N/record', 'N/file', 'N/redirect', 'N
             });
 
             /** Se obtiene el motor que se esta usando (legacy or suitetax) */
+            var oneWorldFeature = runtime.isFeatureInEffect({ feature: RUNTIME.FEATURES.SUBSIDIARIES });
             var suitetax = runtime.isFeatureInEffect({ feature: RUNTIME.FEATURES.SUITETAX });
-            log.audit({title: 'suitetax', details: suitetax});
-            
-            /* Se realiza la búsqueda de todos los códigos de impuesto */
-            var codigosImpuesto = searchCodigoImpuesto(suitetax);
+            log.debug('Caracteristicas', {oneWorldFeature: oneWorldFeature, suitetax: suitetax});
 
-            return codigosImpuesto;
-
+            if (oneWorldFeature == true && suitetax == true) { // si es suiteTax
+                /* Se realiza la búsqueda de todos los códigos de impuesto */
+                var codigosImpuesto = searchCodigoImpuesto(suitetax);
+    
+                return codigosImpuesto;   
+            }else{
+                throw generateError('ERROR DE ENTORNO', 'Error de configuración DIOT, contacte a su administrador.', 'Su instancia no esta configurada para trabajar con el modulo DIOT.');
+            }
         } catch (error) {
             var recordID = objScript.getParameter({ name: SCRIPTS_INFO.MAP_REDUCE.PARAMETERS.RECORD_DIOT_ID });
             otherId = record.submitFields({
@@ -103,7 +107,7 @@ define(['N/runtime', 'N/search', 'N/url', 'N/record', 'N/file', 'N/redirect', 'N
                 }
             });
             var results = JSON.parse(mapContext.value);
-            //log.debug('Resultados de getInput', results);
+            log.debug('Resultados de getInput', results);
 
             // Revisar la carga de registros de los códigos de impuesto
             var taxRate, codeName, taxType, cuenta1, cuenta2;
@@ -151,7 +155,8 @@ define(['N/runtime', 'N/search', 'N/url', 'N/record', 'N/file', 'N/redirect', 'N
                 mapContext.write({
                     key: "taxRate",
                     value: JSON.stringify(taxRateArray)
-                }); 
+                });
+                // throw 'Error controlado'
             }   
 
         }catch(error){
@@ -2867,6 +2872,19 @@ define(['N/runtime', 'N/search', 'N/url', 'N/record', 'N/file', 'N/redirect', 'N
                 }
             });
             log.error({ title: 'Error en el envío de correo', details: error })
+        }
+    }
+
+    const generateError = (code, msg, cause) =>{
+        try {
+            var custom_error = newError.create({
+                name: code,
+                message: 'DIOT generator: ' + msg,
+                cause: cause
+            });
+            return custom_error;
+        } catch (error) {
+            log.error({ title:'generateError', details:error });
         }
     }
 
