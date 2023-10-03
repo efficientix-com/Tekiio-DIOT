@@ -2,7 +2,7 @@
   <accesstype>NONENEEDED</accesstype>
   <allowattachments>T</allowattachments>
   <allowinlinedeleting>F</allowinlinedeleting>
-  <allowinlinedetaching>T</allowinlinedetaching>
+  <allowinlinedetaching>F</allowinlinedetaching>
   <allowinlineediting>F</allowinlineediting>
   <allowmobileaccess>F</allowmobileaccess>
   <allownumberingoverride>F</allownumberingoverride>
@@ -396,7 +396,15 @@
   <subtabs>
     <subtab scriptid="tab_684_t2220309_518">
       <tabparent></tabparent>
-      <tabtitle>Errores DIOT</tabtitle>
+      <tabtitle>Errores</tabtitle>
     </subtab>
   </subtabs>
+  <recordsublists>
+    <recordsublist scriptid="sublist_147_t2269267_443">
+      <recorddescr>Errores DIOT</recorddescr>
+      <recordfield></recordfield>
+      <recordsearch>[scriptid=customsearch_fb_diot_errors_by_record]</recordsearch>
+      <recordtab>[scriptid=customrecord_fb_diot.tab_684_t2220309_518]</recordtab>
+    </recordsublist>
+  </recordsublists>
 </customrecordtype>

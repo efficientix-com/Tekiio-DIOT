@@ -25,44 +25,65 @@ define(["N/error",'N/runtime', 'N/search', 'N/url', 'N/record', 'N/file', 'N/red
     const SCRIPTS_INFO = values.SCRIPTS_INFO;
     const RECORD_INFO = values.RECORD_INFO;
     const STATUS_LIST_DIOT = values.STATUS_LIST_DIOT;
+    const LISTS = values.LISTS;
     const RUNTIME = values.RUNTIME;
     const OPERATION_TYPE = values.OPERATION_TYPE;
 
     const getInputData = (inputContext) => {
+        const objScript = runtime.getCurrentScript();
+        const recordID = objScript.getParameter({ name: SCRIPTS_INFO.MAP_REDUCE.PARAMETERS.RECORD_DIOT_ID });
         try{
-            var objScript = runtime.getCurrentScript();
-            var recordID = objScript.getParameter({ name: SCRIPTS_INFO.MAP_REDUCE.PARAMETERS.RECORD_DIOT_ID }); 
-            log.audit({title: 'Estado_getInput', details: "Se esta ejecutando el getInputData"});
-
+            /** Se obtiene el motor que se esta usando (legacy or suitetax) */
             var otherId = record.submitFields({
                 type: RECORD_INFO.DIOT_RECORD.ID,
                 id: recordID,
                 values: {
-                    [RECORD_INFO.DIOT_RECORD.FIELDS.STATUS]: STATUS_LIST_DIOT.OBTAINING_DATA
+                    [RECORD_INFO.DIOT_RECORD.FIELDS.STATUS]: STATUS_LIST_DIOT.OBTAINING_DATA,
+                    [RECORD_INFO.DIOT_RECORD.FIELDS.PROGRESS]: 0.0,
+                    [RECORD_INFO.DIOT_RECORD.FIELDS.FILE]: ''
                 }
             });
-
-            /** Se obtiene el motor que se esta usando (legacy or suitetax) */
             var oneWorldFeature = runtime.isFeatureInEffect({ feature: RUNTIME.FEATURES.SUBSIDIARIES });
             var suitetax = runtime.isFeatureInEffect({ feature: RUNTIME.FEATURES.SUITETAX });
-            log.debug('Caracteristicas', {oneWorldFeature: oneWorldFeature, suitetax: suitetax});
-
-            if (oneWorldFeature == true && suitetax == true) { // si es suiteTax
-                
-            }else{
-                throw generateError('ERROR DE ENTORNO', 'Error de configuración DIOT, contacte a su administrador.', 'Su instancia no esta configurada para trabajar con el modulo DIOT.');
+            log.debug('Config_Instance', {oneWorldFeature: oneWorldFeature, suitetax: suitetax});
+            // oneWorldFeature = false;
+            if (oneWorldFeature == false || suitetax == false) { // si no es oneWorld o SuiteTax
+                let newError = generateError('ERROR DE ENTORNO', 'Error de configuración DIOT, contacte a su administrador.', 'Su instancia no esta configurada para trabajar con el modulo DIOT.');
+                let mapErrorRecord = generateRecordError(newError.name, newError.message, '', '', recordID);
+                throw newError;
             }
+            let registerData = search.lookupFields({
+               type: RECORD_INFO.DIOT_RECORD.ID,
+               id: recordID,
+               columns: [RECORD_INFO.DIOT_RECORD.FIELDS.SUBSIDIARY, RECORD_INFO.DIOT_RECORD.FIELDS.PERIOD]
+            });
+            log.audit({title: 'Estado_getInput', details: registerData});
+            const recordSubsidiary = registerData[RECORD_INFO.DIOT_RECORD.FIELDS.SUBSIDIARY][0].value;
+            const recordPeriod = registerData[RECORD_INFO.DIOT_RECORD.FIELDS.PERIOD][0].value;
+            log.debug({ title:'resultData', details:{recordSubsidiary: recordSubsidiary, recordPeriod: recordPeriod} });
+            let getVendorBills_result = getVendorBills(recordPeriod, recordSubsidiary);
+            // log.debug({ title:'getVendorBills_result', details:getVendorBills_result });
+            if (getVendorBills_result.success == false) {
+                throw getVendorBills_result.error;
+            }
+            var otherId = record.submitFields({
+                type: RECORD_INFO.DIOT_RECORD.ID,
+                id: recordID,
+                values: {
+                    [RECORD_INFO.DIOT_RECORD.FIELDS.STATUS]: STATUS_LIST_DIOT.VALIDATING_DATA,
+                    [RECORD_INFO.DIOT_RECORD.FIELDS.PROGRESS]: 0.0
+                }
+            });
+            return getVendorBills_result.data;
         } catch (error) {
-            var recordID = objScript.getParameter({ name: SCRIPTS_INFO.MAP_REDUCE.PARAMETERS.RECORD_DIOT_ID });
+            log.error({ title:'getInputdata', details:error });
             otherId = record.submitFields({
                 type: RECORD_INFO.DIOT_RECORD.ID,
                 id: recordID,
                 values: {
-                    [RECORD_INFO.DIOT_RECORD.FIELDS.STATUS]: STATUS_LIST_DIOT.ERROR,
-                    [RECORD_INFO.DIOT_RECORD.FIELDS.ERROR]: error.message
+                    [RECORD_INFO.DIOT_RECORD.FIELDS.STATUS]: STATUS_LIST_DIOT.ERROR
                 }
             });
-            log.error({ title: 'Error en la busqueda de Códigos de Impuesto', details: error });
         }
 
     }
@@ -85,7 +106,31 @@ define(["N/error",'N/runtime', 'N/search', 'N/url', 'N/record', 'N/file', 'N/red
       */
 
      const map = (mapContext) => {
-
+        try {
+            
+            // log.debug({ title:'mapContext: ' + mapContext.key, details:mapContext });
+            var datos = JSON.parse(mapContext.value);
+            let getVendorBillTaxes_result = getVendorBillTaxes(datos.vendorbillInternalId);
+            // log.debug({ title:'getVendorBillTaxes', details:getVendorBillTaxes_result });
+            if (getVendorBillTaxes_result.success == false) {
+                throw getVendorBillTaxes_result.error;
+            }
+            datos['taxes'] = getVendorBillTaxes_result.data;
+            let getVendorBillPayment_result = getVendorBillPayment(datos.vendorbillInternalId);
+            // log.debug({ title:'getVendorBillPayment_result', details:getVendorBillPayment_result });
+            if (getVendorBillPayment_result.success == false) {
+                throw getVendorBillPayment_result.error;
+            }
+            datos['payments'] = getVendorBillPayment_result.data;
+            // log.debug({ title:'datos_Final: ' + mapContext.key , details:datos });
+            let newKey = datos.vendorId + '_' + datos.vendorbillTipoOperacion_Text;
+            mapContext.write({
+                key:newKey,
+                value:datos
+            });
+        } catch (error) {
+            log.error({ title:'map', details:error });
+        }
      }
 
      /**
@@ -103,8 +148,167 @@ define(["N/error",'N/runtime', 'N/search', 'N/url', 'N/record', 'N/file', 'N/red
       *     for processing
       * @since 2015.2
       */
-     const reduce = (reduceContext) => {
+    const reduce = (reduceContext) => {
+        const { key, values } = reduceContext
+        try {
+            const objScript = runtime.getCurrentScript();
+            const recordID = objScript.getParameter({ name: SCRIPTS_INFO.MAP_REDUCE.PARAMETERS.RECORD_DIOT_ID });
+            var otherId = record.submitFields({
+                type: RECORD_INFO.DIOT_RECORD.ID,
+                id: recordID,
+                values: {
+                    [RECORD_INFO.DIOT_RECORD.FIELDS.STATUS]: STATUS_LIST_DIOT.BUILDING,
+                    [RECORD_INFO.DIOT_RECORD.FIELDS.FILE]: ''
+                }
+            });
+            log.audit({title:'reduce Data: ' + key, details:{long: values.length, data: values}});
+            // obtencion de impuestos configurados a reportar
+            var salestaxitemSearchObj = search.create({
+                type: "salestaxitem",
+                filters:
+                [
+                   ["isinactive","is","F"], 
+                   "AND", 
+                   ["custrecord_fb_diot_tipo_imp","noneof","@NONE@"]
+                ],
+                columns:
+                [
+                   search.createColumn({name: "name", label: "Nombre"}),
+                   search.createColumn({
+                      name: "internalid",
+                      sort: search.Sort.ASC,
+                      label: "ID interno"
+                   }),
+                   search.createColumn({name: "custrecord_fb_diot_tipo_imp", label: "DIOT - Tipo de impuesto"})
+                ]
+            });
+            var searchTaxCodesNS = salestaxitemSearchObj.runPaged({
+                pageSize: 1000
+            });
+            var codigosReporte = {[RECORD_INFO.DESGLOSE_TAX_RECORD.FIELDS.IVA]: [], [RECORD_INFO.DESGLOSE_TAX_RECORD.FIELDS.RETENCION]: [], [RECORD_INFO.DESGLOSE_TAX_RECORD.FIELDS.IEPS]: [], [RECORD_INFO.DESGLOSE_TAX_RECORD.FIELDS.EXENTO]: []};
+            if (searchTaxCodesNS.count > 0) {
+                searchTaxCodesNS.pageRanges.forEach(function(pageRange){
+                    var myPage = searchTaxCodesNS.fetch({index: pageRange.index});
+                    myPage.data.forEach(function(result){
+                        let codigoTipo = result.getValue({name: 'custrecord_fb_diot_tipo_imp'});
+                        let codigoID = result.getValue({name: 'internalid'});
+                        let codigoNombre = result.getValue({name: 'name'});
+                        switch (codigoTipo) {
+                            case '1': // IVA
+                                codigosReporte[RECORD_INFO.DESGLOSE_TAX_RECORD.FIELDS.IVA].push({value: codigoID, text: codigoNombre})
+                                break;
+                            case '2': // IEPS
+                                codigosReporte[RECORD_INFO.DESGLOSE_TAX_RECORD.FIELDS.IEPS].push({value: codigoID, text: codigoNombre})
+                                break;
+                            case '3': // retenciones
+                                codigosReporte[RECORD_INFO.DESGLOSE_TAX_RECORD.FIELDS.RETENCION].push({value: codigoID, text: codigoNombre})
+                                break;
+                            case '4': // Exentos
+                                codigosReporte[RECORD_INFO.DESGLOSE_TAX_RECORD.FIELDS.EXENTO].push({value: codigoID, text: codigoNombre})
+                                break;
+                        }
+                    });
+                });
+            }else{ // si no hay impuestos configurados
+                throw generateError('ERROR DE PROCESAMIENTO', 'No se encontraron Impuestos configurados para reportar.', 'Error, no hay codigos de impuestos configurados para el reporte DIOT.');
+            }
 
+            // let codigosReporte = search.lookupFields({
+            //    type: RECORD_INFO.DESGLOSE_TAX_RECORD.ID,
+            //    id: 1,
+            //    columns: [RECORD_INFO.DESGLOSE_TAX_RECORD.FIELDS.IVA, RECORD_INFO.DESGLOSE_TAX_RECORD.FIELDS.RETENCION, RECORD_INFO.DESGLOSE_TAX_RECORD.FIELDS.IEPS, RECORD_INFO.DESGLOSE_TAX_RECORD.FIELDS.EXENTO]
+            // });
+            var ivas_response, retenciones_response, ieps_respose, exento_response;
+            log.debug({ title:'codigosReporte', details:codigosReporte });
+
+            if (codigosReporte[RECORD_INFO.DESGLOSE_TAX_RECORD.FIELDS.IVA].length) {
+                ivas_response = extractTaxes(codigosReporte[RECORD_INFO.DESGLOSE_TAX_RECORD.FIELDS.IVA], values);
+                log.debug({ title:'IVAS', details:ivas_response });
+                if (ivas_response.success == false) {
+                    throw ivas_response.error;
+                }
+            }
+
+            if (codigosReporte[RECORD_INFO.DESGLOSE_TAX_RECORD.FIELDS.RETENCION].length) {
+                retenciones_response = extractTaxes(codigosReporte[RECORD_INFO.DESGLOSE_TAX_RECORD.FIELDS.RETENCION], values);
+                log.debug({ title:'RETENCIONES', details:retenciones_response });
+                if (retenciones_response.success == false) {
+                    throw retenciones_response.error;
+                }
+            }
+
+            if (codigosReporte[RECORD_INFO.DESGLOSE_TAX_RECORD.FIELDS.IEPS].length) {
+                ieps_respose = extractTaxes(codigosReporte[RECORD_INFO.DESGLOSE_TAX_RECORD.FIELDS.IEPS], values);
+                log.debug({ title:'IEPS', details:ieps_respose });
+                if (ieps_respose.success == false) {
+                    throw ieps_respose.error;
+                }
+            }
+
+            if (codigosReporte[RECORD_INFO.DESGLOSE_TAX_RECORD.FIELDS.EXENTO].length) {
+                exento_response = extractTaxes(codigosReporte[RECORD_INFO.DESGLOSE_TAX_RECORD.FIELDS.EXENTO], values);
+                log.debug({ title:'EXENTOS', details:exento_response });
+                if (exento_response.success == false) {
+                    throw exento_response.error;
+                }
+            }
+            
+            const generalInfo = JSON.parse(values[0]);
+            log.debug({ title:'generalInfo', details:generalInfo });
+            let diotLine = generalInfo.vendorTipoTercero_Code + '|' + generalInfo.vendorbillTipoOperacion_Code + '|' + generalInfo.vendorRFC + '|' + generalInfo.vendorTaxId + '|' + generalInfo.vendorNombreExtranjero + '|' + generalInfo.vendorPaisResidencia_Code + '|' + generalInfo.vendorNacionalidad + '|';
+            // log.debug({ title:'ivas_response.dataClear', details: (Object.keys(ivas_response.dataClear)).length > 0 });
+            if (Object.keys(ivas_response.dataClear).length > 0) {
+                if (ivas_response.dataClear['16.0%'] && (generalInfo.vendorTipoTercero == LISTS.TIPO_TERCERO.VALUES.NACIONAL)) {
+                    diotLine += ivas_response.dataClear['16.0%'].total;
+                }
+                diotLine +='|||||';
+                if (ivas_response.dataClear['8.0%']) {
+                    diotLine += ivas_response.dataClear['8.0%'].total;
+                }
+                diotLine += '|||';
+                if (ivas_response.dataClear['16.0%'] && (generalInfo.vendorTipoTercero == LISTS.TIPO_TERCERO.VALUES.EXTRANJERO)) {
+                    diotLine += ivas_response.dataClear['16.0%'].total;
+                }
+                diotLine += '||||'
+                if (ivas_response.dataClear['0.0%'] && (generalInfo.vendorTipoTercero == LISTS.TIPO_TERCERO.VALUES.EXTRANJERO)) {
+                    diotLine += ivas_response.dataClear['0.0%'].total;
+                }         
+                diotLine += '|'
+                if (ivas_response.dataClear['0.0%'] && (generalInfo.vendorTipoTercero == LISTS.TIPO_TERCERO.VALUES.NACIONAL)) {
+                    diotLine += ivas_response.dataClear['0.0%'].total;
+                }
+                diotLine += '|'
+                if (Object.keys(exento_response.dataClear).length > 0 && (generalInfo.vendorTipoTercero == LISTS.TIPO_TERCERO.VALUES.NACIONAL)) { // columna 22
+                    // log.debug({ title:'exento_response.dataClear', details:exento_response });
+                    diotLine += exento_response.dataClear['0.0%'].total;
+                    // diotLine += 'pendiente columna 22';
+                }
+                diotLine += '|'
+                // diotLine += 'retencion_23|'
+                diotLine += '||\n'; // TODO: Borrar esta linea y descomentar la anterior y posterior
+                // diotLine += 'devoluciones_24|\n'
+            }
+            log.debug({ title:'diotLine', details:diotLine });
+            let objLine = {
+                linea: diotLine,
+                success: true
+            };
+            reduceContext.write({
+                key: key,
+                value: objLine
+            });
+        } catch (error) {
+            log.error({ title:'reduce', details:error });
+            let objLine = {
+                success: false,
+                error: error,
+                values: values
+            };
+            reduceContext.write({
+                key: key,
+                value: objLine
+            });
+        }
     }
 
     /**
@@ -127,14 +331,91 @@ define(["N/error",'N/runtime', 'N/search', 'N/url', 'N/record', 'N/file', 'N/red
      * @since 2015.2
      */
     const summarize = (summaryContext) => {
-        
+        const objScript = runtime.getCurrentScript();
+        const recordID = objScript.getParameter({ name: SCRIPTS_INFO.MAP_REDUCE.PARAMETERS.RECORD_DIOT_ID });
+        try {
+            const { output } = summaryContext;
+            var txtDiot = '', txtFolder = 0, txtNombre= '';
+            const folderRaiz = objScript.getParameter({ name: SCRIPTS_INFO.MAP_REDUCE.PARAMETERS.FOLDER_RAIZ });
+            { // validaciones de folders
+                if (!folderRaiz) {
+                    throw 'Folder raíz no configurado';
+                }
+                let registerData = search.lookupFields({
+                    type: RECORD_INFO.DIOT_RECORD.ID,
+                    id: recordID,
+                    columns: [RECORD_INFO.DIOT_RECORD.FIELDS.SUBSIDIARY, RECORD_INFO.DIOT_RECORD.FIELDS.PERIOD]
+                });
+                // log.audit({title: 'Estado_getInput', details: registerData});
+                var recordSubsidiary = registerData[RECORD_INFO.DIOT_RECORD.FIELDS.SUBSIDIARY][0].text;
+                var recordPeriod = registerData[RECORD_INFO.DIOT_RECORD.FIELDS.PERIOD][0].text;
+                recordSubsidiary = recordSubsidiary.split(' : ');
+                recordSubsidiary = recordSubsidiary[recordSubsidiary.length - 1];
+                recordPeriod = recordPeriod.split(' : ');
+                recordPeriod = recordPeriod[recordPeriod.length - 1];
+                // log.debug({ title:'resultData', details:{recordSubsidiary: recordSubsidiary, recordPeriod: recordPeriod} });
+                let validateFolder_response = validateFolder(folderRaiz, recordSubsidiary, recordPeriod);
+                if (validateFolder_response.success == false || !validateFolder_response.folderID) {
+                    throw validateFolder_response.error;
+                }
+                txtFolder = validateFolder_response.folderID;
+            }
+            { // extracción de nombre
+                let fecha = new Date();
+                let dateStructure = fecha.getDate() + '-' + (fecha.getMonth()+1) + '-' + fecha.getFullYear() + '_' + fecha.toLocaleTimeString('en-US');
+                txtNombre = 'DIOT_' + recordSubsidiary + '_' + recordPeriod + '_' + dateStructure;
+            }
+            { // extracción de cuerpo de archivo
+                output.iterator().each((key, value) => {
+                    const jsonValue = JSON.parse(value);
+                    // log.debug({ title:'salida', details:{key:key, value: jsonValue} });
+                    if (jsonValue.success == true) {
+                        txtDiot += jsonValue.linea;
+                    }else{
+                        log.error({ title:'Ocurrio un error key: ' + key, details:jsonValue });
+                        throw 'Error pendiente line 319';
+                    }
+                    return true;
+                });
+                // log.debug({ title:'txtDiot', details:txtDiot });
+            }
+            { // Creación de reporte
+                const fileObj = file.create({
+                    name    : txtNombre + '.txt',
+                    fileType: file.Type.PLAINTEXT,
+                    folder: txtFolder,
+                    contents: txtDiot
+                });
+                var fileId = fileObj.save();
+                if (fileId) {
+                    let otherId = record.submitFields({
+                        type: RECORD_INFO.DIOT_RECORD.ID,
+                        id: recordID,
+                        values: {
+                            [RECORD_INFO.DIOT_RECORD.FIELDS.FILE]: fileId,
+                            [RECORD_INFO.DIOT_RECORD.FIELDS.STATUS]: STATUS_LIST_DIOT.COMPLETE,
+                        }
+                    });
+                }
+            }
+            log.debug({ title:'Fin del procesamiento', details:'summarize' });
+        } catch (error) {
+            log.error({ title:'summarize', details:error });
+        }
+        var otherId = record.submitFields({
+            type: RECORD_INFO.DIOT_RECORD.ID,
+            id: recordID,
+            values: {
+                [RECORD_INFO.DIOT_RECORD.FIELDS.STATUS]: STATUS_LIST_DIOT.ERROR
+            }
+        });
     }
 
     const generateError = (code, msg, cause) =>{
         try {
             var custom_error = newError.create({
                 name: code,
-                message: 'DIOT generator: ' + msg,
+                message: 'Generador DIOT: ' + msg,
                 cause: cause
             });
             return custom_error;
@@ -143,6 +424,551 @@ define(["N/error",'N/runtime', 'N/search', 'N/url', 'N/record', 'N/file', 'N/red
         }
     }
 
+    const generateRecordError = (type, detail, transaccion, proveedor, recordDiot) => {
+        const response = {success: false, error: '', errorId: ''};
+        try {
+            log.debug({ title:'Crear Error record', details:{type: type, detail:detail, transaccion: transaccion, proveedor: proveedor, recordDiot: recordDiot} });
+            let errorRecord = record.create({
+                type: RECORD_INFO.ERRORES_DIOT.ID,
+                isDynamic: true
+            });
+            { // seteo de valores
+                errorRecord.setValue({
+                    fieldId: RECORD_INFO.ERRORES_DIOT.FIELDS.TIPO,
+                    value: type
+                });
+                errorRecord.setValue({
+                    fieldId: RECORD_INFO.ERRORES_DIOT.FIELDS.DETALLE,
+                    value: detail
+                });
+                errorRecord.setValue({
+                    fieldId: RECORD_INFO.ERRORES_DIOT.FIELDS.TRANSACCION,
+                    value: transaccion
+                });
+                errorRecord.setValue({
+                    fieldId: RECORD_INFO.ERRORES_DIOT.FIELDS.PROVEEDOR,
+                    value: proveedor
+                });
+                errorRecord.setValue({
+                    fieldId: RECORD_INFO.ERRORES_DIOT.FIELDS.HISTORIAL_DIOT,
+                    value: recordDiot
+                });
+            }
+            let recordId = errorRecord.save({
+                enableSourcing: false,
+                ignoreMandatoryFields: false
+            });
+            response.errorId = recordId;
+            response.success = true;
+        } catch (error) {
+            log.error({ title:'generateRecordError', details:error });
+            response.success = false;
+            response.error = error;
+        }
+        return response;
+    }
+
+    const getVendorBills = (recordPeriod, recordSubsidiary) =>{
+        const response = {success: false, error: '', quantityData:'', data: {}};
+        try {
+            var vendorbillSearchObj = search.create({
+                type: "vendorbill",
+                filters:
+                [
+                    ["type","anyof","VendBill"], 
+                    "AND", 
+                    ["subsidiary","anyof",recordSubsidiary], 
+                    "AND", 
+                    ["postingperiod","abs",recordPeriod], 
+                    "AND", 
+                    ["mainline","is","T"],
+                    "AND", 
+                    ["status","anyof","VendBill:B","VendBill:A"],
+                    "AND", 
+                    ["applyingtransaction","noneof","@NONE@"]
+                ],
+                columns:
+                [
+                    search.createColumn({name: "tranid", label: "Número de documento"}),
+                    search.createColumn({name: "internalid", label: "ID interno"}),
+                    search.createColumn({name: "statusref", label: "Estado"}),
+                    search.createColumn({name: "amount", label: "Importe"}),
+                    // search.createColumn({name: "applyingtransaction", label: "Aplicación de transacción"}),
+                    search.createColumn({name: "custbody_fb_tipo_operacion", label: "Tipo de Operación"}),
+                    // search.createColumn({
+                    //     name: "type",
+                    //     join: "applyingTransaction",
+                    //     label: "Tipo"
+                    // }),
+                    search.createColumn({
+                       name: "internalid",
+                       join: "vendor",
+                       label: "Proveedor ID"
+                    }),
+                    search.createColumn({
+                       name: "custentity_mx_rfc",
+                       join: "vendor",
+                       label: "RFC"
+                    }),
+                    search.createColumn({
+                       name: "custentity_efx_fe_numregidtrib",
+                       join: "vendor",
+                       label: "NumRegIdTrib"
+                    }),
+                    search.createColumn({
+                       name: "custentity_fb_diot_prov_type",
+                       join: "vendor",
+                       label: "Tipo de tercero"
+                    }),
+                    search.createColumn({
+                       name: "custentity_fb_pais_residencia",
+                       join: "vendor",
+                       label: "País de Residencia"
+                    }),
+                    search.createColumn({
+                       name: "custentity_fb_nombre_extranjero",
+                       join: "vendor",
+                       label: "Nombre del Extranjero"
+                    }),
+                    search.createColumn({
+                       name: "custentity_fb_nacionalidad",
+                       join: "vendor",
+                       label: "Nacionalidad"
+                    })
+                ]
+            });
+            var vendorbillResult = vendorbillSearchObj.runPaged({
+                pageSize: 1000
+            });
+            if (vendorbillResult.count > 0) {
+                let vendorbillFound = [];
+                vendorbillResult.pageRanges.forEach(function(pageRange){
+                    var myPage = vendorbillResult.fetch({index: pageRange.index});
+                    myPage.data.forEach(function(result){
+                        let vendorTipoTercero = result.getValue({name: RECORD_INFO.VENDOR_RECORD.FIELDS.TIPO_TERCERO, join: RECORD_INFO.VENDOR_RECORD.ID});
+                        let vendorTipoTercero_Text = result.getText({name: RECORD_INFO.VENDOR_RECORD.FIELDS.TIPO_TERCERO, join: RECORD_INFO.VENDOR_RECORD.ID});
+                        let vendorTipoTercero_Code = vendorTipoTercero_Text.split(' ');
+                        vendorTipoTercero_Code = vendorTipoTercero_Code[0];
+                        let vendorbillTipoOperacion = result.getValue({name: RECORD_INFO.VENDOR_BILL_RECORD.FIELDS.TIPO_OPERACION});
+                        let vendorbillTipoOperacion_Text = result.getText({name: RECORD_INFO.VENDOR_BILL_RECORD.FIELDS.TIPO_OPERACION});
+                        let vendorbillTipoOperacion_Code = vendorbillTipoOperacion_Text.split(' ');
+                        vendorbillTipoOperacion_Code = vendorbillTipoOperacion_Code[0];
+                        let vendorbillTranId = result.getValue({name: RECORD_INFO.VENDOR_BILL_RECORD.FIELDS.TRANID});
+                        let vendorbillInternalId = result.getValue({name: RECORD_INFO.VENDOR_BILL_RECORD.FIELDS.ID});
+                        if ( vendorTipoTercero ) {
+                            if (vendorbillTipoOperacion) {
+                                let vendorRFC = result.getValue({name: RECORD_INFO.VENDOR_RECORD.FIELDS.RFC, join: RECORD_INFO.VENDOR_RECORD.ID});
+                                let vendorNombreExtranjero = result.getValue({name: RECORD_INFO.VENDOR_RECORD.FIELDS.NOMBRE_EXTRANJERO, join: RECORD_INFO.VENDOR_RECORD.ID});
+                                let vendorPaisResidencia = result.getValue({name: RECORD_INFO.VENDOR_RECORD.FIELDS.PAIS_RESIDENCIA, join: RECORD_INFO.VENDOR_RECORD.ID});
+                                let vendorPaisResidencia_Text = result.getText({name: RECORD_INFO.VENDOR_RECORD.FIELDS.PAIS_RESIDENCIA, join: RECORD_INFO.VENDOR_RECORD.ID});
+                                let vendorPaisResidencia_Code = vendorPaisResidencia_Text.split(' ');
+                                vendorPaisResidencia_Code = vendorPaisResidencia_Code[0];
+                                let vendorNacionalidad = result.getValue({name: RECORD_INFO.VENDOR_RECORD.FIELDS.NACIONALIDAD, join: RECORD_INFO.VENDOR_RECORD.ID});
+                                let vendorTaxId = result.getValue({name: RECORD_INFO.VENDOR_RECORD.FIELDS.TAX_ID, join: RECORD_INFO.VENDOR_RECORD.ID});
+                                let errorControl = false;
+                                switch (vendorTipoTercero) {
+                                    case [LISTS.TIPO_TERCERO.VALUES.NACIONAL]:
+                                        if (!vendorRFC) {
+                                            log.debug({ title:'ERROR RFC_NACIONAL', details:{msg: 'No hay rfc para el proveedor', tranid: vendorbillTranId, id: vendorbillInternalId} });
+                                            errorControl = true;
+                                        }
+                                        break;
+                                    case [LISTS.TIPO_TERCERO.VALUES.EXTRANJERO]:
+                                        // numregfd, nombre extranejero, pais de recidencia solo si hay nombre extranjero, nacionalidad solo si hay nombre extranjero
+                                        if (vendorTaxId && vendorNombreExtranjero && vendorPaisResidencia && vendorNacionalidad) {
+                                            log.debug({ title:'extranjero', details:'Correcto' });
+                                        }else{
+                                            log.debug({ title:'ERROR EXTRANJERO', details:{msg: 'Falta configurar datos de proveedor', tranid: vendorbillTranId, id: vendorbillInternalId} });
+                                            errorControl = true;
+                                        }
+                                        break;
+                                    case [LISTS.TIPO_TERCERO.VALUES.GLOBAL]:
+                                        if (!vendorRFC) {
+                                            log.debug({ title:'ERROR RFC_GLOBAL', details:{msg: 'No hay rfc para el proveedor', tranid: vendorbillTranId, id: vendorbillInternalId} });
+                                            errorControl = true;
+                                        }
+                                        break;
+                                }
+                                if (errorControl == false) {
+                                    let objVendorBillResult = {
+                                        vendorbillTranId: vendorbillTranId,
+                                        vendorbillInternalId: vendorbillInternalId,
+                                        vendorbillEstado: result.getValue({name: 'statusref'}),
+                                        vendorbillImporte:result.getValue({name: 'amount'}),
+                                        // vendorbillTransaccionRelacionadaTipo: result.getValue({name: "type", join: "applyingTransaction"}),
+                                        // vendorbillTransaccionRelacionadaId: result.getValue({name: 'applyingtransaction'}),
+                                        vendorbillTipoOperacion: vendorbillTipoOperacion,
+                                        vendorbillTipoOperacion_Text: vendorbillTipoOperacion_Text,
+                                        vendorbillTipoOperacion_Code: vendorbillTipoOperacion_Code,
+                                        vendorId: result.getValue({name: "internalid", join: "vendor"}),
+                                        vendorRFC: vendorRFC,
+                                        vendorTaxId: vendorTaxId,
+                                        vendorTipoTercero: vendorTipoTercero,
+                                        vendorTipoTercero_Text: vendorTipoTercero_Text,
+                                        vendorTipoTercero_Code: vendorTipoTercero_Code,
+                                        vendorNombreExtranjero: vendorNombreExtranjero,
+                                        vendorPaisResidencia: vendorPaisResidencia,
+                                        vendorPaisResidencia_Text: vendorPaisResidencia_Text,
+                                        vendorPaisResidencia_Code: vendorPaisResidencia_Code,
+                                        vendorNacionalidad: vendorNacionalidad
+                                    };
+                                    vendorbillFound.push(objVendorBillResult);
+                                }
+                            }else{
+                                log.debug({ title:'ERROR FACTURA', details:{msg: 'No hay tipo de operacion', tranid: vendorbillTranId, id: vendorbillInternalId} });
+                            }
+                        }else{
+                            log.debug({ title:'ERROR PROVEEDOR', details:{msg: 'No hay tipo de tercero', tranid: vendorbillTranId, id: vendorbillInternalId} });
+                        }
+                    });
+                });
+                // log.debug({ title:'vendorbillFound_long', details:vendorbillFound.length });
+                // log.debug({ title:'vendorbillFound', details:vendorbillFound });
+                var vendorbillFoundClear = {};
+                vendorbillFound.forEach((element, index) => {
+                    // log.debug({ title:'element: ' + index, details:element });
+                    let identify = element.vendorbillTranId + '_' + element.vendorbillInternalId;
+                    if (!vendorbillFoundClear.hasOwnProperty(identify)) {
+                        vendorbillFoundClear[identify] = element;   
+                    }
+                });
+                // log.debug({ title:'vendorbillFoundClear', details:vendorbillFoundClear });
+                response.success = true;
+                response.quantityData = Object.keys(vendorbillFoundClear).length;
+                response.data = vendorbillFoundClear;
+            }else{ // si no hay facturas
+                throw generateError('ERROR DE PROCESAMIENTO', 'No se encontraron Facturas a reportar con los datos ingresados.', 'Error, la busqueda guardada regreso una cantidad de resultados cero.');
+            }
+        } catch (error) {
+            log.error({ title:'getVendorBills', details:error });
+            response.success = false;
+            response.error = error;
+        }
+        return response;
+    }
+
+    const getVendorBillTaxes = (vendorbillInternalId)=>{
+        const response = {success: false, error: '', data: []};
+        try {
+            // log.debug({ title:'vendorbillInternalId', details:vendorbillInternalId });
+            var vendorbillSearchObj = search.create({
+                type: "vendorbill",
+                filters:
+                [
+                   ["mainline","is","F"], 
+                   "AND", 
+                   ["taxline","is","F"], 
+                   "AND", 
+                   ["internalid","anyof",vendorbillInternalId]
+                ],
+                columns:
+                [
+                   search.createColumn({name: "internalid", label: "ID interno"}),
+                   search.createColumn({name: "item", label: "Artículo"}),
+                   search.createColumn({
+                      name: "taxbasis",
+                      join: "taxDetail",
+                      label: "Base de impuesto (moneda extranjera)"
+                   }),
+                   search.createColumn({
+                      name: "taxcode",
+                      join: "taxDetail",
+                      label: "Código de impuesto"
+                   }),
+                   search.createColumn({
+                      name: "taxtype",
+                      join: "taxDetail",
+                      label: "Tipo de impuesto"
+                   }),
+                   search.createColumn({
+                      name: "taxfxamount",
+                      join: "taxDetail",
+                      label: "Importe de impuestos (moneda extranjera)"
+                   }),
+                   search.createColumn({
+                      name: "taxrate",
+                      join: "taxDetail",
+                      label: "Tax Rate"
+                   })
+                ]
+            });
+            var vendorbillResult = vendorbillSearchObj.runPaged({
+                pageSize: 1000
+            });
+            if (vendorbillResult.count > 0) {
+                vendorbillResult.pageRanges.forEach(function(pageRange){
+                    var myPage = vendorbillResult.fetch({index: pageRange.index});
+                    var taxes = [];
+                    myPage.data.forEach(function(result){
+                        let taxItem = result.getValue({name: 'item'});
+                        let taxBasis = result.getValue({name: "taxbasis", join: "taxDetail"});
+                        let taxCode = result.getValue({name: "taxcode", join: "taxDetail"});
+                        let taxType = result.getValue({name: "taxtype", join: "taxDetail"});
+                        let taxAmount = result.getValue({name: "taxfxamount", join: "taxDetail"});
+                        let taxRate = result.getValue({name: "taxrate", join: "taxDetail"});
+                        let taxObj = {
+                            taxItem: taxItem,
+                            taxBasis: taxBasis,
+                            taxCode: taxCode,
+                            taxType: taxType,
+                            taxAmount: taxAmount,
+                            taxRate: taxRate
+                        };
+                        taxes.push(taxObj);
+                    });
+                    // log.debug({ title:'taxes', details:taxes });
+                    response.success = true;
+                    response.data = taxes;
+                });
+            }else{
+                log.debug({ title:'ERROR NO IMPUESTOS', details:{msg: 'La factura no cuenta con impuestos', id: vendorbillInternalId} });
+                response.success = false;
+            }
+        } catch (error) {
+            log.error({ title:'getVendorBillTaxes', details:error });
+            response.success =  false;
+            response.error = error;
+        }
+        return response;
+    }
+
+    const getVendorBillPayment = (vendorbillInternalId) =>{
+        const response = {success: false, error: '', data: []};
+        try {
+            var vendorpaymentSearchObj = search.create({
+                type: "vendorpayment",
+                filters:
+                [
+                   ["type","anyof","VendPymt"], 
+                   "AND", 
+                   ["mainline","is","F"], 
+                   "AND", 
+                   ["appliedtotransaction.internalid","anyof",vendorbillInternalId]
+                ],
+                columns:
+                [
+                   search.createColumn({name: "internalid", label: "ID interno"}),
+                   search.createColumn({
+                      name: "transactionname",
+                      join: "appliedToTransaction",
+                      label: "Nombre de la transacción"
+                   }),
+                   search.createColumn({
+                      name: "internalid",
+                      join: "appliedToTransaction",
+                      label: "ID interno"
+                   }),
+                   search.createColumn({name: "appliedtolinkamount", label: "Aplicado al vínculo importe"})
+                ]
+            });
+            var vendorbillResult = vendorpaymentSearchObj.runPaged({
+                pageSize: 1000
+            });
+            if (vendorbillResult.count > 0) {
+                vendorbillResult.pageRanges.forEach(function(pageRange){
+                    var myPage = vendorbillResult.fetch({index: pageRange.index});
+                    var payments = {};
+                    myPage.data.forEach(function(result){
+                        let paymentId = result.getValue({name: 'internalid'});
+                        let vendorbillId = result.getValue({name: "internalid", join: "appliedToTransaction"});
+                        let vendorbillName = result.getValue({name: "transactionname", join: "appliedToTransaction"});
+                        let paymentAmountApply = Number(result.getValue({name: "appliedtolinkamount"})).toFixed(2);
+                        let paymentObj = {
+                            paymentId: paymentId,
+                            vendorbillId: vendorbillId,
+                            vendorbillName: vendorbillName,
+                            paymentAmountApply: paymentAmountApply
+                        }
+                        let identify = vendorbillId + '_' + paymentId;
+                        if (!payments.hasOwnProperty(identify)) {
+                            payments[identify] = paymentObj;
+                        }else{
+                            payments[identify].paymentAmountApply = payments[identify].paymentAmountApply + paymentAmountApply;
+                        }
+                    });
+                    // log.debug({ title:'payments by: ' + vendorbillInternalId, details:payments });
+                    response.data = payments;
+                    response.success = true;
+                });
+            }else{
+                log.debug({ title:'ERROR NO PAGOS', details:{msg: 'La factura no cuenta con pagos', id: vendorbillInternalId} });
+                response.success = false;
+            }
+        } catch (error) {
+            log.error({ title:'getVendorBillPayment', details:error });
+            response.success = false;
+            response.error = error;
+        }
+        return response;
+    }
+
+    const extractTaxes = (impuestos, values) =>{
+        const response = {success: false, error: '', data: [], dataClear: {}};
+        try {
+            // log.debug({ title:'impuestos', details:impuestos });
+            // log.debug({ title:'values', details:values });
+            let impuestosFound = [];
+            impuestos.forEach((element_impuesto, index_impuesto) => {
+                // log.debug({ title:'impuesto ' + index_impuesto, details:element_impuesto });
+                let sumaImpuesto = 0;
+                let impuestoRate = '';
+                values.forEach((element_factura, index_factura) => {
+                    let factura = JSON.parse(element_factura);
+                    // log.debug({ title:'factura ' + index_factura, details:factura });
+                    const taxes = factura.taxes;
+                    taxes.forEach((tax, index_tax) => {
+                        if (tax.taxCode == element_impuesto.value) {
+                            // log.debug({ title:'tax found ' + index_tax, details:tax });
+                            sumaImpuesto = (sumaImpuesto*1) + (tax.taxBasis*1);
+                            impuestoRate = tax.taxRate;
+                        }
+                    });
+                });
+                impuestosFound.push({impuesto: element_impuesto, sumaImpuesto: sumaImpuesto, taxRate: impuestoRate});
+            });
+            response.data = impuestosFound;
+            let impuestosFoundClear = {};
+            impuestosFound.forEach((elemento, index) => {
+                if (elemento.taxRate) {
+                    if (impuestosFoundClear.hasOwnProperty(elemento.taxRate)) {
+                        impuestosFoundClear[elemento.taxRate]['total'] = impuestosFoundClear[elemento.taxRate].total + elemento.sumaImpuesto;
+                        impuestosFoundClear[elemento.taxRate]['hijos'].push(elemento);
+                    }else{
+                        impuestosFoundClear[elemento.taxRate] = {total: 0, hijos: []}
+                        impuestosFoundClear[elemento.taxRate]['total'] = elemento.sumaImpuesto;
+                        impuestosFoundClear[elemento.taxRate]['hijos'].push(elemento);
+                    }
+                }
+            });
+            response.dataClear = impuestosFoundClear;
+            response.success = true;
+        } catch (error) {
+            log.error({ title:'extractTaxes', details:error });
+            response.success = false;
+            response.error = error;
+        }
+        return response;
+    }
+
+    const validateFolder = (folderId, subsidiaria, periodo) =>{
+        const response = {success: false, error: '', folderID: ''};
+        try {
+            let subsidiariafolder_result = search_folder(subsidiaria, folderId);
+            if (subsidiariafolder_result.success == false) {
+                throw subsidiariafolder_result.error;
+            }
+            let subsidiariaFolder;
+            if (subsidiariafolder_result.folderID == -1) { //crear folder
+                let createSubsidiariaFolder = create_folder(subsidiaria, folderId);
+                if (createSubsidiariaFolder.success == false) {
+                    throw createSubsidiariaFolder.error;
+                }
+                subsidiariaFolder = createSubsidiariaFolder.folderID;
+            }else{ // ya existe folder
+                subsidiariaFolder = subsidiariafolder_result.folderID;
+            }
+            let periodoFolder_result = search_folder(periodo, subsidiariaFolder);
+            if (periodoFolder_result.success == false) {
+                throw periodoFolder_result.error;
+            }
+            let periodoFolder;
+            if (periodoFolder_result.folderID == -1) { // crear folder
+                let createPeriodoFolder = create_folder(periodo, subsidiariaFolder);
+                if (createPeriodoFolder.success == false) {
+                    throw createPeriodoFolder.error;
+                }
+                periodoFolder = createPeriodoFolder.folderID;
+            }else{ // ya existe folder
+                periodoFolder = periodoFolder_result.folderID;
+            }
+            if (periodoFolder) {
+                response.folderID = periodoFolder;
+            }else{
+                response.folderID = folderId;
+            }
+            response.success = true;
+        } catch (error) {
+            log.error({ title:'validateFolder', details:error });
+            response.success = false;
+            response.error = error;
+        }
+        return response
+    }
+
+    function search_folder(folderName, parentFolder) {
+        const response = {success: false, error: '', folderID: -1}
+        try {
+            const folderSearchVendor = search.create({
+                type: search.Type.FOLDER,
+                filters:
+                [
+                   ["parent", search.Operator.ANYOF, parentFolder],
+                   "AND", 
+                   ["name", search.Operator.IS, folderName]
+                ],
+                columns:
+                [
+                    search.createColumn({
+                        name: "internalid",
+                        sort: search.Sort.ASC,
+                        label: "Internal ID"
+                    }),
+                    search.createColumn({name: "name", label: "Name"}),
+                    search.createColumn({name: "foldersize", label: "Size (KB)"}),
+                    search.createColumn({name: "lastmodifieddate", label: "Last Modified"}),
+                    search.createColumn({name: "parent", label: "Sub of"}),
+                    search.createColumn({name: "numfiles", label: "# of Files"})
+                ]
+            });
+            const myPagedData = folderSearchVendor.runPaged({
+                pageSize: 1000
+            });
+            // log.debug("Resultados de folders",myPagedData.count);
+            if (myPagedData.count > 0) { // obtener folder
+                myPagedData.pageRanges.forEach(function(pageRange){
+                    let myPage = myPagedData.fetch({index: pageRange.index});
+                    myPage.data.forEach(function(result){
+                        response.folderID = result.getValue({name: 'internalid'});
+                    });
+                });
+            }
+            response.success = true;
+        } catch (error) {
+            log.error({ title:'search_folder', details:error });
+            response.success = false;
+            response.error = error;
+        }
+        return response;
+    }
+
+    function create_folder(folderName, parentFolder) {
+        const response = {success: false, error: '', folderID: -1}
+        try {
+            let objFolder = record.create({
+                type: record.Type.FOLDER,
+                isDynamic: true
+            });
+
+            objFolder.setValue({
+                fieldId: 'name',
+                value: folderName
+            });
+            objFolder.setValue({
+                fieldId: 'parent',
+                value: parentFolder
+            });
+            response.folderID = objFolder.save({
+                enableSourcing: true,
+                ignoreMandatoryFields: true
+            });
+            response.success = true;
+        } catch (error) {
+            log.error({ title:'create_folder', details:error });
+            response.success = false;
+            response.error = error;
+        }
+        return response;
+    }
 
     return {getInputData, map, reduce, summarize};
 

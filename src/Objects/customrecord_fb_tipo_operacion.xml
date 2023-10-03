@@ -40,4 +40,18 @@
   <showowner>F</showowner>
   <showownerallowchange>F</showownerallowchange>
   <showowneronlist>F</showowneronlist>
+  <instances>
+    <instance scriptid="val_611989_t2220309_713">
+      <isinactive>F</isinactive>
+      <name>03 - Prestación de servicios</name>
+    </instance>
+    <instance scriptid="val_611990_t2220309_301">
+      <isinactive>F</isinactive>
+      <name>06 - Arrendamiento de Inmuebles</name>
+    </instance>
+    <instance scriptid="val_611991_t2220309_390">
+      <isinactive>F</isinactive>
+      <name>85 - Otros</name>
+    </instance>
+  </instances>
 </customrecordtype>

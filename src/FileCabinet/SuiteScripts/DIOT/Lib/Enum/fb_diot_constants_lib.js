@@ -68,6 +68,7 @@ define([],function(){
     RECORD_INFO.ACCOUNTINGPERIOD_RECORD.FIELDS.NAME = 'periodname';
 
     RECORD_INFO.VENDOR_RECORD = {};
+    RECORD_INFO.VENDOR_RECORD.ID = 'vendor'
     RECORD_INFO.VENDOR_RECORD.FIELDS = {};
     RECORD_INFO.VENDOR_RECORD.FIELDS.NAME = 'companyname';
     RECORD_INFO.VENDOR_RECORD.FIELDS.RFC = 'custentity_mx_rfc';
@@ -75,6 +76,7 @@ define([],function(){
     RECORD_INFO.VENDOR_RECORD.FIELDS.NOMBRE_EXTRANJERO = 'custentity_fb_nombre_extranjero';
     RECORD_INFO.VENDOR_RECORD.FIELDS.PAIS_RESIDENCIA = 'custentity_fb_pais_residencia';
     RECORD_INFO.VENDOR_RECORD.FIELDS.NACIONALIDAD = 'custentity_fb_nacionalidad';
+    RECORD_INFO.VENDOR_RECORD.FIELDS.TIPO_TERCERO = 'custentity_fb_diot_prov_type';
 
     RECORD_INFO.SALES_TAX_RECORD = {};
     RECORD_INFO.SALES_TAX_RECORD.FIELDS = {};
@@ -95,6 +97,7 @@ define([],function(){
     RECORD_INFO.VENDOR_BILL_RECORD.ID = 'vendorbill';
     RECORD_INFO.VENDOR_BILL_RECORD.FIELDS = {};
     RECORD_INFO.VENDOR_BILL_RECORD.FIELDS.ID = 'internalid';
+    RECORD_INFO.VENDOR_BILL_RECORD.FIELDS.TRANID = 'tranid';
     RECORD_INFO.VENDOR_BILL_RECORD.FIELDS.ENTITY = 'entityid';
     RECORD_INFO.VENDOR_BILL_RECORD.FIELDS.NAME = 'name';
     RECORD_INFO.VENDOR_BILL_RECORD.FIELDS.VENDOR = 'vendor';
@@ -256,6 +259,20 @@ define([],function(){
     RECORD_INFO.DESGLOSE_TAX_RECORD.FIELDS.EXENTO = 'custrecord_efx_fe_desglose_exento';
     RECORD_INFO.DESGLOSE_TAX_RECORD.FIELDS.IVA = 'custrecord_efx_fe_desglose_iva';
     RECORD_INFO.DESGLOSE_TAX_RECORD.FIELDS.RETENCION = 'custrecord_efx_fe_desglose_ret';
+    RECORD_INFO.DESGLOSE_TAX_RECORD.FIELDS.IEPS = 'custrecord_efx_fe_desglose_ieps';
+
+    RECORD_INFO.ERRORES_DIOT = {};
+    RECORD_INFO.ERRORES_DIOT.ID = 'customrecord_fb_errores_diot';
+    RECORD_INFO.ERRORES_DIOT.FIELDS = {};
+    RECORD_INFO.ERRORES_DIOT.FIELDS.ID = 'id';
+    RECORD_INFO.ERRORES_DIOT.FIELDS.INACTIVE = 'isinactive';
+    RECORD_INFO.ERRORES_DIOT.FIELDS.TIPO = 'custrecord_fb_tipo_error'
+    RECORD_INFO.ERRORES_DIOT.FIELDS.DETALLE = 'custrecord_fb_detalle_error';
+    RECORD_INFO.ERRORES_DIOT.FIELDS.TRANSACCION = 'custrecord_fb_diot_rel_tran';
+    RECORD_INFO.ERRORES_DIOT.FIELDS.PROVEEDOR = 'custrecord_fb_diot_rel_prov';
+    RECORD_INFO.ERRORES_DIOT.FIELDS.HISTORIAL_DIOT = 'custrecord_fb_hist_diot';
+    RECORD_INFO.ERRORES_DIOT.FIELDS.PROPIETARIO = 'owner';
+    RECORD_INFO.ERRORES_DIOT.FIELDS.FECHA_CREACION = 'created';
 
     const STATUS_LIST_DIOT = {};
 
@@ -266,6 +283,14 @@ define([],function(){
     STATUS_LIST_DIOT.COMPLETE = 5;
     STATUS_LIST_DIOT.ERROR = 6;
 
+    const LISTS = {};
+    LISTS.TIPO_TERCERO = {};
+    LISTS.TIPO_TERCERO.ID = 'customlist_fb_diot_tipo_tercero';
+    LISTS.TIPO_TERCERO.VALUES = {};
+    LISTS.TIPO_TERCERO.VALUES.NACIONAL = 1;
+    LISTS.TIPO_TERCERO.VALUES.EXTRANJERO = 2;
+    LISTS.TIPO_TERCERO.VALUES.GLOBAL = 3;
+
     const SCRIPTS_INFO = {};
 
     SCRIPTS_INFO.MAP_REDUCE = {};
@@ -275,6 +300,7 @@ define([],function(){
     SCRIPTS_INFO.MAP_REDUCE.PARAMETERS.SUBSIDIARY = 'custscript_fb_diot_subsidiary';
     SCRIPTS_INFO.MAP_REDUCE.PARAMETERS.PERIOD = 'custscript_fb_diot_periodo';
     SCRIPTS_INFO.MAP_REDUCE.PARAMETERS.RECORD_DIOT_ID = 'custscript_fb_diot_record_id';
+    SCRIPTS_INFO.MAP_REDUCE.PARAMETERS.FOLDER_RAIZ = 'custscript_fb_diot_folder_raiz';
     SCRIPTS_INFO.MAP_REDUCE.PARAMETERS.TIPO_GUARDADO = 'custscript_fb_diot_tipo_guardado';
     SCRIPTS_INFO.MAP_REDUCE.PARAMETERS.NOMBRE_ARCHIVO = 'custscript_fb_diot_nombre_archivo';
     SCRIPTS_INFO.MAP_REDUCE.PARAMETERS.NOTIFICAR = 'custscript_fb_diot_notificar_correo';
@@ -317,6 +343,7 @@ define([],function(){
         INTERFACE: INTERFACE,
         RECORD_INFO: RECORD_INFO,
         STATUS_LIST_DIOT: STATUS_LIST_DIOT,
+        LISTS: LISTS,
         SCRIPTS_INFO: SCRIPTS_INFO,
         RUNTIME: RUNTIME,
         COMPANY_INFORMATION: COMPANY_INFORMATION,

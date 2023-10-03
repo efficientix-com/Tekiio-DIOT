@@ -62,7 +62,7 @@ Las palabras válidas son:&#xd;
 Favor de separar las palabras por &apos;_&apos;.&#xd;
 &#xd;
 Ejemplo:&#xd;
-       Subsidiaria_Periodo_DD_MM_YYYY&#xd;
+     Subsidiaria_Periodo_DD_MM_YYYY&#xd;
 </help>
       <isformula>F</isformula>
       <ismandatory>F</ismandatory>
@@ -239,6 +239,33 @@ Ejemplo:&#xd;
       <setting></setting>
       <storevalue>T</storevalue>
     </scriptcustomfield>
+    <scriptcustomfield scriptid="custscript_fb_diot_folder_raiz">
+      <accesslevel>2</accesslevel>
+      <applyformatting>F</applyformatting>
+      <checkspelling>F</checkspelling>
+      <defaultchecked>F</defaultchecked>
+      <defaultselection></defaultselection>
+      <defaultvalue></defaultvalue>
+      <description>Folder donde de se almacenaran todos los reportes DIOT creados.</description>
+      <displayheight></displayheight>
+      <displaytype>NORMAL</displaytype>
+      <displaywidth></displaywidth>
+      <dynamicdefault></dynamicdefault>
+      <fieldtype>TEXT</fieldtype>
+      <help>Folder donde de se almacenaran todos los reportes DIOT creados.</help>
+      <isformula>F</isformula>
+      <ismandatory>F</ismandatory>
+      <label>Folder raíz</label>
+      <linktext></linktext>
+      <maxlength></maxlength>
+      <maxvalue></maxvalue>
+      <minvalue></minvalue>
+      <onparentdelete></onparentdelete>
+      <searchlevel>2</searchlevel>
+      <selectrecordtype></selectrecordtype>
+      <setting></setting>
+      <storevalue>T</storevalue>
+    </scriptcustomfield>
   </scriptcustomfields>
   <scriptdeployments>
     <scriptdeployment scriptid="customdeploy_fb_diot_generate_1">
@@ -248,6 +275,7 @@ Ejemplo:&#xd;
       <custscript_fb_busqueda_informes>customsearch_fb_diot_expensereport</custscript_fb_busqueda_informes>
       <custscript_fb_busqueda_pagos_proveedor></custscript_fb_busqueda_pagos_proveedor>
       <custscript_fb_busqueda_polizas>customsearch_fb_diot_journalentry</custscript_fb_busqueda_polizas>
+      <custscript_fb_diot_folder_raiz>7224</custscript_fb_diot_folder_raiz>
       <custscript_fb_diot_nombre_archivo>Subsidiaria_Periodo_MM_YYYY</custscript_fb_diot_nombre_archivo>
       <custscript_fb_diot_notificar_correo>T</custscript_fb_diot_notificar_correo>
       <custscript_fb_diot_record_id></custscript_fb_diot_record_id>
