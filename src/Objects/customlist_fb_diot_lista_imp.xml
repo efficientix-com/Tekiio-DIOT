@@ -1,0 +1,29 @@
+<customlist scriptid="customlist_fb_diot_lista_imp">
+  <description></description>
+  <isinactive>F</isinactive>
+  <ismatrixoption>F</ismatrixoption>
+  <isordered>T</isordered>
+  <name>Tipos de impuesto para DIOT</name>
+  <customvalues>
+    <customvalue scriptid="val_252071_t2269267_382">
+      <abbreviation>I</abbreviation>
+      <isinactive>F</isinactive>
+      <value>IVA</value>
+    </customvalue>
+    <customvalue scriptid="val_252072_t2269267_403">
+      <abbreviation>I</abbreviation>
+      <isinactive>F</isinactive>
+      <value>IEPS</value>
+    </customvalue>
+    <customvalue scriptid="val_252073_t2269267_926">
+      <abbreviation>R</abbreviation>
+      <isinactive>F</isinactive>
+      <value>Retenciones</value>
+    </customvalue>
+    <customvalue scriptid="val_252074_t2269267_942">
+      <abbreviation>E</abbreviation>
+      <isinactive>F</isinactive>
+      <value>Exentos</value>
+    </customvalue>
+  </customvalues>
+</customlist>
