@@ -481,8 +481,8 @@ define(["N/error",'N/runtime', 'N/search', 'N/url', 'N/record', 'N/file', 'N/red
                     ["status","anyof","VendBill:B","VendBill:A"],
                     "AND", 
                     ["applyingtransaction","noneof","@NONE@"]
-                    ,"AND",
-                    ["internalid", "is", 28104]
+                    // ,"AND",
+                    // ["internalid", "is", 28104]
                 ],
                 columns:
                 [
@@ -877,19 +877,32 @@ define(["N/error",'N/runtime', 'N/search', 'N/url', 'N/record', 'N/file', 'N/red
                 let impuestoRate = '';
                 values.forEach((element_factura, index_factura) => {
                     let factura = JSON.parse(element_factura);
-                    log.debug({ title:'extractTaxes_factura ' + index_factura, details:factura });
-                    if (factura.vendorbillEstado != "open") {
-                        const taxes = factura.taxes;
-                        taxes.forEach((tax, index_tax) => {
-                            if (tax.taxCode == element_impuesto.value) {
-                                // log.debug({ title:'tax found ' + index_tax, details:tax });
+                    // log.debug({ title:'extractTaxes_factura ' + index_factura, details:factura });
+                    const taxes = factura.taxes;
+                    taxes.forEach((tax, index_tax) => {
+                        if (tax.taxCode == element_impuesto.value) {
+                            // log.debug({ title:'tax found ' + index_tax, details:tax });
+                            impuestoRate = tax.taxRate;
+                            if (factura.vendorbillEstado != "open") {
                                 sumaImpuesto = (sumaImpuesto*1) + (tax.taxBasis*1);
-                                impuestoRate = tax.taxRate;
+                            }else{
+                                let pagosObj = factura.payments;
+                                let pagosIds = Object.keys(pagosObj);
+                                let totalpagado = 0;
+                                pagosIds.forEach((element) => {
+                                    let montoApply = pagosObj[element].paymentAmountApply;
+                                    let paymentId = pagosObj[element].paymentId;
+                                    // log.debug({ title:'datos extract', details:{montoApply: montoApply, paymentId: paymentId} });
+                                    totalpagado = (totalpagado*1) + (montoApply*1);
+                                });
+                                totalpagado = totalpagado.toFixed(2);
+                                let equivalentePagado = ((totalpagado*1)*(tax.taxBasis*1))/(factura.vendorbillImporte*1);
+                                equivalentePagado = equivalentePagado.toFixed(2);
+                                log.debug({ title:'finales', details:{totalpagado: totalpagado, equivalentePagado: equivalentePagado} });
+                                sumaImpuesto = (sumaImpuesto*1) + (equivalentePagado*1);
                             }
-                        });
-                    }else{
-                        throw 'Error controlado';
-                    }
+                        }
+                    });
                 });
                 impuestosFound.push({impuesto: element_impuesto, sumaImpuesto: sumaImpuesto, taxRate: impuestoRate});
             });
@@ -907,6 +920,8 @@ define(["N/error",'N/runtime', 'N/search', 'N/url', 'N/record', 'N/file', 'N/red
                     }
                 }
             });
+            log.debug({ title:'impuestosFoundClear', details:impuestosFoundClear });
+            
             response.dataClear = impuestosFoundClear;
             response.success = true;
         } catch (error) {
