@@ -49,7 +49,7 @@ define(["N/error",'N/runtime', 'N/search', 'N/url', 'N/record', 'N/file', 'N/red
             // oneWorldFeature = false;
             if (oneWorldFeature == false || suitetax == false) { // si no es oneWorld o SuiteTax
                 let newError = generateError('ERROR DE ENTORNO', 'Error de configuración DIOT, contacte a su administrador.', 'Su instancia no esta configurada para trabajar con el modulo DIOT.');
-                let mapErrorRecord = generateRecordError(newError.name, newError.message, '', '', recordID);
+                generateRecordError(newError.name, newError.message, '', '', recordID);
                 throw newError;
             }
             let registerData = search.lookupFields({
@@ -61,10 +61,11 @@ define(["N/error",'N/runtime', 'N/search', 'N/url', 'N/record', 'N/file', 'N/red
             const recordSubsidiary = registerData[RECORD_INFO.DIOT_RECORD.FIELDS.SUBSIDIARY][0].value;
             const recordPeriod = registerData[RECORD_INFO.DIOT_RECORD.FIELDS.PERIOD][0].value;
             log.debug({ title:'resultData', details:{recordSubsidiary: recordSubsidiary, recordPeriod: recordPeriod} });
-            let getVendorBills_result = getVendorBills(recordPeriod, recordSubsidiary);
+            let getVendorBills_result = getVendorBills(recordPeriod, recordSubsidiary, recordID);
             // log.debug({ title:'getVendorBills_result', details:getVendorBills_result });
             if (getVendorBills_result.success == false) {
-                throw getVendorBills_result.error;
+                let newError = getVendorBills_result.error;
+                throw newError;
             }
             var otherId = record.submitFields({
                 type: RECORD_INFO.DIOT_RECORD.ID,
@@ -110,13 +111,13 @@ define(["N/error",'N/runtime', 'N/search', 'N/url', 'N/record', 'N/file', 'N/red
             
             // log.debug({ title:'mapContext: ' + mapContext.key, details:mapContext });
             var datos = JSON.parse(mapContext.value);
-            let getVendorBillTaxes_result = getVendorBillTaxes(datos.vendorbillInternalId);
+            let getVendorBillTaxes_result = getVendorBillTaxes(datos.vendorbillInternalId, datos.vendorId, datos.diotRecord);
             // log.debug({ title:'getVendorBillTaxes', details:getVendorBillTaxes_result });
             if (getVendorBillTaxes_result.success == false) {
                 throw getVendorBillTaxes_result.error;
             }
             datos['taxes'] = getVendorBillTaxes_result.data;
-            let getVendorBillPayment_result = getVendorBillPayment(datos.vendorbillInternalId);
+            let getVendorBillPayment_result = getVendorBillPayment(datos.vendorbillInternalId, datos.vendorId, datos.diotRecord);
             // log.debug({ title:'getVendorBillPayment_result', details:getVendorBillPayment_result });
             if (getVendorBillPayment_result.success == false) {
                 throw getVendorBillPayment_result.error;
@@ -212,14 +213,8 @@ define(["N/error",'N/runtime', 'N/search', 'N/url', 'N/record', 'N/file', 'N/red
             }else{ // si no hay impuestos configurados
                 throw generateError('ERROR DE PROCESAMIENTO', 'No se encontraron Impuestos configurados para reportar.', 'Error, no hay codigos de impuestos configurados para el reporte DIOT.');
             }
-
-            // let codigosReporte = search.lookupFields({
-            //    type: RECORD_INFO.DESGLOSE_TAX_RECORD.ID,
-            //    id: 1,
-            //    columns: [RECORD_INFO.DESGLOSE_TAX_RECORD.FIELDS.IVA, RECORD_INFO.DESGLOSE_TAX_RECORD.FIELDS.RETENCION, RECORD_INFO.DESGLOSE_TAX_RECORD.FIELDS.IEPS, RECORD_INFO.DESGLOSE_TAX_RECORD.FIELDS.EXENTO]
-            // });
             var ivas_response, retenciones_response, ieps_respose, exento_response;
-            log.debug({ title:'codigosReporte', details:codigosReporte });
+            // log.debug({ title:'codigosReporte', details:codigosReporte });
 
             if (codigosReporte[RECORD_INFO.DESGLOSE_TAX_RECORD.FIELDS.IVA].length) {
                 ivas_response = extractTaxes(codigosReporte[RECORD_INFO.DESGLOSE_TAX_RECORD.FIELDS.IVA], values);
@@ -254,7 +249,7 @@ define(["N/error",'N/runtime', 'N/search', 'N/url', 'N/record', 'N/file', 'N/red
             }
             
             const generalInfo = JSON.parse(values[0]);
-            log.debug({ title:'generalInfo', details:generalInfo });
+            // log.debug({ title:'generalInfo', details:generalInfo });
             let diotLine = generalInfo.vendorTipoTercero_Code + '|' + generalInfo.vendorbillTipoOperacion_Code + '|' + generalInfo.vendorRFC + '|' + generalInfo.vendorTaxId + '|' + generalInfo.vendorNombreExtranjero + '|' + generalInfo.vendorPaisResidencia_Code + '|' + generalInfo.vendorNacionalidad + '|';
             // log.debug({ title:'ivas_response.dataClear', details: (Object.keys(ivas_response.dataClear)).length > 0 });
             if (Object.keys(ivas_response.dataClear).length > 0) {
@@ -284,9 +279,9 @@ define(["N/error",'N/runtime', 'N/search', 'N/url', 'N/record', 'N/file', 'N/red
                     // diotLine += 'pendiente columna 22';
                 }
                 diotLine += '|'
-                // diotLine += 'retencion_23|'
-                diotLine += '||\n'; // TODO: Borrar esta linea y descomentar la anterior y posterior
-                // diotLine += 'devoluciones_24|\n'
+                diotLine += 'retencion_23|'
+                // diotLine += '||\n';
+                diotLine += 'devoluciones_24|\n'
             }
             log.debug({ title:'diotLine', details:diotLine });
             let objLine = {
@@ -427,7 +422,7 @@ define(["N/error",'N/runtime', 'N/search', 'N/url', 'N/record', 'N/file', 'N/red
     const generateRecordError = (type, detail, transaccion, proveedor, recordDiot) => {
         const response = {success: false, error: '', errorId: ''};
         try {
-            log.debug({ title:'Crear Error record', details:{type: type, detail:detail, transaccion: transaccion, proveedor: proveedor, recordDiot: recordDiot} });
+            log.error({ title:'Crear Error record', details:{type: type, detail:detail, transaccion: transaccion, proveedor: proveedor, recordDiot: recordDiot} });
             let errorRecord = record.create({
                 type: RECORD_INFO.ERRORES_DIOT.ID,
                 isDynamic: true
@@ -468,7 +463,7 @@ define(["N/error",'N/runtime', 'N/search', 'N/url', 'N/record', 'N/file', 'N/red
         return response;
     }
 
-    const getVendorBills = (recordPeriod, recordSubsidiary) =>{
+    const getVendorBills = (recordPeriod, recordSubsidiary, recordID) =>{
         const response = {success: false, error: '', quantityData:'', data: {}};
         try {
             var vendorbillSearchObj = search.create({
@@ -486,6 +481,8 @@ define(["N/error",'N/runtime', 'N/search', 'N/url', 'N/record', 'N/file', 'N/red
                     ["status","anyof","VendBill:B","VendBill:A"],
                     "AND", 
                     ["applyingtransaction","noneof","@NONE@"]
+                    ,"AND",
+                    ["internalid", "is", 28104]
                 ],
                 columns:
                 [
@@ -542,10 +539,12 @@ define(["N/error",'N/runtime', 'N/search', 'N/url', 'N/record', 'N/file', 'N/red
             });
             if (vendorbillResult.count > 0) {
                 let vendorbillFound = [];
+                let errorsTrans = [];
                 vendorbillResult.pageRanges.forEach(function(pageRange){
                     var myPage = vendorbillResult.fetch({index: pageRange.index});
                     myPage.data.forEach(function(result){
                         let vendorTipoTercero = result.getValue({name: RECORD_INFO.VENDOR_RECORD.FIELDS.TIPO_TERCERO, join: RECORD_INFO.VENDOR_RECORD.ID});
+                        let vendorId = result.getValue({name: RECORD_INFO.VENDOR_RECORD.FIELDS.INTERNALID, join: RECORD_INFO.VENDOR_RECORD.ID});
                         let vendorTipoTercero_Text = result.getText({name: RECORD_INFO.VENDOR_RECORD.FIELDS.TIPO_TERCERO, join: RECORD_INFO.VENDOR_RECORD.ID});
                         let vendorTipoTercero_Code = vendorTipoTercero_Text.split(' ');
                         vendorTipoTercero_Code = vendorTipoTercero_Code[0];
@@ -567,30 +566,62 @@ define(["N/error",'N/runtime', 'N/search', 'N/url', 'N/record', 'N/file', 'N/red
                                 let vendorTaxId = result.getValue({name: RECORD_INFO.VENDOR_RECORD.FIELDS.TAX_ID, join: RECORD_INFO.VENDOR_RECORD.ID});
                                 let errorControl = false;
                                 switch (vendorTipoTercero) {
-                                    case [LISTS.TIPO_TERCERO.VALUES.NACIONAL]:
+                                    case LISTS.TIPO_TERCERO.VALUES.NACIONAL:
                                         if (!vendorRFC) {
-                                            log.debug({ title:'ERROR RFC_NACIONAL', details:{msg: 'No hay rfc para el proveedor', tranid: vendorbillTranId, id: vendorbillInternalId} });
-                                            errorControl = true;
+                                            let errorObj = {
+                                                code: 'ERROR PROVEEDOR NACIONAL', 
+                                                msg: 'No hay rfc para el proveedor', 
+                                                cause: 'Error, No se tiene configurado el rfc del proveedor.', 
+                                                proveedor: vendorId, 
+                                                transaccion: ''
+                                            };
+                                            let errorFound = errorsTrans.findIndex((element) => element.code == errorObj.code && element.msg == errorObj.msg && element.proveedor == errorObj.proveedor);
+                                            if (errorFound == -1) {
+                                                errorsTrans.push(errorObj);
+                                                errorControl = true;
+                                            }
                                         }
                                         break;
-                                    case [LISTS.TIPO_TERCERO.VALUES.EXTRANJERO]:
+                                    case LISTS.TIPO_TERCERO.VALUES.EXTRANJERO:
                                         // numregfd, nombre extranejero, pais de recidencia solo si hay nombre extranjero, nacionalidad solo si hay nombre extranjero
                                         if (vendorTaxId && vendorNombreExtranjero && vendorPaisResidencia && vendorNacionalidad) {
                                             log.debug({ title:'extranjero', details:'Correcto' });
                                         }else{
-                                            log.debug({ title:'ERROR EXTRANJERO', details:{msg: 'Falta configurar datos de proveedor', tranid: vendorbillTranId, id: vendorbillInternalId} });
-                                            errorControl = true;
+                                            // log.debug({ title:'ERROR EXTRANJERO', details:{msg: 'Falta configurar datos de proveedor', tranid: vendorbillTranId, id: vendorbillInternalId} });
+                                            let errorObj = {
+                                                code: 'ERROR PROVEEDOR EXTRANJERO', 
+                                                msg: 'Falta configurar datos de proveedor', 
+                                                cause: 'Error, No se tiene configurado el proveedor extranjero.', 
+                                                proveedor: vendorId, 
+                                                transaccion: ''
+                                            };
+                                            let errorFound = errorsTrans.findIndex((element) => element.code == errorObj.code && element.msg == errorObj.msg && element.proveedor == errorObj.proveedor);
+                                            if (errorFound == -1) {
+                                                errorsTrans.push(errorObj);
+                                                errorControl = true;
+                                            }
                                         }
                                         break;
-                                    case [LISTS.TIPO_TERCERO.VALUES.GLOBAL]:
-                                        if (!vendorRFC) {
-                                            log.debug({ title:'ERROR RFC_GLOBAL', details:{msg: 'No hay rfc para el proveedor', tranid: vendorbillTranId, id: vendorbillInternalId} });
-                                            errorControl = true;
+                                    case LISTS.TIPO_TERCERO.VALUES.GLOBAL:
+                                        if (!vendorRFC) {0
+                                            let errorObj = {
+                                                code: 'ERROR PROVEEDOR GLOBAL', 
+                                                msg: 'No hay rfc para el proveedor', 
+                                                cause: 'Error, No se tiene configurado el proveedor global.', 
+                                                proveedor: vendorId, 
+                                                transaccion: ''
+                                            };
+                                            let errorFound = errorsTrans.findIndex((element) => element.code == errorObj.code && element.msg == errorObj.msg && element.proveedor == errorObj.proveedor);
+                                            if (errorFound == -1) {
+                                                errorsTrans.push(errorObj);
+                                                errorControl = true;
+                                            }
                                         }
                                         break;
                                 }
                                 if (errorControl == false) {
                                     let objVendorBillResult = {
+                                        diotRecord: recordID,
                                         vendorbillTranId: vendorbillTranId,
                                         vendorbillInternalId: vendorbillInternalId,
                                         vendorbillEstado: result.getValue({name: 'statusref'}),
@@ -615,12 +646,36 @@ define(["N/error",'N/runtime', 'N/search', 'N/url', 'N/record', 'N/file', 'N/red
                                     vendorbillFound.push(objVendorBillResult);
                                 }
                             }else{
-                                log.debug({ title:'ERROR FACTURA', details:{msg: 'No hay tipo de operacion', tranid: vendorbillTranId, id: vendorbillInternalId} });
+                                let errorObj ={
+                                    code: 'ERROR EN FACTURA', 
+                                    msg: 'Transaccion no configurada adecuadamente', 
+                                    cause: 'Error, No se tiene configurado el tipo de operacion en la transaccion.', 
+                                    proveedor: vendorId, 
+                                    transaccion: vendorbillInternalId
+                                };
+                                let errorFound = errorsTrans.findIndex((element) => element.code == errorObj.code && element.msg == errorObj.msg && element.proveedor == errorObj.proveedor && element.transaccion == errorObj.transaccion);
+                                if (errorFound == -1) {
+                                    errorsTrans.push(errorObj);
+                                }
                             }
                         }else{
-                            log.debug({ title:'ERROR PROVEEDOR', details:{msg: 'No hay tipo de tercero', tranid: vendorbillTranId, id: vendorbillInternalId} });
+                            // log.debug({ title:'ERROR PROVEEDOR', details:{msg: 'No hay tipo de tercero', tranid: vendorbillTranId, id: vendorbillInternalId} });
+                            let errorObj = {
+                                code: 'ERROR EN PROVEEDOR', 
+                                msg: 'Proveedor no configurado adecuadamente', 
+                                cause: 'Error, No se tiene configurado el tipo de tercero del proveedor.', 
+                                proveedor: vendorId, 
+                                transaccion: ''
+                            };
+                            let errorFound = errorsTrans.findIndex((element) => element.code == errorObj.code && element.msg == errorObj.msg && element.proveedor == errorObj.proveedor);
+                            if (errorFound == -1) {
+                                errorsTrans.push(errorObj);
+                            }
                         }
                     });
+                });
+                errorsTrans.forEach((element, index) => {
+                    generateRecordError(element.code, element.msg, element.transaccion, element.proveedor, recordID);
                 });
                 // log.debug({ title:'vendorbillFound_long', details:vendorbillFound.length });
                 // log.debug({ title:'vendorbillFound', details:vendorbillFound });
@@ -637,7 +692,9 @@ define(["N/error",'N/runtime', 'N/search', 'N/url', 'N/record', 'N/file', 'N/red
                 response.quantityData = Object.keys(vendorbillFoundClear).length;
                 response.data = vendorbillFoundClear;
             }else{ // si no hay facturas
-                throw generateError('ERROR DE PROCESAMIENTO', 'No se encontraron Facturas a reportar con los datos ingresados.', 'Error, la busqueda guardada regreso una cantidad de resultados cero.');
+                let newError = generateError('ERROR DE PROCESAMIENTO', 'No se encontraron Facturas a reportar con los datos ingresados.', 'Error, la busqueda guardada regreso una cantidad de resultados cero.');
+                generateRecordError('ERROR DE PROCESAMIENTO', 'No se encontraron Facturas a reportar con los datos ingresados.', '', '', recordID);
+                throw newError;
             }
         } catch (error) {
             log.error({ title:'getVendorBills', details:error });
@@ -647,7 +704,7 @@ define(["N/error",'N/runtime', 'N/search', 'N/url', 'N/record', 'N/file', 'N/red
         return response;
     }
 
-    const getVendorBillTaxes = (vendorbillInternalId)=>{
+    const getVendorBillTaxes = (vendorbillInternalId, vendorId, diotRecord)=>{
         const response = {success: false, error: '', data: []};
         try {
             // log.debug({ title:'vendorbillInternalId', details:vendorbillInternalId });
@@ -721,8 +778,9 @@ define(["N/error",'N/runtime', 'N/search', 'N/url', 'N/record', 'N/file', 'N/red
                     response.data = taxes;
                 });
             }else{
-                log.debug({ title:'ERROR NO IMPUESTOS', details:{msg: 'La factura no cuenta con impuestos', id: vendorbillInternalId} });
-                response.success = false;
+                let newError = generateError('ERROR NO IMPUESTOS', 'La factura no cuenta con impuestos registrados', 'La factura id: ' + vendorbillInternalId + ' no contiene impuestos.');
+                generateRecordError('ERROR NO IMPUESTOS', 'La factura no cuenta con impuestos registrados', vendorbillInternalId, vendorId, diotRecord);
+                throw newError;
             }
         } catch (error) {
             log.error({ title:'getVendorBillTaxes', details:error });
@@ -732,7 +790,7 @@ define(["N/error",'N/runtime', 'N/search', 'N/url', 'N/record', 'N/file', 'N/red
         return response;
     }
 
-    const getVendorBillPayment = (vendorbillInternalId) =>{
+    const getVendorBillPayment = (vendorbillInternalId, vendorId, diotRecord) =>{
         const response = {success: false, error: '', data: []};
         try {
             var vendorpaymentSearchObj = search.create({
@@ -772,7 +830,11 @@ define(["N/error",'N/runtime', 'N/search', 'N/url', 'N/record', 'N/file', 'N/red
                         let paymentId = result.getValue({name: 'internalid'});
                         let vendorbillId = result.getValue({name: "internalid", join: "appliedToTransaction"});
                         let vendorbillName = result.getValue({name: "transactionname", join: "appliedToTransaction"});
-                        let paymentAmountApply = Number(result.getValue({name: "appliedtolinkamount"})).toFixed(2);
+                        let paymentAmountApply = 0;
+                        paymentAmountApply = paymentAmountApply + Number(result.getValue({name: "appliedtolinkamount"}));
+                        // paymentAmountApply = (Number(paymentAmountApply));
+                        // log.debug({ title:'paymentAmountApply', details:paymentAmountApply });
+                        // log.debug({ title:'tipo de', details:typeof(paymentAmountApply) });
                         let paymentObj = {
                             paymentId: paymentId,
                             vendorbillId: vendorbillId,
@@ -783,7 +845,7 @@ define(["N/error",'N/runtime', 'N/search', 'N/url', 'N/record', 'N/file', 'N/red
                         if (!payments.hasOwnProperty(identify)) {
                             payments[identify] = paymentObj;
                         }else{
-                            payments[identify].paymentAmountApply = payments[identify].paymentAmountApply + paymentAmountApply;
+                            payments[identify].paymentAmountApply = (payments[identify].paymentAmountApply*1) + (paymentAmountApply*1);
                         }
                     });
                     // log.debug({ title:'payments by: ' + vendorbillInternalId, details:payments });
@@ -791,8 +853,9 @@ define(["N/error",'N/runtime', 'N/search', 'N/url', 'N/record', 'N/file', 'N/red
                     response.success = true;
                 });
             }else{
-                log.debug({ title:'ERROR NO PAGOS', details:{msg: 'La factura no cuenta con pagos', id: vendorbillInternalId} });
-                response.success = false;
+                let newError = generateError('ERROR NO PAGOS', 'La factura no cuenta con pagos registrados', 'La factura id: ' + vendorbillInternalId + ' no contiene pagos.');
+                generateRecordError('ERROR NO PAGOS', 'La factura no cuenta con pagos registrados', vendorbillInternalId, vendorId, diotRecord);
+                throw newError;
             }
         } catch (error) {
             log.error({ title:'getVendorBillPayment', details:error });
@@ -814,15 +877,19 @@ define(["N/error",'N/runtime', 'N/search', 'N/url', 'N/record', 'N/file', 'N/red
                 let impuestoRate = '';
                 values.forEach((element_factura, index_factura) => {
                     let factura = JSON.parse(element_factura);
-                    // log.debug({ title:'factura ' + index_factura, details:factura });
-                    const taxes = factura.taxes;
-                    taxes.forEach((tax, index_tax) => {
-                        if (tax.taxCode == element_impuesto.value) {
-                            // log.debug({ title:'tax found ' + index_tax, details:tax });
-                            sumaImpuesto = (sumaImpuesto*1) + (tax.taxBasis*1);
-                            impuestoRate = tax.taxRate;
-                        }
-                    });
+                    log.debug({ title:'extractTaxes_factura ' + index_factura, details:factura });
+                    if (factura.vendorbillEstado != "open") {
+                        const taxes = factura.taxes;
+                        taxes.forEach((tax, index_tax) => {
+                            if (tax.taxCode == element_impuesto.value) {
+                                // log.debug({ title:'tax found ' + index_tax, details:tax });
+                                sumaImpuesto = (sumaImpuesto*1) + (tax.taxBasis*1);
+                                impuestoRate = tax.taxRate;
+                            }
+                        });
+                    }else{
+                        throw 'Error controlado';
+                    }
                 });
                 impuestosFound.push({impuesto: element_impuesto, sumaImpuesto: sumaImpuesto, taxRate: impuestoRate});
             });
