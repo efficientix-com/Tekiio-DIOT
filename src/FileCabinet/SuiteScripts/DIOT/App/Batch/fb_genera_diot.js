@@ -17,10 +17,7 @@ define(["N/error",'N/runtime', 'N/search', 'N/url', 'N/record', 'N/file', 'N/red
      * @property {string} ObjectRef.type - Type of the record instance that contains the input data
      * @returns {Array|Object|Search|ObjectRef|File|Query} The input data to use in the map/reduce process
      * @since 2015.2
-     */
-
-    var taxRateArray = new Array();
-    var erroresArray = new Array();
+    */
 
     const SCRIPTS_INFO = values.SCRIPTS_INFO;
     const RECORD_INFO = values.RECORD_INFO;
@@ -503,7 +500,7 @@ define(["N/error",'N/runtime', 'N/search', 'N/url', 'N/record', 'N/file', 'N/red
         const response = {success: false, error: '', quantityData:'', data: {}};
         try {
             var vendorbillSearchObj = search.create({
-                type: "vendorbill",
+                type: RECORD_INFO.VENDOR_BILL_RECORD.ID,
                 filters:
                 [
                     ["type","anyof","VendBill"], 
