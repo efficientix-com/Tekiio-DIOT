@@ -151,9 +151,9 @@ define(["N/error",'N/runtime', 'N/search', 'N/url', 'N/record', 'N/file', 'N/red
       */
     const reduce = (reduceContext) => {
         const { key, values } = reduceContext
+        const objScript = runtime.getCurrentScript();
+        const recordID = objScript.getParameter({ name: SCRIPTS_INFO.MAP_REDUCE.PARAMETERS.RECORD_DIOT_ID });
         try {
-            const objScript = runtime.getCurrentScript();
-            const recordID = objScript.getParameter({ name: SCRIPTS_INFO.MAP_REDUCE.PARAMETERS.RECORD_DIOT_ID });
             var otherId = record.submitFields({
                 type: RECORD_INFO.DIOT_RECORD.ID,
                 id: recordID,
@@ -187,6 +187,7 @@ define(["N/error",'N/runtime', 'N/search', 'N/url', 'N/record', 'N/file', 'N/red
                 pageSize: 1000
             });
             var codigosReporte = {[RECORD_INFO.DESGLOSE_TAX_RECORD.FIELDS.IVA]: [], [RECORD_INFO.DESGLOSE_TAX_RECORD.FIELDS.RETENCION]: [], [RECORD_INFO.DESGLOSE_TAX_RECORD.FIELDS.IEPS]: [], [RECORD_INFO.DESGLOSE_TAX_RECORD.FIELDS.EXENTO]: []};
+            var codigosReporteIds = [];
             if (searchTaxCodesNS.count > 0) {
                 searchTaxCodesNS.pageRanges.forEach(function(pageRange){
                     var myPage = searchTaxCodesNS.fetch({index: pageRange.index});
@@ -194,6 +195,7 @@ define(["N/error",'N/runtime', 'N/search', 'N/url', 'N/record', 'N/file', 'N/red
                         let codigoTipo = result.getValue({name: 'custrecord_fb_diot_tipo_imp'});
                         let codigoID = result.getValue({name: 'internalid'});
                         let codigoNombre = result.getValue({name: 'name'});
+                        codigosReporteIds.push(codigoID);
                         switch (codigoTipo) {
                             case '1': // IVA
                                 codigosReporte[RECORD_INFO.DESGLOSE_TAX_RECORD.FIELDS.IVA].push({value: codigoID, text: codigoNombre})
@@ -279,11 +281,24 @@ define(["N/error",'N/runtime', 'N/search', 'N/url', 'N/record', 'N/file', 'N/red
                     // diotLine += 'pendiente columna 22';
                 }
                 diotLine += '|'
-                diotLine += 'retencion_23|'
-                // diotLine += '||\n';
-                diotLine += 'devoluciones_24|\n'
+                if (Object.keys(retenciones_response.dataClear).length > 0) { // suma de todas las retenciones
+                    let suma_impuestos_response = suma_impuestos(retenciones_response.dataClear);
+                    log.debug({ title:'suma_impuestos_response', details:suma_impuestos_response });
+                    if (suma_impuestos_response.success == true && suma_impuestos_response.totalRetenciones) {
+                        diotLine += suma_impuestos_response.totalRetenciones;
+                    }
+                }
+                diotLine += '|'
+                let extract_devoluciones_response = extract_devoluciones(generalInfo.subsidiaria, generalInfo.periodo, generalInfo.vendorId, generalInfo.vendorbillTipoOperacion, codigosReporteIds);
+                log.debug({ title:'DEVOLUCIONES', details:extract_devoluciones_response });
+                if (extract_devoluciones_response.success == true) {
+                    diotLine += extract_devoluciones_response.totalDevoluciones
+                }else{
+                    throw extract_devoluciones_response.error;
+                }
+                diotLine += '|\n'
             }
-            log.debug({ title:'diotLine', details:diotLine });
+            // log.debug({ title:'diotLine', details:diotLine });
             let objLine = {
                 linea: diotLine,
                 success: true
@@ -296,6 +311,7 @@ define(["N/error",'N/runtime', 'N/search', 'N/url', 'N/record', 'N/file', 'N/red
             log.error({ title:'reduce', details:error });
             let objLine = {
                 success: false,
+                recordId: recordID,
                 error: error,
                 values: values
             };
@@ -328,10 +344,12 @@ define(["N/error",'N/runtime', 'N/search', 'N/url', 'N/record', 'N/file', 'N/red
     const summarize = (summaryContext) => {
         const objScript = runtime.getCurrentScript();
         const recordID = objScript.getParameter({ name: SCRIPTS_INFO.MAP_REDUCE.PARAMETERS.RECORD_DIOT_ID });
+        const notificar = objScript.getParameter({ name: SCRIPTS_INFO.MAP_REDUCE.PARAMETERS.NOTIFICAR });
         try {
             const { output } = summaryContext;
             var txtDiot = '', txtFolder = 0, txtNombre= '';
             const folderRaiz = objScript.getParameter({ name: SCRIPTS_INFO.MAP_REDUCE.PARAMETERS.FOLDER_RAIZ });
+            var hasErrors = false;
             { // validaciones de folders
                 if (!folderRaiz) {
                     throw 'Folder raíz no configurado';
@@ -367,43 +385,61 @@ define(["N/error",'N/runtime', 'N/search', 'N/url', 'N/record', 'N/file', 'N/red
                     if (jsonValue.success == true) {
                         txtDiot += jsonValue.linea;
                     }else{
-                        log.error({ title:'Ocurrio un error key: ' + key, details:jsonValue });
-                        throw 'Error pendiente line 319';
+                        // log.error({ title:'Ocurrio un error key: ' + key, details:jsonValue });
+                        let reportError = jsonValue.error;
+                        generateRecordError(reportError.name, reportError.message, '', '', jsonValue.recordId);
+                        hasErrors = true;
                     }
                     return true;
                 });
                 // log.debug({ title:'txtDiot', details:txtDiot });
             }
             { // Creación de reporte
-                const fileObj = file.create({
-                    name    : txtNombre + '.txt',
-                    fileType: file.Type.PLAINTEXT,
-                    folder: txtFolder,
-                    contents: txtDiot
-                });
-                var fileId = fileObj.save();
-                if (fileId) {
-                    let otherId = record.submitFields({
-                        type: RECORD_INFO.DIOT_RECORD.ID,
-                        id: recordID,
-                        values: {
-                            [RECORD_INFO.DIOT_RECORD.FIELDS.FILE]: fileId,
-                            [RECORD_INFO.DIOT_RECORD.FIELDS.STATUS]: STATUS_LIST_DIOT.COMPLETE,
-                        }
+                if (hasErrors == true) {
+                    throw 'Su reporte contiene errores, valide su registro de seguimiento.';
+                }else{
+                    const fileObj = file.create({
+                        name    : txtNombre + '.txt',
+                        fileType: file.Type.PLAINTEXT,
+                        folder: txtFolder,
+                        contents: txtDiot
                     });
+                    // var fileId = 456554;
+                    var fileId = fileObj.save();
+                    if (fileId) {
+                        let otherId = record.submitFields({
+                            type: RECORD_INFO.DIOT_RECORD.ID,
+                            id: recordID,
+                            values: {
+                                [RECORD_INFO.DIOT_RECORD.FIELDS.FILE]: fileId,
+                                [RECORD_INFO.DIOT_RECORD.FIELDS.STATUS]: STATUS_LIST_DIOT.COMPLETE,
+                            }
+                        });
+                    }
                 }
             }
             log.debug({ title:'Fin del procesamiento', details:'summarize' });
         } catch (error) {
             log.error({ title:'summarize', details:error });
+            var otherId = record.submitFields({
+                type: RECORD_INFO.DIOT_RECORD.ID,
+                id: recordID,
+                values: {
+                    [RECORD_INFO.DIOT_RECORD.FIELDS.STATUS]: STATUS_LIST_DIOT.ERROR
+                }
+            });
         }
-        var otherId = record.submitFields({
-            type: RECORD_INFO.DIOT_RECORD.ID,
-            id: recordID,
-            values: {
-                [RECORD_INFO.DIOT_RECORD.FIELDS.STATUS]: STATUS_LIST_DIOT.ERROR
-            }
-        });
+        if (notificar) {
+            let send_email_status_response = send_email_status(recordID);
+        }
+        log.debug({ title:'summarize', details:'Fin de procesamiento DIOT' });
+        // var otherId = record.submitFields({
+        //     type: RECORD_INFO.DIOT_RECORD.ID,
+        //     id: recordID,
+        //     values: {
+        //         [RECORD_INFO.DIOT_RECORD.FIELDS.STATUS]: STATUS_LIST_DIOT.ERROR
+        //     }
+        // });
     }
 
     const generateError = (code, msg, cause) =>{
@@ -422,7 +458,7 @@ define(["N/error",'N/runtime', 'N/search', 'N/url', 'N/record', 'N/file', 'N/red
     const generateRecordError = (type, detail, transaccion, proveedor, recordDiot) => {
         const response = {success: false, error: '', errorId: ''};
         try {
-            log.error({ title:'Crear Error record', details:{type: type, detail:detail, transaccion: transaccion, proveedor: proveedor, recordDiot: recordDiot} });
+            // log.error({ title:'Crear Error record', details:{type: type, detail:detail, transaccion: transaccion, proveedor: proveedor, recordDiot: recordDiot} });
             let errorRecord = record.create({
                 type: RECORD_INFO.ERRORES_DIOT.ID,
                 isDynamic: true
@@ -482,7 +518,7 @@ define(["N/error",'N/runtime', 'N/search', 'N/url', 'N/record', 'N/file', 'N/red
                     "AND", 
                     ["applyingtransaction","noneof","@NONE@"]
                     // ,"AND",
-                    // ["internalid", "is", 28104]
+                    // ["internalid", "is", 28117]
                 ],
                 columns:
                 [
@@ -584,10 +620,7 @@ define(["N/error",'N/runtime', 'N/search', 'N/url', 'N/record', 'N/file', 'N/red
                                         break;
                                     case LISTS.TIPO_TERCERO.VALUES.EXTRANJERO:
                                         // numregfd, nombre extranejero, pais de recidencia solo si hay nombre extranjero, nacionalidad solo si hay nombre extranjero
-                                        if (vendorTaxId && vendorNombreExtranjero && vendorPaisResidencia && vendorNacionalidad) {
-                                            log.debug({ title:'extranjero', details:'Correcto' });
-                                        }else{
-                                            // log.debug({ title:'ERROR EXTRANJERO', details:{msg: 'Falta configurar datos de proveedor', tranid: vendorbillTranId, id: vendorbillInternalId} });
+                                        if (!vendorTaxId || !vendorNombreExtranjero || !vendorPaisResidencia || !vendorNacionalidad) {
                                             let errorObj = {
                                                 code: 'ERROR PROVEEDOR EXTRANJERO', 
                                                 msg: 'Falta configurar datos de proveedor', 
@@ -622,6 +655,8 @@ define(["N/error",'N/runtime', 'N/search', 'N/url', 'N/record', 'N/file', 'N/red
                                 if (errorControl == false) {
                                     let objVendorBillResult = {
                                         diotRecord: recordID,
+                                        periodo: recordPeriod,
+                                        subsidiaria: recordSubsidiary,
                                         vendorbillTranId: vendorbillTranId,
                                         vendorbillInternalId: vendorbillInternalId,
                                         vendorbillEstado: result.getValue({name: 'statusref'}),
@@ -898,7 +933,7 @@ define(["N/error",'N/runtime', 'N/search', 'N/url', 'N/record', 'N/file', 'N/red
                                 totalpagado = totalpagado.toFixed(2);
                                 let equivalentePagado = ((totalpagado*1)*(tax.taxBasis*1))/(factura.vendorbillImporte*1);
                                 equivalentePagado = equivalentePagado.toFixed(2);
-                                log.debug({ title:'finales', details:{totalpagado: totalpagado, equivalentePagado: equivalentePagado} });
+                                // log.debug({ title:'finales', details:{totalpagado: totalpagado, equivalentePagado: equivalentePagado} });
                                 sumaImpuesto = (sumaImpuesto*1) + (equivalentePagado*1);
                             }
                         }
@@ -920,7 +955,7 @@ define(["N/error",'N/runtime', 'N/search', 'N/url', 'N/record', 'N/file', 'N/red
                     }
                 }
             });
-            log.debug({ title:'impuestosFoundClear', details:impuestosFoundClear });
+            // log.debug({ title:'impuestosFoundClear', details:impuestosFoundClear });
             
             response.dataClear = impuestosFoundClear;
             response.success = true;
@@ -1046,6 +1081,132 @@ define(["N/error",'N/runtime', 'N/search', 'N/url', 'N/record', 'N/file', 'N/red
             response.success = true;
         } catch (error) {
             log.error({ title:'create_folder', details:error });
+            response.success = false;
+            response.error = error;
+        }
+        return response;
+    }
+
+    function suma_impuestos(impuestos) {
+        const response = {success: false, error: '', totalImpuestos: 0};
+        try {
+            let impuestosIds = Object.keys(impuestos);
+            let sumaImpuestos = 0;
+            impuestosIds.forEach((element, index) => {
+                log.debug({ title:'retencion: ' + index, details:element });
+                sumaImpuestos = (sumaImpuestos*1) + (impuestos[element].total*1);
+            });
+            sumaImpuestos = sumaImpuestos.toFixed(2);
+            response.totalImpuestos = sumaImpuestos;
+            response.success = true;
+        } catch (error) {
+            log.error({ title:'suma_impuestos', details:error });
+            response.success = false;
+            response.error = error;
+        }
+        return response;
+    }
+
+    function extract_devoluciones(subsidiaria, periodo, proveedor, tipoOperacion, taxCodes) {
+        const response = {success: false, error: '', totalDevoluciones: ''};
+        try {
+            // log.debug({ title:'extract_devoluciones_PARAMAS', details:{subsidiaria: subsidiaria, periodo: periodo, proveedor: proveedor, tipoOperacion: tipoOperacion} });
+            // log.debug({ title:'taxCodes', details:taxCodes });
+            var vendorcreditSearchObj = search.create({
+                type: "vendorcredit",
+                filters:
+                [
+                   ["type","anyof","VendCred"], 
+                   "AND", 
+                   ["subsidiary","anyof",subsidiaria], 
+                   "AND", 
+                   ["postingperiod","abs",periodo], 
+                   "AND", 
+                   ["vendor.internalid","anyof",proveedor], 
+                   "AND", 
+                   ["custbody_fb_tipo_operacion","anyof",tipoOperacion], 
+                   "AND", 
+                   ["taxline","is","F"], 
+                   "AND", 
+                   ["mainline","is","F"]
+                ],
+                columns:
+                [
+                   search.createColumn({
+                      name: "internalid",
+                      sort: search.Sort.ASC,
+                      label: "ID interno"
+                   }),
+                   search.createColumn({name: "tranid", label: "Número de documento"}),
+                   search.createColumn({
+                      name: "taxbasis",
+                      join: "taxDetail",
+                      label: "Base de impuesto (moneda extranjera)"
+                   }),
+                   search.createColumn({
+                      name: "taxcode",
+                      join: "taxDetail",
+                      label: "Código de impuesto"
+                   }),
+                   search.createColumn({
+                      name: "taxrate",
+                      join: "taxDetail",
+                      label: "Tax Rate"
+                   })
+                ]
+            });
+            const myPagedData = vendorcreditSearchObj.runPaged({
+                pageSize: 1000
+            });
+            if (myPagedData.count > 0) {
+                response.totalDevoluciones = 0;
+                myPagedData.pageRanges.forEach(function(pageRange){
+                    let myPage = myPagedData.fetch({index: pageRange.index});
+                    myPage.data.forEach(function(result){
+                        let taxCode = result.getValue({name: "taxcode", join: "taxDetail"});
+                        // log.debug({ title:'taxcode', details:taxCode });
+                        if (taxCodes.indexOf(taxCode) != -1) {
+                            let taxBasis = result.getValue({name: "taxbasis", join: "taxDetail"});
+                            response.totalDevoluciones = (response.totalDevoluciones*1) + (taxBasis*1);
+                            response.totalDevoluciones = response.totalDevoluciones.toFixed(2);
+                        }
+                    });
+                });
+            }
+            response.success = true;
+        } catch (error) {
+            log.error({ title:'extract_devoluciones', details:error });
+            response.success = false;
+            response.error = error;
+        }
+        return response;
+    }
+
+    function send_email_status(recordId) {
+        const response = {success: false, error: ''};
+        try {
+            log.debug({ title:'sendMail', details:recordId });
+            let sender = search.lookupFields({
+               type: RECORD_INFO.DIOT_RECORD.ID,
+               id: recordId,
+               columns: ['owner']
+            });
+            sender = sender.owner[0].value
+            log.debug({ title:'sender', details:sender });
+            let receiver = search.lookupFields({
+               type: search.Type.EMPLOYEE,
+               id: sender,
+               columns: ['email']
+            });
+            receiver = receiver.email;
+            log.debug({ title:'receiver', details:receiver });
+            email.send({
+                author: sender,
+                recipients: receiver,
+                subject: 'Estado reporte DIOT',
+                body: 'Estimado usuario el proceso de generación del reporte DIOT ha concluido, revise su registro de seguimiento con id: ' + recordId,
+            });
+        } catch (error) {
             response.success = false;
             response.error = error;
         }
