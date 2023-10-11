@@ -7,76 +7,6 @@
   <notifyowner>T</notifyowner>
   <scriptfile>[/SuiteScripts/DIOT/App/Batch/fb_genera_diot.js]</scriptfile>
   <scriptcustomfields>
-    <scriptcustomfield scriptid="custscript_fb_diot_tipo_guardado">
-      <accesslevel>2</accesslevel>
-      <applyformatting>F</applyformatting>
-      <checkspelling>F</checkspelling>
-      <defaultchecked>F</defaultchecked>
-      <defaultselection></defaultselection>
-      <defaultvalue></defaultvalue>
-      <description></description>
-      <displayheight></displayheight>
-      <displaytype>NORMAL</displaytype>
-      <displaywidth></displaywidth>
-      <dynamicdefault></dynamicdefault>
-      <fieldtype>SELECT</fieldtype>
-      <help></help>
-      <isformula>F</isformula>
-      <ismandatory>F</ismandatory>
-      <label>DIOT - Tipo de Guardado</label>
-      <linktext></linktext>
-      <maxlength></maxlength>
-      <maxvalue></maxvalue>
-      <minvalue></minvalue>
-      <onparentdelete>NO_ACTION</onparentdelete>
-      <searchlevel>2</searchlevel>
-      <selectrecordtype>[scriptid=customlist_fb_lista_guardado_diot]</selectrecordtype>
-      <setting></setting>
-      <storevalue>T</storevalue>
-    </scriptcustomfield>
-    <scriptcustomfield scriptid="custscript_fb_diot_nombre_archivo">
-      <accesslevel>2</accesslevel>
-      <applyformatting>F</applyformatting>
-      <checkspelling>F</checkspelling>
-      <defaultchecked>F</defaultchecked>
-      <defaultselection></defaultselection>
-      <defaultvalue></defaultvalue>
-      <description></description>
-      <displayheight></displayheight>
-      <displaytype>NORMAL</displaytype>
-      <displaywidth></displaywidth>
-      <dynamicdefault></dynamicdefault>
-      <fieldtype>CLOBTEXT</fieldtype>
-      <help>Introduzca la nomenclatura que debe seguir el nombre del archivo.&#xd;
-Las palabras válidas son:&#xd;
-&#xd;
-- Subsidiaria&#xd;
-- Periodo&#xd;
-- Día (DD)&#xd;
-- Mes (MM)&#xd;
-- Año (YYYY)&#xd;
-- Hora (HH)&#xd;
-- Minutos (MIN)&#xd;
-- Segundos (SS)&#xd;
-&#xd;
-Favor de separar las palabras por &apos;_&apos;.&#xd;
-&#xd;
-Ejemplo:&#xd;
-     Subsidiaria_Periodo_DD_MM_YYYY&#xd;
-</help>
-      <isformula>F</isformula>
-      <ismandatory>F</ismandatory>
-      <label>DIOT - Nombre del Archivo</label>
-      <linktext></linktext>
-      <maxlength></maxlength>
-      <maxvalue></maxvalue>
-      <minvalue></minvalue>
-      <onparentdelete></onparentdelete>
-      <searchlevel>2</searchlevel>
-      <selectrecordtype></selectrecordtype>
-      <setting></setting>
-      <storevalue>T</storevalue>
-    </scriptcustomfield>
     <scriptcustomfield scriptid="custscript_fb_diot_notificar_correo">
       <accesslevel>2</accesslevel>
       <applyformatting>F</applyformatting>
@@ -131,114 +61,6 @@ Ejemplo:&#xd;
       <setting></setting>
       <storevalue>T</storevalue>
     </scriptcustomfield>
-    <scriptcustomfield scriptid="custscript_fb_busqueda_pagos_proveedor">
-      <accesslevel>2</accesslevel>
-      <applyformatting>F</applyformatting>
-      <checkspelling>F</checkspelling>
-      <defaultchecked>F</defaultchecked>
-      <defaultselection></defaultselection>
-      <defaultvalue></defaultvalue>
-      <description></description>
-      <displayheight></displayheight>
-      <displaytype>NORMAL</displaytype>
-      <displaywidth></displaywidth>
-      <dynamicdefault></dynamicdefault>
-      <fieldtype>TEXT</fieldtype>
-      <help></help>
-      <isformula>F</isformula>
-      <ismandatory>F</ismandatory>
-      <label>Búsqueda Pagos de Proveedor</label>
-      <linktext></linktext>
-      <maxlength></maxlength>
-      <maxvalue></maxvalue>
-      <minvalue></minvalue>
-      <onparentdelete></onparentdelete>
-      <searchlevel>2</searchlevel>
-      <selectrecordtype></selectrecordtype>
-      <setting></setting>
-      <storevalue>T</storevalue>
-    </scriptcustomfield>
-    <scriptcustomfield scriptid="custscript_fb_busqueda_informes">
-      <accesslevel>2</accesslevel>
-      <applyformatting>F</applyformatting>
-      <checkspelling>F</checkspelling>
-      <defaultchecked>F</defaultchecked>
-      <defaultselection></defaultselection>
-      <defaultvalue></defaultvalue>
-      <description></description>
-      <displayheight></displayheight>
-      <displaytype>NORMAL</displaytype>
-      <displaywidth></displaywidth>
-      <dynamicdefault></dynamicdefault>
-      <fieldtype>TEXT</fieldtype>
-      <help></help>
-      <isformula>F</isformula>
-      <ismandatory>F</ismandatory>
-      <label>Búsqueda Informes de gastos</label>
-      <linktext></linktext>
-      <maxlength></maxlength>
-      <maxvalue></maxvalue>
-      <minvalue></minvalue>
-      <onparentdelete></onparentdelete>
-      <searchlevel>2</searchlevel>
-      <selectrecordtype></selectrecordtype>
-      <setting></setting>
-      <storevalue>T</storevalue>
-    </scriptcustomfield>
-    <scriptcustomfield scriptid="custscript_fb_busqueda_polizas">
-      <accesslevel>2</accesslevel>
-      <applyformatting>F</applyformatting>
-      <checkspelling>F</checkspelling>
-      <defaultchecked>F</defaultchecked>
-      <defaultselection></defaultselection>
-      <defaultvalue></defaultvalue>
-      <description></description>
-      <displayheight></displayheight>
-      <displaytype>NORMAL</displaytype>
-      <displaywidth></displaywidth>
-      <dynamicdefault></dynamicdefault>
-      <fieldtype>TEXT</fieldtype>
-      <help></help>
-      <isformula>F</isformula>
-      <ismandatory>F</ismandatory>
-      <label>Búsqueda Pólizas</label>
-      <linktext></linktext>
-      <maxlength></maxlength>
-      <maxvalue></maxvalue>
-      <minvalue></minvalue>
-      <onparentdelete></onparentdelete>
-      <searchlevel>2</searchlevel>
-      <selectrecordtype></selectrecordtype>
-      <setting></setting>
-      <storevalue>T</storevalue>
-    </scriptcustomfield>
-    <scriptcustomfield scriptid="custscript_fb_busqueda_credito_proveedor">
-      <accesslevel>2</accesslevel>
-      <applyformatting>F</applyformatting>
-      <checkspelling>F</checkspelling>
-      <defaultchecked>F</defaultchecked>
-      <defaultselection></defaultselection>
-      <defaultvalue></defaultvalue>
-      <description></description>
-      <displayheight></displayheight>
-      <displaytype>NORMAL</displaytype>
-      <displaywidth></displaywidth>
-      <dynamicdefault></dynamicdefault>
-      <fieldtype>TEXT</fieldtype>
-      <help></help>
-      <isformula>F</isformula>
-      <ismandatory>F</ismandatory>
-      <label>Búsqueda Notas de Crédito Proveedor</label>
-      <linktext></linktext>
-      <maxlength></maxlength>
-      <maxvalue></maxvalue>
-      <minvalue></minvalue>
-      <onparentdelete></onparentdelete>
-      <searchlevel>2</searchlevel>
-      <selectrecordtype></selectrecordtype>
-      <setting></setting>
-      <storevalue>T</storevalue>
-    </scriptcustomfield>
     <scriptcustomfield scriptid="custscript_fb_diot_folder_raiz">
       <accesslevel>2</accesslevel>
       <applyformatting>F</applyformatting>
@@ -271,15 +93,9 @@ Ejemplo:&#xd;
     <scriptdeployment scriptid="customdeploy_fb_diot_generate_1">
       <buffersize>1</buffersize>
       <concurrencylimit>1</concurrencylimit>
-      <custscript_fb_busqueda_credito_proveedor>custdataset_fb_diot_vendorcredit</custscript_fb_busqueda_credito_proveedor>
-      <custscript_fb_busqueda_informes>customsearch_fb_diot_expensereport</custscript_fb_busqueda_informes>
-      <custscript_fb_busqueda_pagos_proveedor></custscript_fb_busqueda_pagos_proveedor>
-      <custscript_fb_busqueda_polizas>customsearch_fb_diot_journalentry</custscript_fb_busqueda_polizas>
       <custscript_fb_diot_folder_raiz>7224</custscript_fb_diot_folder_raiz>
-      <custscript_fb_diot_nombre_archivo>Subsidiaria_Periodo_MM_YYYY</custscript_fb_diot_nombre_archivo>
       <custscript_fb_diot_notificar_correo>T</custscript_fb_diot_notificar_correo>
       <custscript_fb_diot_record_id></custscript_fb_diot_record_id>
-      <custscript_fb_diot_tipo_guardado>[scriptid=customlist_fb_lista_guardado_diot.val_616604_t2220309_998]</custscript_fb_diot_tipo_guardado>
       <isdeployed>T</isdeployed>
       <loglevel>DEBUG</loglevel>
       <queueallstagesatonce>T</queueallstagesatonce>
