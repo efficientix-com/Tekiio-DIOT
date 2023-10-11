@@ -7,6 +7,7 @@
       <feature required="false">MULTILANGUAGE</feature>
       <feature required="false">ADVRECEIVING</feature>
       <feature required="false">MULTILOCINVT</feature>
+      <feature required="false">MATRIXITEMS</feature>
       <feature required="false">INVENTORY</feature>
       <feature required="false">CRM</feature>
       <feature required="false">CUSTOMTRANSACTIONS</feature>
@@ -23,6 +24,7 @@
       <feature required="true">ACCOUNTINGPERIODS</feature>
       <feature required="false">EXPREPORTS</feature>
       <feature required="true">ACCOUNTING</feature>
+      <feature required="true">SUBSCRIPTIONBILLING</feature>
       <feature required="false">EXTREMELIST</feature>
       <feature required="false">MAILMERGE</feature>
       <feature required="true">CUSTOMRECORDS</feature>
