@@ -24,7 +24,7 @@
       <feature required="true">ACCOUNTINGPERIODS</feature>
       <feature required="false">EXPREPORTS</feature>
       <feature required="true">ACCOUNTING</feature>
-      <feature required="true">SUBSCRIPTIONBILLING</feature>
+      <feature required="false">SUBSCRIPTIONBILLING</feature>
       <feature required="false">EXTREMELIST</feature>
       <feature required="false">MAILMERGE</feature>
       <feature required="true">CUSTOMRECORDS</feature>
