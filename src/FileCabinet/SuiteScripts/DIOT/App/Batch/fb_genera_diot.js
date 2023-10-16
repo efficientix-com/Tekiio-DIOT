@@ -54,16 +54,29 @@ define(["N/error",'N/runtime', 'N/search', 'N/url', 'N/record', 'N/file', 'N/red
                id: recordID,
                columns: [RECORD_INFO.DIOT_RECORD.FIELDS.SUBSIDIARY, RECORD_INFO.DIOT_RECORD.FIELDS.PERIOD]
             });
-            log.audit({title: 'Estado_getInput', details: registerData});
+            // log.audit({title: 'Estado_getInput', details: registerData});
             const recordSubsidiary = registerData[RECORD_INFO.DIOT_RECORD.FIELDS.SUBSIDIARY][0].value;
             const recordPeriod = registerData[RECORD_INFO.DIOT_RECORD.FIELDS.PERIOD][0].value;
             log.debug({ title:'resultData', details:{recordSubsidiary: recordSubsidiary, recordPeriod: recordPeriod} });
-            let getVendorBills_result = getVendorBills(recordPeriod, recordSubsidiary, recordID);
-            // log.debug({ title:'getVendorBills_result', details:getVendorBills_result });
+            let resultPagos = getPaymentsPeriod(recordSubsidiary, recordPeriod);
+            // log.debug({ title:'resultPagos', details:resultPagos });
+            if (resultPagos.length <= 0) {
+                throw 'No se encontraron transacciones a reportar';
+            }
+            let extractVendorBill_result = extractVendorBill(resultPagos);
+            log.debug({ title:'extractVendorBill_result', details:extractVendorBill_result });
+            if (extractVendorBill_result.length <= 0) {
+                throw 'A ocurrido un error al extraer facturas';
+            }
+            let getVendorBills_result = getVendorBills(recordPeriod, recordSubsidiary, recordID, extractVendorBill_result);
+            log.debug({ title:'getVendorBills_result', details:getVendorBills_result });
+            // log.debug({ title:'data', details:getVendorBills_result.data['EKU9003173C9-INV10000221_27995'] });
             if (getVendorBills_result.success == false) {
                 let newError = getVendorBills_result.error;
                 throw newError;
             }
+            let getExpenseReport_result = getExpenseReport(recordSubsidiary, recordPeriod, recordID);
+            log.debug({ title:'getExpenseReport_result', details:getExpenseReport_result });
             var otherId = record.submitFields({
                 type: RECORD_INFO.DIOT_RECORD.ID,
                 id: recordID,
@@ -496,26 +509,23 @@ define(["N/error",'N/runtime', 'N/search', 'N/url', 'N/record', 'N/file', 'N/red
         return response;
     }
 
-    const getVendorBills = (recordPeriod, recordSubsidiary, recordID) =>{
+    const getVendorBills = (recordPeriod, recordSubsidiary, recordID, transacciones) =>{
         const response = {success: false, error: '', quantityData:'', data: {}};
         try {
+
             var vendorbillSearchObj = search.create({
                 type: RECORD_INFO.VENDOR_BILL_RECORD.ID,
                 filters:
                 [
                     ["type","anyof","VendBill"], 
                     "AND", 
-                    ["subsidiary","anyof",recordSubsidiary], 
-                    "AND", 
-                    ["postingperiod","abs",recordPeriod], 
-                    "AND", 
                     ["mainline","is","T"],
                     "AND", 
                     ["status","anyof","VendBill:B","VendBill:A"],
                     "AND", 
                     ["applyingtransaction","noneof","@NONE@"]
-                    // ,"AND",
-                    // ["internalid", "is", 28117]
+                    ,"AND",
+                    ["internalid", "anyof", transacciones]
                 ],
                 columns:
                 [
@@ -1208,6 +1218,121 @@ define(["N/error",'N/runtime', 'N/search', 'N/url', 'N/record', 'N/file', 'N/red
             response.error = error;
         }
         return response;
+    }
+
+    function getExpenseReport(subsidiaria, periodo, recordID) {
+        const response = {success: false, error: '', data: []};
+        try {
+            log.debug({ title:'ExpenseReport_Params', details:{subsidiaria: subsidiaria, periodo: periodo, recordID: recordID} });
+
+        } catch (error) {
+            log.error({ title:'getExpenseReport', details:error });
+            response.success = false;
+            response.error = error;
+        }
+        return response;
+    }
+
+    function getPaymentsPeriod(subsidiaria, periodo) {
+        try {
+            // log.debug({ title:'getPaymentsPeriod', details:{sub: subsidiaria, per: periodo} });
+            var vendorpaymentSearchObj = search.create({
+                type: "vendorpayment",
+                filters:
+                [
+                   ["type","anyof","VendPymt"], 
+                   "AND", 
+                   ["subsidiary","anyof",subsidiaria], 
+                   "AND", 
+                   ["postingperiod","abs",periodo], 
+                   "AND", 
+                   ["mainline","is","F"], 
+                   "AND", 
+                   ["taxline","is","F"]
+                ],
+                columns:
+                [
+                   search.createColumn({
+                      name: "internalid",
+                      sort: search.Sort.ASC,
+                      label: "ID interno"
+                   }),
+                   search.createColumn({name: "tranid", label: "Número de documento"}),
+                   search.createColumn({name: "appliedtotransaction", label: "Aplicado a la transacción"}),
+                   search.createColumn({
+                    name: "type",
+                    join: "appliedToTransaction",
+                    label: "Tipo"
+                 })
+                ]
+             });
+            var vendorbillResult = vendorpaymentSearchObj.runPaged({
+                pageSize: 1000
+            });
+            if (vendorbillResult.count > 0) {
+                let paymentsFound = {};
+                vendorbillResult.pageRanges.forEach(function(pageRange){
+                    var myPage = vendorbillResult.fetch({index: pageRange.index});
+                    myPage.data.forEach(function(result){
+                        let internalId = result.getValue({name: "internalid"});
+                        let payTranId = result.getValue({name: "tranid"});
+                        let transactionApply =  result.getValue({name: "appliedtotransaction"});
+                        let typeTransactionApply = result.getValue({name: "type", join: "appliedToTransaction"});
+                        // log.debug({ title:'dataFound', details:{internalId: internalId, tranid: payTranId, transactionApply: transactionApply, type: typeTransactionApply} });
+                        if (typeTransactionApply == 'VendBill') {
+                            let prefijo = 'Payment_' + internalId;
+                            if (transactionApply != '') {
+                                let allPayments = Object.keys(paymentsFound);
+                                if (allPayments.length > 0) {
+                                    let indexFound = allPayments.findIndex((element) => element == prefijo);
+                                    if (indexFound != -1) { // se encontro
+                                        let transaccionIndex = paymentsFound[prefijo]['transacciones'].findIndex((element) => element == transactionApply);
+                                        if (transaccionIndex == -1) {
+                                            paymentsFound[prefijo]['transacciones'].push(transactionApply);
+                                        }
+                                    }else{
+                                        paymentsFound[prefijo] = {'pagoid': internalId, 'transacciones': [transactionApply]};
+                                    }
+                                }else{
+                                    paymentsFound[prefijo] = {'pagoid': internalId, 'transacciones': [transactionApply]};
+                                }
+                            }
+                        }
+                    });
+                });
+                // log.debug({ title:'paymentsFound', details:paymentsFound });
+                return paymentsFound;
+            }else{
+                throw 'No se tienen pagos en la subsidiaria y periodo indicado.'
+            }
+        } catch (error) {
+            log.error({ title:'getPaymentsPeriod', details:error });
+            return [];
+        }
+    }
+
+    function extractVendorBill(pagos) {
+        try {
+            // log.debug({ title:'pagos', details:pagos });
+            let pagosKeys = Object.keys(pagos);
+            let vendorBillFounds = [];
+            // log.debug({ title:'pagosKeys', details:pagosKeys });
+            pagosKeys.forEach((element, index) =>{
+                // log.debug({ title:'pagos en ' + index, details:pagos[element] });
+                pagos[element].transacciones.forEach((element, index) => {
+                    // log.debug({ title:'factura', details:'    ' + element});
+                    let vendorBillFound = vendorBillFounds.indexOf(element);
+                    if (vendorBillFound == -1) {
+                        vendorBillFounds.push(element)
+                    }
+                });
+            });
+            // log.debug({ title:'vendorBillFounds', details:vendorBillFounds });
+            return vendorBillFounds;
+        } catch (error) {
+            log.error({ title:'extractVendorBill', details:error });
+            return [];
+        }
     }
 
     return {getInputData, map, reduce, summarize};
