@@ -15,7 +15,6 @@
   <appliestowebsite>F</appliestowebsite>
   <applyformatting>F</applyformatting>
   <availableexternally>F</availableexternally>
-  <availabletosso>F</availabletosso>
   <checkspelling>F</checkspelling>
   <defaultchecked>F</defaultchecked>
   <defaultselection></defaultselection>
@@ -49,5 +48,5 @@
   <sourcefrom></sourcefrom>
   <sourcelist></sourcelist>
   <storevalue>T</storevalue>
-  <subtab>ENTITYMAIN</subtab>
+  <subtab>[scriptid=custtab_397_t2269267_205]</subtab>
 </entitycustomfield>
