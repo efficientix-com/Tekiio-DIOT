@@ -59,24 +59,40 @@ define(["N/error",'N/runtime', 'N/search', 'N/url', 'N/record', 'N/file', 'N/red
             const recordPeriod = registerData[RECORD_INFO.DIOT_RECORD.FIELDS.PERIOD][0].value;
             log.debug({ title:'resultData', details:{recordSubsidiary: recordSubsidiary, recordPeriod: recordPeriod} });
             let resultPagos = getPaymentsPeriod(recordSubsidiary, recordPeriod);
-            // log.debug({ title:'resultPagos', details:resultPagos });
+            log.debug({ title:'resultPagos', details:resultPagos });
             if (resultPagos.length <= 0) {
                 throw 'No se encontraron transacciones a reportar';
             }
-            let extractVendorBill_result = extractVendorBill(resultPagos);
-            log.debug({ title:'extractVendorBill_result', details:extractVendorBill_result });
-            if (extractVendorBill_result.length <= 0) {
-                throw 'A ocurrido un error al extraer facturas';
+            let getVendorBills_result;
+            { // obtencion de facturas de proveedor
+                let extractVendorBill_result = extractVendorBill(resultPagos);
+                log.debug({ title:'extractVendorBill_result', details:extractVendorBill_result });
+                if (extractVendorBill_result.length <= 0) {
+                    throw 'A ocurrido un error al extraer facturas';
+                }
+                getVendorBills_result = getVendorBills(recordPeriod, recordSubsidiary, recordID, extractVendorBill_result);
+                log.debug({ title:'getVendorBills_result', details:getVendorBills_result });
+                // log.debug({ title:'data', details:getVendorBills_result.data['EKU9003173C9-INV10000221_27995'] });
+                if (getVendorBills_result.success == false) {
+                    let newError = getVendorBills_result.error;
+                    throw newError;
+                }
             }
-            let getVendorBills_result = getVendorBills(recordPeriod, recordSubsidiary, recordID, extractVendorBill_result);
-            log.debug({ title:'getVendorBills_result', details:getVendorBills_result });
-            // log.debug({ title:'data', details:getVendorBills_result.data['EKU9003173C9-INV10000221_27995'] });
-            if (getVendorBills_result.success == false) {
-                let newError = getVendorBills_result.error;
-                throw newError;
+            let getExpenseReport_result;
+            { // obtencion de informes de gastos
+                let extractExpenseReport_result = extractExpenseReport(resultPagos);
+                log.debug({ title:'extractExpenseReport_result', details:extractExpenseReport_result });
+                if (extractExpenseReport_result.length <= 0) {
+                    throw 'A ocurrido un error al extraer Informes de gastos';
+                }
+                getExpenseReport_result = getExpenseReport(recordSubsidiary, recordPeriod, recordID, extractExpenseReport_result);
+                log.debug({ title:'getExpenseReport_result', details:getExpenseReport_result });
+                if (getExpenseReport_result.success == false) {
+                    let newError = getVendorBills_result.error;
+                    throw newError;
+                }
             }
-            let getExpenseReport_result = getExpenseReport(recordSubsidiary, recordPeriod, recordID);
-            log.debug({ title:'getExpenseReport_result', details:getExpenseReport_result });
+            throw 'Error controlado';
             var otherId = record.submitFields({
                 type: RECORD_INFO.DIOT_RECORD.ID,
                 id: recordID,
@@ -119,22 +135,22 @@ define(["N/error",'N/runtime', 'N/search', 'N/url', 'N/record', 'N/file', 'N/red
      const map = (mapContext) => {
         try {
             
-            // log.debug({ title:'mapContext: ' + mapContext.key, details:mapContext });
+            log.debug({ title:'mapContext: ' + mapContext.key, details:mapContext });
             var datos = JSON.parse(mapContext.value);
-            let getVendorBillTaxes_result = getVendorBillTaxes(datos.vendorbillInternalId, datos.vendorId, datos.diotRecord);
+            let getVendorBillTaxes_result = getVendorBillTaxes(datos.transaccionInternalId, datos.vendorId, datos.diotRecord);
             // log.debug({ title:'getVendorBillTaxes', details:getVendorBillTaxes_result });
             if (getVendorBillTaxes_result.success == false) {
                 throw getVendorBillTaxes_result.error;
             }
             datos['taxes'] = getVendorBillTaxes_result.data;
-            let getVendorBillPayment_result = getVendorBillPayment(datos.vendorbillInternalId, datos.vendorId, datos.diotRecord);
+            let getVendorBillPayment_result = getVendorBillPayment(datos.transaccionInternalId, datos.vendorId, datos.diotRecord);
             // log.debug({ title:'getVendorBillPayment_result', details:getVendorBillPayment_result });
             if (getVendorBillPayment_result.success == false) {
                 throw getVendorBillPayment_result.error;
             }
             datos['payments'] = getVendorBillPayment_result.data;
-            // log.debug({ title:'datos_Final: ' + mapContext.key , details:datos });
-            let newKey = datos.vendorId + '_' + datos.vendorbillTipoOperacion_Text;
+            log.debug({ title:'datos_Final: ' + mapContext.key , details:datos });
+            let newKey = datos.vendorId + '_' + datos.transaccionTipoOperacion_Text;
             mapContext.write({
                 key:newKey,
                 value:datos
@@ -262,7 +278,7 @@ define(["N/error",'N/runtime', 'N/search', 'N/url', 'N/record', 'N/file', 'N/red
             
             const generalInfo = JSON.parse(values[0]);
             // log.debug({ title:'generalInfo', details:generalInfo });
-            let diotLine = generalInfo.vendorTipoTercero_Code + '|' + generalInfo.vendorbillTipoOperacion_Code + '|' + generalInfo.vendorRFC + '|' + generalInfo.vendorTaxId + '|' + generalInfo.vendorNombreExtranjero + '|' + generalInfo.vendorPaisResidencia_Code + '|' + generalInfo.vendorNacionalidad + '|';
+            let diotLine = generalInfo.vendorTipoTercero_Code + '|' + generalInfo.transaccionTipoOperacion_Code + '|' + generalInfo.vendorRFC + '|' + generalInfo.vendorTaxId + '|' + generalInfo.vendorNombreExtranjero + '|' + generalInfo.vendorPaisResidencia_Code + '|' + generalInfo.vendorNacionalidad + '|';
             // log.debug({ title:'ivas_response.dataClear', details: (Object.keys(ivas_response.dataClear)).length > 0 });
             if (Object.keys(ivas_response.dataClear).length > 0) {
                 if (ivas_response.dataClear['16.0%'] && (generalInfo.vendorTipoTercero == LISTS.TIPO_TERCERO.VALUES.NACIONAL)) {
@@ -299,7 +315,7 @@ define(["N/error",'N/runtime', 'N/search', 'N/url', 'N/record', 'N/file', 'N/red
                     }
                 }
                 diotLine += '|'
-                let extract_devoluciones_response = extract_devoluciones(generalInfo.subsidiaria, generalInfo.periodo, generalInfo.vendorId, generalInfo.vendorbillTipoOperacion, codigosReporteIds);
+                let extract_devoluciones_response = extract_devoluciones(generalInfo.subsidiaria, generalInfo.periodo, generalInfo.vendorId, generalInfo.transaccionTipoOperacion, codigosReporteIds);
                 log.debug({ title:'DEVOLUCIONES', details:extract_devoluciones_response });
                 if (extract_devoluciones_response.success == true) {
                     diotLine += extract_devoluciones_response.totalDevoluciones
@@ -443,13 +459,13 @@ define(["N/error",'N/runtime', 'N/search', 'N/url', 'N/record', 'N/file', 'N/red
             let send_email_status_response = send_email_status(recordID);
         }
         log.debug({ title:'summarize', details:'Fin de procesamiento DIOT' });
-        // var otherId = record.submitFields({
-        //     type: RECORD_INFO.DIOT_RECORD.ID,
-        //     id: recordID,
-        //     values: {
-        //         [RECORD_INFO.DIOT_RECORD.FIELDS.STATUS]: STATUS_LIST_DIOT.ERROR
-        //     }
-        // });
+        var otherId = record.submitFields({
+            type: RECORD_INFO.DIOT_RECORD.ID,
+            id: recordID,
+            values: {
+                [RECORD_INFO.DIOT_RECORD.FIELDS.STATUS]: STATUS_LIST_DIOT.ERROR
+            }
+        });
     }
 
     const generateError = (code, msg, cause) =>{
@@ -551,7 +567,7 @@ define(["N/error",'N/runtime', 'N/search', 'N/url', 'N/record', 'N/file', 'N/red
                        label: "RFC"
                     }),
                     search.createColumn({
-                       name: "custentity_efx_fe_numregidtrib",
+                       name: "custentityfb_diot_numregidtrib",
                        join: "vendor",
                        label: "NumRegIdTrib"
                     }),
@@ -664,15 +680,15 @@ define(["N/error",'N/runtime', 'N/search', 'N/url', 'N/record', 'N/file', 'N/red
                                         diotRecord: recordID,
                                         periodo: recordPeriod,
                                         subsidiaria: recordSubsidiary,
-                                        vendorbillTranId: vendorbillTranId,
-                                        vendorbillInternalId: vendorbillInternalId,
-                                        vendorbillEstado: result.getValue({name: 'statusref'}),
-                                        vendorbillImporte:result.getValue({name: 'amount'}),
+                                        transaccionTranId: vendorbillTranId,
+                                        transaccionInternalId: vendorbillInternalId,
+                                        transaccionEstado: result.getValue({name: 'statusref'}),
+                                        transaccionImporte:result.getValue({name: 'amount'}),
                                         // vendorbillTransaccionRelacionadaTipo: result.getValue({name: "type", join: "applyingTransaction"}),
                                         // vendorbillTransaccionRelacionadaId: result.getValue({name: 'applyingtransaction'}),
-                                        vendorbillTipoOperacion: vendorbillTipoOperacion,
-                                        vendorbillTipoOperacion_Text: vendorbillTipoOperacion_Text,
-                                        vendorbillTipoOperacion_Code: vendorbillTipoOperacion_Code,
+                                        transaccionTipoOperacion: vendorbillTipoOperacion,
+                                        transaccionTipoOperacion_Text: vendorbillTipoOperacion_Text,
+                                        transaccionTipoOperacion_Code: vendorbillTipoOperacion_Code,
                                         vendorId: result.getValue({name: "internalid", join: "vendor"}),
                                         vendorRFC: vendorRFC,
                                         vendorTaxId: vendorTaxId,
@@ -724,7 +740,7 @@ define(["N/error",'N/runtime', 'N/search', 'N/url', 'N/record', 'N/file', 'N/red
                 var vendorbillFoundClear = {};
                 vendorbillFound.forEach((element, index) => {
                     // log.debug({ title:'element: ' + index, details:element });
-                    let identify = element.vendorbillTranId + '_' + element.vendorbillInternalId;
+                    let identify = element.transaccionTranId + '_' + element.transaccionInternalId;
                     if (!vendorbillFoundClear.hasOwnProperty(identify)) {
                         vendorbillFoundClear[identify] = element;   
                     }
@@ -925,7 +941,7 @@ define(["N/error",'N/runtime', 'N/search', 'N/url', 'N/record', 'N/file', 'N/red
                         if (tax.taxCode == element_impuesto.value) {
                             // log.debug({ title:'tax found ' + index_tax, details:tax });
                             impuestoRate = tax.taxRate;
-                            if (factura.vendorbillEstado != "open") {
+                            if (factura.transaccionEstado != "open") {
                                 sumaImpuesto = (sumaImpuesto*1) + (tax.taxBasis*1);
                             }else{
                                 let pagosObj = factura.payments;
@@ -938,7 +954,7 @@ define(["N/error",'N/runtime', 'N/search', 'N/url', 'N/record', 'N/file', 'N/red
                                     totalpagado = (totalpagado*1) + (montoApply*1);
                                 });
                                 totalpagado = totalpagado.toFixed(2);
-                                let equivalentePagado = ((totalpagado*1)*(tax.taxBasis*1))/(factura.vendorbillImporte*1);
+                                let equivalentePagado = ((totalpagado*1)*(tax.taxBasis*1))/(factura.transaccionImporte*1);
                                 equivalentePagado = equivalentePagado.toFixed(2);
                                 // log.debug({ title:'finales', details:{totalpagado: totalpagado, equivalentePagado: equivalentePagado} });
                                 sumaImpuesto = (sumaImpuesto*1) + (equivalentePagado*1);
@@ -1220,11 +1236,141 @@ define(["N/error",'N/runtime', 'N/search', 'N/url', 'N/record', 'N/file', 'N/red
         return response;
     }
 
-    function getExpenseReport(subsidiaria, periodo, recordID) {
-        const response = {success: false, error: '', data: []};
+    function getExpenseReport(subsidiaria, periodo, recordID, transacciones) {
+        const response = {success: false, error: '', quantityData:0, data: []};
         try {
-            log.debug({ title:'ExpenseReport_Params', details:{subsidiaria: subsidiaria, periodo: periodo, recordID: recordID} });
+            // log.debug({ title:'ExpenseReport_Params', details:{subsidiaria: subsidiaria, periodo: periodo, recordID: recordID, transacciones: transacciones} });
+            var expensereportSearchObj = search.create({
+                type: "expensereport",
+                filters:
+                [
+                   ["type","anyof","ExpRept"], 
+                   "AND", 
+                   ["mainline","is","F"], 
+                   "AND", 
+                   ["taxline","is","F"],
+                   "AND", 
+                   ["taxdetail.taxcode","noneof","@NONE@"],
+                   "AND",
+                   ["internalid","anyof",transacciones]
+                ],
+                columns:
+                [
+                    search.createColumn({
+                        name: "internalid",
+                        sort: search.Sort.ASC,
+                        label: "ID interno"
+                     }),
+                     search.createColumn({name: "tranid", label: "Número de documento"}),
+                     search.createColumn({name: "statusref", label: "Estado"}),
+                     search.createColumn({name: "expensecategory", label: "Categoría de gastos"}),
+                     search.createColumn({name: "custcol_fb_diot_prov_type", label: " Tipo de tercero"}),
+                     search.createColumn({name: "custcol_fb_diot_rfc_proveedot", label: "RFC Proveedor"}),
+                     search.createColumn({name: "custbody_fb_tipo_operacion", label: "Tipo de Operación"}),
+                     search.createColumn({
+                        name: "taxcode",
+                        join: "taxDetail",
+                        label: "Código de impuesto"
+                     }),
+                     search.createColumn({
+                        name: "taxbasis",
+                        join: "taxDetail",
+                        label: "Base de impuesto (moneda extranjera)"
+                     }),
+                     search.createColumn({
+                        name: "taxfxamount",
+                        join: "taxDetail",
+                        label: "Importe de impuestos (moneda extranjera)"
+                     }),
+                     search.createColumn({
+                        name: "taxamount",
+                        join: "taxDetail",
+                        label: "Tax Amt"
+                     }),
+                     search.createColumn({
+                        name: "taxrate",
+                        join: "taxDetail",
+                        label: "Tax Rate"
+                     }),
+                     search.createColumn({
+                        name: "taxtype",
+                        join: "taxDetail",
+                        label: "Tipo de impuesto"
+                     }),
+                     search.createColumn({name: "total", label: "Importe (total de transacción)"})
+                ]
+            });
+            var expenseReportResult = expensereportSearchObj.runPaged({
+                pageSize: 1000
+            });
+            if (expenseReportResult.count > 0) {3
+                var expenseReportArray = [];
+                expenseReportResult.pageRanges.forEach(function(pageRange){
+                    var myPage = expenseReportResult.fetch({index: pageRange.index});
+                    myPage.data.forEach(function(result){
+                        let vendorRFC = result.getValue({name: 'custcol_fb_diot_rfc_proveedot'});
+                        let vendorTipoTercero = result.getValue({name: "custcol_fb_diot_prov_type"}) || 1;
+                        let vendorTipoTercero_Text = result.getText({name: "custcol_fb_diot_prov_type"}) || '04 - Proveedor Nacional';
+                        let vendorTipoTercero_Code = vendorTipoTercero_Text.split(' ');
+                        vendorTipoTercero_Code = vendorTipoTercero_Code[0];
+                        let expenseReportTranId = result.getValue({name: "tranid"});
+                        let expenseReportInternalId = result.getValue({name: "internalid"});
+                        let expenseReportEstado = result.getValue({name: 'statusref'});
+                        let expenseReportImporte = result.getValue({name: 'total'});
+                        let expenseReportTipoOperacion = result.getValue({name: "custbody_fb_tipo_operacion"}) || 3;
+                        let expenseReportTipoOperacion_Text = result.getText({name: "custbody_fb_tipo_operacion"}) || '85 - Otros';
+                        let expenseReportTipoOperacion_Code = expenseReportTipoOperacion_Text.split(' ');
+                        expenseReportTipoOperacion_Code = expenseReportTipoOperacion_Code[0];
+                        let taxExpense = result.getValue({name: 'expensecategory'});
+                        let taxBasis = result.getValue({name: "taxbasis", join: "taxDetail"});
+                        let taxCode = result.getValue({name: "taxcode", join: "taxDetail"});
+                        let taxType = result.getValue({name: "taxtype", join: "taxDetail"});
+                        let taxAmount = result.getValue({name: "taxamount", join: "taxDetail"});
+                        let taxRate = result.getValue({name: "taxrate",join: "taxDetail"});
+                        let objTax = {
+                            taxExpense: taxExpense,
+                            taxBasis: taxBasis,
+                            taxCode: taxCode,
+                            taxType: taxType,
+                            taxAmount: taxAmount,
+                            taxRate: taxRate
+                        }
+                        // log.debug({ title:'objTax', details:objTax });
 
+                        let expenseFound = expenseReportArray.findIndex((element) => element.transaccionInternalId == expenseReportInternalId);
+                        if (expenseFound == -1) {
+                            let objExpenseReport = {
+                                diotRecord: recordID,
+                                periodo: periodo,
+                                subsidiaria: subsidiaria,
+                                isExpenseReport: true,
+                                transaccionTranId: expenseReportTranId,
+                                transaccionInternalId: expenseReportInternalId,
+                                transaccionEstado: expenseReportEstado,
+                                transaccionImporte: expenseReportImporte,
+                                transaccionTipoOperacion: expenseReportTipoOperacion,
+                                transaccionTipoOperacion_Text: expenseReportTipoOperacion_Text,
+                                transaccionTipoOperacion_Code: expenseReportTipoOperacion_Code,
+                                vendorRFC: vendorRFC,
+                                vendorTipoTercero: vendorTipoTercero,
+                                vendorTipoTercero_Text: vendorTipoTercero_Text,
+                                vendorTipoTercero_Code: vendorTipoTercero_Code,
+                                taxes: [objTax]
+                            }
+                            // log.debug({ title:'objExpenseReport', details:objExpenseReport });
+                            expenseReportArray.push(objExpenseReport)
+                        }else{
+                            expenseReportArray[expenseFound].taxes.push(objTax);
+                        }
+                    });
+                });
+                // log.debug({ title:'expenseReportArray', details:expenseReportArray });
+                response.success = true;
+                response.data = expenseReportArray
+                response.quantityData = expenseReportArray.length;
+            }else{
+                response.success = true;
+            }
         } catch (error) {
             log.error({ title:'getExpenseReport', details:error });
             response.success = false;
@@ -1279,22 +1425,45 @@ define(["N/error",'N/runtime', 'N/search', 'N/url', 'N/record', 'N/file', 'N/red
                         let transactionApply =  result.getValue({name: "appliedtotransaction"});
                         let typeTransactionApply = result.getValue({name: "type", join: "appliedToTransaction"});
                         // log.debug({ title:'dataFound', details:{internalId: internalId, tranid: payTranId, transactionApply: transactionApply, type: typeTransactionApply} });
-                        if (typeTransactionApply == 'VendBill') {
+                        if (typeTransactionApply == 'VendBill' || typeTransactionApply == 'ExpRept') { // Factura de proveedor
                             let prefijo = 'Payment_' + internalId;
                             if (transactionApply != '') {
                                 let allPayments = Object.keys(paymentsFound);
                                 if (allPayments.length > 0) {
                                     let indexFound = allPayments.findIndex((element) => element == prefijo);
                                     if (indexFound != -1) { // se encontro
-                                        let transaccionIndex = paymentsFound[prefijo]['transacciones'].findIndex((element) => element == transactionApply);
-                                        if (transaccionIndex == -1) {
-                                            paymentsFound[prefijo]['transacciones'].push(transactionApply);
-                                        }
+                                        // if (transaccionIndex == -1) {
+                                            if (typeTransactionApply == 'VendBill') {
+                                                let transaccionIndex = paymentsFound[prefijo]['transacciones']['vendBill'].findIndex((element) => element == transactionApply);
+                                                if (transaccionIndex == -1) {
+                                                    paymentsFound[prefijo]['transacciones']['vendBill'].push(transactionApply);
+                                                }
+                                                // paymentsFound[prefijo] = {'pagoid': internalId, 'transacciones': {vendBill: [transactionApply], expRept: []}};
+                                            }
+                                            if (typeTransactionApply == 'ExpRept') {
+                                                let transaccionIndex = paymentsFound[prefijo]['transacciones']['expRept'].findIndex((element) => element == transactionApply);
+                                                if (transaccionIndex == -1) {
+                                                    paymentsFound[prefijo]['transacciones']['expRept'].push(transactionApply);
+                                                }
+                                                // paymentsFound[prefijo] = {'pagoid': internalId, 'transacciones': {vendBill: [], expRept: [transactionApply]}};
+                                            }
+                                        // }
                                     }else{
-                                        paymentsFound[prefijo] = {'pagoid': internalId, 'transacciones': [transactionApply]};
+                                        if (typeTransactionApply == 'VendBill') {
+                                            paymentsFound[prefijo] = {'pagoid': internalId, 'transacciones': {vendBill: [transactionApply], expRept: []}};
+                                        }
+                                        if (typeTransactionApply == 'ExpRept') {
+                                            paymentsFound[prefijo] = {'pagoid': internalId, 'transacciones': {vendBill: [], expRept: [transactionApply]}};
+                                        }
+                                        // paymentsFound[prefijo] = {'pagoid': internalId, 'transacciones': [transactionApply]};
                                     }
                                 }else{
-                                    paymentsFound[prefijo] = {'pagoid': internalId, 'transacciones': [transactionApply]};
+                                    if (typeTransactionApply == 'VendBill') {
+                                        paymentsFound[prefijo] = {'pagoid': internalId, 'transacciones': {vendBill: [transactionApply], expRept: []}};
+                                    }
+                                    if (typeTransactionApply == 'ExpRept') {
+                                        paymentsFound[prefijo] = {'pagoid': internalId, 'transacciones': {vendBill: [], expRept: [transactionApply]}};
+                                    }
                                 }
                             }
                         }
@@ -1319,8 +1488,8 @@ define(["N/error",'N/runtime', 'N/search', 'N/url', 'N/record', 'N/file', 'N/red
             // log.debug({ title:'pagosKeys', details:pagosKeys });
             pagosKeys.forEach((element, index) =>{
                 // log.debug({ title:'pagos en ' + index, details:pagos[element] });
-                pagos[element].transacciones.forEach((element, index) => {
-                    // log.debug({ title:'factura', details:'    ' + element});
+                pagos[element].transacciones.vendBill.forEach((element, index) => {
+                    // log.debug({ title:'factura', details:element});
                     let vendorBillFound = vendorBillFounds.indexOf(element);
                     if (vendorBillFound == -1) {
                         vendorBillFounds.push(element)
@@ -1331,6 +1500,30 @@ define(["N/error",'N/runtime', 'N/search', 'N/url', 'N/record', 'N/file', 'N/red
             return vendorBillFounds;
         } catch (error) {
             log.error({ title:'extractVendorBill', details:error });
+            return [];
+        }
+    }
+
+    function extractExpenseReport(pagos) {
+        try {
+            // log.debug({ title:'pagos', details:pagos });
+            let pagosKeys = Object.keys(pagos);
+            let expenseReportFounds = [];
+            // log.debug({ title:'pagosKeys', details:pagosKeys });
+            pagosKeys.forEach((element, index) =>{
+                // log.debug({ title:'pagos en ' + index, details:pagos[element] });
+                pagos[element].transacciones.expRept.forEach((element, index) => {
+                    // log.debug({ title:'factura', details:element});
+                    let expenseReportFound = expenseReportFounds.indexOf(element);
+                    if (expenseReportFound == -1) {
+                        expenseReportFounds.push(element)
+                    }
+                });
+            });
+            // log.debug({ title:'expenseReportFounds', details:expenseReportFounds });
+            return expenseReportFounds;
+        } catch (error) {
+            log.error({ title:'extractExpenseReport', details:error });
             return [];
         }
     }
