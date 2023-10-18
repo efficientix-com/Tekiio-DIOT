@@ -73,7 +73,7 @@ define([],function(){
     RECORD_INFO.VENDOR_RECORD.FIELDS.INTERNALID = 'internalid';
     RECORD_INFO.VENDOR_RECORD.FIELDS.NAME = 'companyname';
     RECORD_INFO.VENDOR_RECORD.FIELDS.RFC = 'custentity_mx_rfc';
-    RECORD_INFO.VENDOR_RECORD.FIELDS.TAX_ID = 'custentity_efx_fe_numregidtrib';
+    RECORD_INFO.VENDOR_RECORD.FIELDS.TAX_ID = 'custentityfb_diot_numregidtrib';
     RECORD_INFO.VENDOR_RECORD.FIELDS.NOMBRE_EXTRANJERO = 'custentity_fb_nombre_extranjero';
     RECORD_INFO.VENDOR_RECORD.FIELDS.PAIS_RESIDENCIA = 'custentity_fb_pais_residencia';
     RECORD_INFO.VENDOR_RECORD.FIELDS.NACIONALIDAD = 'custentity_fb_nacionalidad';
@@ -124,7 +124,7 @@ define([],function(){
     RECORD_INFO.VENDOR_BILL_RECORD.FIELDS.TAX_ITEM = 'taxItem';
     RECORD_INFO.VENDOR_BILL_RECORD.FIELDS.TAX_DETAIL = 'taxDetail';
     RECORD_INFO.VENDOR_BILL_RECORD.FIELDS.RFC = 'custentity_mx_rfc';
-    RECORD_INFO.VENDOR_BILL_RECORD.FIELDS.TAX_ID = 'custentity_efx_fe_numregidtrib';
+    RECORD_INFO.VENDOR_BILL_RECORD.FIELDS.TAX_ID = 'custentityfb_diot_numregidtrib';
     RECORD_INFO.VENDOR_BILL_RECORD.FIELDS.NOMBRE_EXTRANJERO = 'custentity_fb_nombre_extranjero';
     RECORD_INFO.VENDOR_BILL_RECORD.FIELDS.PAIS_RESIDENCIA = 'custentity_fb_pais_residencia';
     RECORD_INFO.VENDOR_BILL_RECORD.FIELDS.NACIONALIDAD = 'custentity_fb_nacionalidad';
@@ -157,7 +157,7 @@ define([],function(){
     RECORD_INFO.EXPENSE_REPORT_RECORD.FIELDS.PROVEEDOR = 'custcol_fb_proveedor';
     RECORD_INFO.EXPENSE_REPORT_RECORD.FIELDS.IMPORTACION = 'custcol_fb_diot_importacion';
     RECORD_INFO.EXPENSE_REPORT_RECORD.FIELDS.RFC = 'custentity_mx_rfc';
-    RECORD_INFO.EXPENSE_REPORT_RECORD.FIELDS.TAX_ID = 'custentity_efx_fe_numregidtrib';
+    RECORD_INFO.EXPENSE_REPORT_RECORD.FIELDS.TAX_ID = 'custentityfb_diot_numregidtrib';
     RECORD_INFO.EXPENSE_REPORT_RECORD.FIELDS.NOMBRE_EXTRANJERO = 'custentity_fb_nombre_extranjero';
     RECORD_INFO.EXPENSE_REPORT_RECORD.FIELDS.PAIS_RESIDENCIA = 'custentity_fb_pais_residencia';
     RECORD_INFO.EXPENSE_REPORT_RECORD.FIELDS.NACIONALIDAD = 'custentity_fb_nacionalidad';
@@ -186,7 +186,7 @@ define([],function(){
     RECORD_INFO.JOURNAL_ENTRY_RECORD.FIELDS.PROVEEDOR = 'custcol_fb_proveedor';
     RECORD_INFO.JOURNAL_ENTRY_RECORD.FIELDS.IMPORTACION = 'custcol_fb_diot_importacion';
     RECORD_INFO.JOURNAL_ENTRY_RECORD.FIELDS.RFC = 'custentity_mx_rfc';
-    RECORD_INFO.JOURNAL_ENTRY_RECORD.FIELDS.TAX_ID = 'custentity_efx_fe_numregidtrib';
+    RECORD_INFO.JOURNAL_ENTRY_RECORD.FIELDS.TAX_ID = 'custentityfb_diot_numregidtrib';
     RECORD_INFO.JOURNAL_ENTRY_RECORD.FIELDS.NOMBRE_EXTRANJERO = 'custentity_fb_nombre_extranjero';
     RECORD_INFO.JOURNAL_ENTRY_RECORD.FIELDS.PAIS_RESIDENCIA = 'custentity_fb_pais_residencia';
     RECORD_INFO.JOURNAL_ENTRY_RECORD.FIELDS.NACIONALIDAD = 'custentity_fb_nacionalidad';
