@@ -10,7 +10,7 @@
   <colitemfulfillmentorder>F</colitemfulfillmentorder>
   <colitemreceipt>F</colitemreceipt>
   <colitemreceiptorder>F</colitemreceiptorder>
-  <coljournal>T</coljournal>
+  <coljournal>F</coljournal>
   <colkititem>F</colkititem>
   <colopportunity>F</colopportunity>
   <colpackingslip>F</colpackingslip>

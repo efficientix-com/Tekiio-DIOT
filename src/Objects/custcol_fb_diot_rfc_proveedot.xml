@@ -48,7 +48,7 @@
   <selectrecordtype></selectrecordtype>
   <showhierarchy>F</showhierarchy>
   <sourcefilterby></sourcefilterby>
-  <sourcefrom></sourcefrom>
-  <sourcelist></sourcelist>
+  <sourcefrom>[scriptid=custentity_mx_rfc]</sourcefrom>
+  <sourcelist>[scriptid=custcol_fb_proveedor]</sourcelist>
   <storevalue>T</storevalue>
 </transactioncolumncustomfield>

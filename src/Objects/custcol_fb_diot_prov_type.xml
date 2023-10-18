@@ -30,7 +30,7 @@
   <defaultvalue></defaultvalue>
   <description></description>
   <displayheight></displayheight>
-  <displaytype>LOCKED</displaytype>
+  <displaytype>NORMAL</displaytype>
   <displaywidth></displaywidth>
   <dynamicdefault></dynamicdefault>
   <encryptatrest>F</encryptatrest>
