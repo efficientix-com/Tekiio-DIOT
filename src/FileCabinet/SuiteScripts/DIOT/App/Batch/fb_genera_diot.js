@@ -95,7 +95,7 @@ define(["N/error",'N/runtime', 'N/search', 'N/url', 'N/record', 'N/file', 'N/red
                 }
             }
             var dataReturn = {};
-            { // juntar información
+            { // agrupar información
                 dataReturn = Object.assign(dataReturn, getVendorBills_result.data, getExpenseReport_result.data);
                 log.debug({ title:'dataReturn', details:dataReturn });
             }
@@ -160,8 +160,15 @@ define(["N/error",'N/runtime', 'N/search', 'N/url', 'N/record', 'N/file', 'N/red
                 throw getApllyPayments_result.error;
             }
             datos['payments'] = getApllyPayments_result.data;
-            log.debug({ title:'datos_Final: ' + mapContext.key , details:datos });
-            let newKey = datos.vendorRFC + '_' + datos.transaccionTipoOperacion_Text;
+            // log.debug({ title:'datos_Final: ' + mapContext.key , details:datos });
+            let newKey = '';
+            if (datos.vendorRFC) {
+                newKey+='rfc_' + datos.vendorRFC + '_';
+            }
+            if (datos.vendorId) {
+                newKey+='id_' + datos.vendorId + '_';
+            }
+            newKey += datos.transaccionTipoOperacion_Text;
             mapContext.write({
                 key:newKey,
                 value:datos
@@ -335,7 +342,7 @@ define(["N/error",'N/runtime', 'N/search', 'N/url', 'N/record', 'N/file', 'N/red
                 }
                 diotLine += '|\n'
             }
-            log.debug({ title:'diotLine', details:diotLine });
+            // log.debug({ title:'diotLine', details:diotLine });
             let objLine = {
                 linea: diotLine,
                 success: true
@@ -956,7 +963,8 @@ define(["N/error",'N/runtime', 'N/search', 'N/url', 'N/record', 'N/file', 'N/red
                         if (tax.taxCode == element_impuesto.value) {
                             // log.debug({ title:'tax found ' + index_tax, details:tax });
                             impuestoRate = tax.taxRate;
-                            if (factura.transaccionEstado != "open" || factura.transaccionEstado != 'paidInFull') { // TODO transaccionEstado
+                            
+                            if ((factura.transaccionEstado != "open" && !factura.hasOwnProperty('isExpenseReport')) || (factura.transaccionEstado != 'approvedByAcct' && factura.hasOwnProperty('isExpenseReport'))) { 
                                 sumaImpuesto = (sumaImpuesto*1) + (tax.taxBasis*1);
                             }else{
                                 let pagosObj = factura.payments;
