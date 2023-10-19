@@ -513,6 +513,19 @@ define(["N/error",'N/runtime', 'N/search', 'N/url', 'N/record', 'N/file', 'N/red
         // });
     }
 
+    /**
+     * The function `generateError` creates a custom error object with a specified code, message, and
+     * cause.
+     * @param code - The code parameter is a string that represents the error code or identifier for
+     * the custom error. It is used to uniquely identify the error and can be used for error handling
+     * and debugging purposes.
+     * @param msg - The `msg` parameter is a string that represents the error message. It is used to
+     * provide a description or explanation of the error that occurred.
+     * @param cause - The `cause` parameter is an optional parameter that represents the underlying
+     * cause of the error. It can be used to provide additional information about why the error
+     * occurred.
+     * @returns The function `generateError` returns a custom error object.
+     */
     const generateError = (code, msg, cause) =>{
         try {
             var custom_error = newError.create({
@@ -526,6 +539,21 @@ define(["N/error",'N/runtime', 'N/search', 'N/url', 'N/record', 'N/file', 'N/red
         }
     }
 
+    /**
+     * The function `generateRecordError` creates a new error record in NetSuite with the provided
+     * details.
+     * @param type - The type of error being generated.
+     * @param detail - The "detail" parameter is a string that represents the specific details or
+     * description of the error. It provides additional information about the error that occurred.
+     * @param transaccion - The "transaccion" parameter represents the transaction related to the error
+     * record. It could be a unique identifier or any other information that helps identify the
+     * transaction associated with the error.
+     * @param proveedor - The "proveedor" parameter refers to the provider or supplier associated with
+     * the error record.
+     * @param recordDiot - The `recordDiot` parameter is the value that will be set for the "Historial
+     * DIOT" field in the error record.
+     * @returns The function `generateRecordError` returns an object with the following properties:
+     */
     const generateRecordError = (type, detail, transaccion, proveedor, recordDiot) => {
         const response = {success: false, error: '', errorId: ''};
         try {
@@ -570,6 +598,21 @@ define(["N/error",'N/runtime', 'N/search', 'N/url', 'N/record', 'N/file', 'N/red
         return response;
     }
 
+    /**
+     * The function `getVendorBills` retrieves vendor bills based on specified filters and returns the
+     * results.
+     * @param recordPeriod - The recordPeriod parameter is the period or timeframe for which you want
+     * to retrieve vendor bills. It could be a specific month, quarter, or year, depending on your
+     * business requirements.
+     * @param recordSubsidiary - The `recordSubsidiary` parameter is the ID of the subsidiary for which
+     * you want to retrieve vendor bills.
+     * @param recordID - The `recordID` parameter is the ID of the record that you want to retrieve
+     * vendor bills for.
+     * @param transacciones - The "transacciones" parameter is an array of transaction IDs. It is used
+     * as a filter in the search to retrieve vendor bills that have one of the specified transaction
+     * IDs.
+     * @returns The function `getVendorBills` returns an object with the following properties:
+     */
     const getVendorBills = (recordPeriod, recordSubsidiary, recordID, transacciones) =>{
         const response = {success: false, error: '', quantityData:'', data: {}};
         try {
@@ -807,6 +850,18 @@ define(["N/error",'N/runtime', 'N/search', 'N/url', 'N/record', 'N/file', 'N/red
         return response;
     }
 
+    /**
+     * The function `getVendorBillTaxes` retrieves tax information from a vendor bill based on the
+     * provided internal ID.
+     * @param vendorbillInternalId - The internal ID of the vendor bill for which you want to retrieve
+     * the taxes.
+     * @param vendorId - The `vendorId` parameter is the ID of the vendor associated with the vendor
+     * bill.
+     * @param diotRecord - The `diotRecord` parameter is used to pass additional information related to
+     * the DIOT (Declaración Informativa de Operaciones con Terceros) record. It is not used directly
+     * in the `getVendorBillTaxes` function, but it is passed to the `generateRecord
+     * @returns The function `getVendorBillTaxes` returns an object with the following properties:
+     */
     const getVendorBillTaxes = (vendorbillInternalId, vendorId, diotRecord)=>{
         const response = {success: false, error: '', data: []};
         try {
@@ -893,6 +948,22 @@ define(["N/error",'N/runtime', 'N/search', 'N/url', 'N/record', 'N/file', 'N/red
         return response;
     }
 
+    /**
+     * The function `getApllyPayments` retrieves vendor payments applied to a specific vendor bill.
+     * @param vendorbillInternalId - The internal ID of the vendor bill for which you want to retrieve
+     * the applied payments.
+     * @param vendorId - The vendorId parameter is the ID of the vendor for which you want to retrieve
+     * the applied payments.
+     * @param diotRecord - The `diotRecord` parameter is used to identify a specific record in the DIOT
+     * (Declaración Informativa de Operaciones con Terceros) system. It is likely used for logging or
+     * tracking purposes within the function.
+     * @param subsidiaria - The parameter "subsidiaria" refers to the subsidiary ID or internal ID of
+     * the subsidiary for which you want to retrieve the vendor payments.
+     * @param periodo - The "periodo" parameter represents the posting period for which the payments
+     * are being searched. It is used as a filter in the search criteria to find vendor payments
+     * applied to a specific vendor bill within the specified posting period.
+     * @returns The function `getApllyPayments` returns an object with the following properties:
+     */
     const getApllyPayments = (vendorbillInternalId, vendorId, diotRecord, subsidiaria, periodo) =>{
         const response = {success: false, error: '', data: []};
         try {
@@ -972,6 +1043,15 @@ define(["N/error",'N/runtime', 'N/search', 'N/url', 'N/record', 'N/file', 'N/red
         return response;
     }
 
+    /**
+     * The `extractTaxes` function takes in an array of taxes and an array of values, and returns an
+     * object containing the extracted taxes, their sums, and their rates.
+     * @param impuestos - An array of objects representing different taxes. Each object has a "value"
+     * property that represents the tax code.
+     * @param values - The `values` parameter is an array of JSON strings representing invoices or
+     * transactions. Each JSON string should have a `taxes` property, which is an array of tax objects.
+     * @returns The function `extractTaxes` returns an object with the following properties:
+     */
     const extractTaxes = (impuestos, values) =>{
         const response = {success: false, error: '', data: [], dataClear: {}};
         try {
@@ -1047,6 +1127,16 @@ define(["N/error",'N/runtime', 'N/search', 'N/url', 'N/record', 'N/file', 'N/red
         return response;
     }
 
+    /**
+     * The `validateFolder` function checks if a folder exists and creates it if it doesn't, returning
+     * the folder ID.
+     * @param folderId - The ID of the folder that needs to be validated or created.
+     * @param subsidiaria - The "subsidiaria" parameter represents the subsidiary for which the folder
+     * needs to be validated. It is used to search for a folder specific to the subsidiary.
+     * @param periodo - The "periodo" parameter represents a period or time frame. It is used to search
+     * for or create a folder within the "subsidiariaFolder" based on the given period.
+     * @returns The function `validateFolder` returns an object with the following properties:
+     */
     const validateFolder = (folderId, subsidiaria, periodo) =>{
         const response = {success: false, error: '', folderID: ''};
         try {
@@ -1092,6 +1182,14 @@ define(["N/error",'N/runtime', 'N/search', 'N/url', 'N/record', 'N/file', 'N/red
         return response
     }
 
+    /**
+     * The function `search_folder` searches for a folder with a specific name within a parent folder
+     * and returns the folder's internal ID if found.
+     * @param folderName - The name of the folder you want to search for.
+     * @param parentFolder - The parent folder is the internal ID of the folder that contains the
+     * folder you want to search for.
+     * @returns The function `search_folder` returns an object with the following properties:
+     */
     function search_folder(folderName, parentFolder) {
         const response = {success: false, error: '', folderID: -1}
         try {
@@ -1138,6 +1236,14 @@ define(["N/error",'N/runtime', 'N/search', 'N/url', 'N/record', 'N/file', 'N/red
         return response;
     }
 
+    /**
+     * The function `create_folder` creates a new folder with a given name and parent folder in a
+     * system, and returns a response object indicating the success or failure of the operation.
+     * @param folderName - The name of the folder you want to create.
+     * @param parentFolder - The parentFolder parameter is the ID of the parent folder where the new
+     * folder will be created.
+     * @returns an object with the following properties:
+     */
     function create_folder(folderName, parentFolder) {
         const response = {success: false, error: '', folderID: -1}
         try {
@@ -1167,6 +1273,13 @@ define(["N/error",'N/runtime', 'N/search', 'N/url', 'N/record', 'N/file', 'N/red
         return response;
     }
 
+    /**
+     * The function `suma_impuestos` calculates the total sum of taxes from an object of taxes.
+     * @param impuestos - The parameter `impuestos` is an object that contains various taxes. Each tax
+     * is represented by a key-value pair, where the key is the tax ID and the value is an object that
+     * contains information about the tax, including the total amount of the tax.
+     * @returns The function `suma_impuestos` returns an object with the following properties:
+     */
     function suma_impuestos(impuestos) {
         const response = {success: false, error: '', totalImpuestos: 0};
         try {
@@ -1187,6 +1300,28 @@ define(["N/error",'N/runtime', 'N/search', 'N/url', 'N/record', 'N/file', 'N/red
         return response;
     }
 
+    /**
+     * The function `extract_devoluciones` extracts vendor credits based on specified filters and
+     * calculates the total amount of devolutions.
+     * @param subsidiaria - The "subsidiaria" parameter represents the subsidiary of the vendor credits
+     * you want to extract. It is a reference to a specific subsidiary record in the system.
+     * @param periodo - The "periodo" parameter represents the posting period of the transactions you
+     * want to extract devoluciones (returns) from. It is a string value that should match the internal
+     * ID of the posting period record in NetSuite.
+     * @param proveedor - The parameter "proveedor" refers to the vendor or supplier from whom the
+     * returns are being extracted.
+     * @param tipoOperacion - The parameter "tipoOperacion" refers to the type of operation for which
+     * you want to extract devoluciones (returns). It is used as a filter in the search criteria to
+     * retrieve vendor credits with a specific tipoOperacion.
+     * @param taxCodes - The "taxCodes" parameter is an array of tax codes. It is used to filter the
+     * vendor credits based on the tax code associated with them. Only vendor credits with tax codes
+     * that are present in the "taxCodes" array will be considered for further processing.
+     * @param proveedorRFC - The parameter "proveedorRFC" is used to filter the vendor credits based on
+     * the vendor's RFC (Registro Federal de Contribuyentes) in Mexico. It is an optional parameter, so
+     * if it is provided, the function will include it in the search filters to narrow down the
+     * results.
+     * @returns The function `extract_devoluciones` returns an object with the following properties:
+     */
     function extract_devoluciones(subsidiaria, periodo, proveedor, tipoOperacion, taxCodes, proveedorRFC) {
         const response = {success: false, error: '', totalDevoluciones: ''};
         try {
@@ -1268,6 +1403,16 @@ define(["N/error",'N/runtime', 'N/search', 'N/url', 'N/record', 'N/file', 'N/red
         return response;
     }
 
+    /**
+     * The function `send_email_status` sends an email to the owner of a record with the provided
+     * recordId, informing them about the status of a DIOT report generation process.
+     * @param recordId - The recordId parameter is the unique identifier of a record in the system. It
+     * is used to retrieve information about the record and to send an email notification to the owner
+     * of the record.
+     * @returns an object with two properties: "success" and "error". The "success" property indicates
+     * whether the email was sent successfully, and the "error" property contains any error message if
+     * an error occurred during the process.
+     */
     function send_email_status(recordId) {
         const response = {success: false, error: ''};
         try {
@@ -1299,6 +1444,21 @@ define(["N/error",'N/runtime', 'N/search', 'N/url', 'N/record', 'N/file', 'N/red
         return response;
     }
 
+    /**
+     * The function `getExpenseReport` retrieves expense report data based on specified parameters.
+     * @param subsidiaria - The "subsidiaria" parameter represents the subsidiary for which the expense
+     * report is being retrieved. It is used to filter the expense report search results based on the
+     * subsidiary.
+     * @param periodo - The "periodo" parameter represents the period for which the expense report is
+     * being generated. It could be a specific month, quarter, or any other time period for which the
+     * report is required.
+     * @param recordID - The `recordID` parameter is the ID of the DIOT record. It is used to associate
+     * the expense report data with the DIOT record.
+     * @param transacciones - The "transacciones" parameter is an array of transaction IDs. These
+     * transaction IDs are used as filters in the search to retrieve expense reports that match the
+     * specified IDs.
+     * @returns The function `getExpenseReport` returns an object with the following properties:
+     */
     function getExpenseReport(subsidiaria, periodo, recordID, transacciones) {
         const response = {success: false, error: '', quantityData:0, data: []};
         try {
@@ -1459,6 +1619,17 @@ define(["N/error",'N/runtime', 'N/search', 'N/url', 'N/record', 'N/file', 'N/red
         return response;
     }
 
+    /**
+     * The function `getPaymentsPeriod` retrieves vendor payments for a specific subsidiary and posting
+     * period in NetSuite.
+     * @param subsidiaria - The "subsidiaria" parameter refers to the subsidiary of the vendor payments
+     * you want to retrieve. It is used as a filter in the search query to only retrieve vendor
+     * payments associated with the specified subsidiary.
+     * @param periodo - The "periodo" parameter represents the posting period for which you want to
+     * retrieve payments. It is a string value that should be in the format "YYYY-MM".
+     * @returns an object that contains the payments found in the specified subsidiary and period. The
+     * object has the following structure:
+     */
     function getPaymentsPeriod(subsidiaria, periodo) {
         try {
             // log.debug({ title:'getPaymentsPeriod', details:{sub: subsidiaria, per: periodo} });
@@ -1560,6 +1731,11 @@ define(["N/error",'N/runtime', 'N/search', 'N/url', 'N/record', 'N/file', 'N/red
         }
     }
 
+    /**
+     * The function `extractVendorBill` extracts unique vendor bill numbers from a given object.
+     * @param pagos - An object containing payment information.
+     * @returns an array of vendor bill numbers.
+     */
     function extractVendorBill(pagos) {
         try {
             // log.debug({ title:'pagos', details:pagos });
@@ -1584,6 +1760,13 @@ define(["N/error",'N/runtime', 'N/search', 'N/url', 'N/record', 'N/file', 'N/red
         }
     }
 
+    /**
+     * The function `extractExpenseReport` extracts unique expense reports from a given object.
+     * @param pagos - The `pagos` parameter is an object that contains payment information. It has the
+     * following structure:
+     * @returns The function `extractExpenseReport` returns an object with three properties: `success`,
+     * `error`, and `data`.
+     */
     function extractExpenseReport(pagos) {
         const response = {success: false, error: '', data: []}
         try {
@@ -1612,6 +1795,18 @@ define(["N/error",'N/runtime', 'N/search', 'N/url', 'N/record', 'N/file', 'N/red
         return response;
     }
 
+    /**
+     * The function `extractJournalEntries` searches for journal entries in NetSuite based on specified
+     * filters and returns the results.
+     * @param subsidiaria - The "subsidiaria" parameter represents the subsidiary of the journal
+     * entries you want to extract. It is used as a filter in the search criteria to retrieve journal
+     * entries belonging to a specific subsidiary.
+     * @param periodo - The "periodo" parameter represents the posting period for the journal entries.
+     * It is used as a filter in the search to retrieve journal entries for a specific period.
+     * @param recordID - The `recordID` parameter is used to specify the ID of the DIOT record. It is
+     * used to associate the extracted journal entries with the DIOT record.
+     * @returns The function `extractJournalEntries` returns an object with the following properties:
+     */
     function extractJournalEntries(subsidiaria, periodo, recordID) {
         const response = {success: false, error: '', data: {}};
         try {
@@ -1785,6 +1980,15 @@ define(["N/error",'N/runtime', 'N/search', 'N/url', 'N/record', 'N/file', 'N/red
         return response;
     }
 
+    /**
+     * The function `getJEDevoluciones` calculates the total tax basis for all transactions that have a
+     * property `isJournalEntry` set to true and contain taxes with a property `isDevolucion` set to
+     * true.
+     * @param values - An array of JSON strings representing transactions. Each transaction object has
+     * a property "isJournalEntry" and an array of taxes. Each tax object has a property "isDevolucion"
+     * and "taxBasis".
+     * @returns an object with the following properties:
+     */
     function getJEDevoluciones(values) {
         const response = { success: false, error: '', total: 0};
         try {
