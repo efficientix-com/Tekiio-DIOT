@@ -94,9 +94,19 @@ define(["N/error",'N/runtime', 'N/search', 'N/url', 'N/record', 'N/file', 'N/red
                     }
                 }
             }
+            let extractJournalEntries_response;
+            { // obtencion de Entradas de diario
+                extractJournalEntries_response = extractJournalEntries( recordSubsidiary, recordPeriod, recordID);
+                log.debug({ title:'extractJournalEntries_response', details:extractJournalEntries_response });
+                if (extractJournalEntries_response.success == false) {
+                    let newError = extractJournalEntries_response.error;
+                    throw newError;
+                }
+            }
+            // throw 'Error controlado';
             var dataReturn = {};
             { // agrupar información
-                dataReturn = Object.assign(dataReturn, getVendorBills_result.data, getExpenseReport_result.data);
+                dataReturn = Object.assign(dataReturn, getVendorBills_result.data, getExpenseReport_result.data, extractJournalEntries_response.data);
                 log.debug({ title:'dataReturn', details:dataReturn });
             }
             // throw 'Error controlado';
@@ -109,7 +119,7 @@ define(["N/error",'N/runtime', 'N/search', 'N/url', 'N/record', 'N/file', 'N/red
                 }
             });
             return dataReturn;
-            // return getVendorBills_result.data;
+            // return extractJournalEntries_response.data;
         } catch (error) {
             log.error({ title:'getInputdata', details:error });
             otherId = record.submitFields({
@@ -145,22 +155,23 @@ define(["N/error",'N/runtime', 'N/search', 'N/url', 'N/record', 'N/file', 'N/red
             
             // log.debug({ title:'mapContext: ' + mapContext.key, details:mapContext });
             var datos = JSON.parse(mapContext.value);
-            if (!datos.hasOwnProperty('isExpenseReport')) {
-                let getVendorBillTaxes_result = getVendorBillTaxes(datos.transaccionInternalId, datos.vendorId, datos.diotRecord);
-                // log.debug({ title:'getVendorBillTaxes', details:getVendorBillTaxes_result });
-                if (getVendorBillTaxes_result.success == false) {
-                    throw getVendorBillTaxes_result.error;
+            if (!datos.hasOwnProperty('isJournalEntry')) {
+                if (!datos.hasOwnProperty('isExpenseReport')) {
+                    let getVendorBillTaxes_result = getVendorBillTaxes(datos.transaccionInternalId, datos.vendorId, datos.diotRecord);
+                    // log.debug({ title:'getVendorBillTaxes', details:getVendorBillTaxes_result });
+                    if (getVendorBillTaxes_result.success == false) {
+                        throw getVendorBillTaxes_result.error;
+                    }
+                    datos['taxes'] = getVendorBillTaxes_result.data;
                 }
-                datos['taxes'] = getVendorBillTaxes_result.data;
+                // log.debug({ title:'datos: ' + mapContext.key, details:datos });
+                let getApllyPayments_result = getApllyPayments(datos.transaccionInternalId, datos.vendorId, datos.diotRecord, datos.subsidiaria, datos.periodo);
+                // log.debug({ title:'getApllyPayments_result', details:getApllyPayments_result });
+                if (getApllyPayments_result.success == false) {
+                    throw getApllyPayments_result.error;
+                }
+                datos['payments'] = getApllyPayments_result.data;
             }
-            // log.debug({ title:'datos: ' + mapContext.key, details:datos });
-            let getApllyPayments_result = getApllyPayments(datos.transaccionInternalId, datos.vendorId, datos.diotRecord, datos.subsidiaria, datos.periodo);
-            // log.debug({ title:'getApllyPayments_result', details:getApllyPayments_result });
-            if (getApllyPayments_result.success == false) {
-                throw getApllyPayments_result.error;
-            }
-            datos['payments'] = getApllyPayments_result.data;
-            // log.debug({ title:'datos_Final: ' + mapContext.key , details:datos });
             let newKey = '';
             if (datos.vendorRFC) {
                 newKey+='rfc_' + datos.vendorRFC + '_';
@@ -169,6 +180,7 @@ define(["N/error",'N/runtime', 'N/search', 'N/url', 'N/record', 'N/file', 'N/red
                 newKey+='id_' + datos.vendorId + '_';
             }
             newKey += datos.transaccionTipoOperacion_Text;
+            // log.debug({ title:'datos_Final: ' + newKey , details:datos });
             mapContext.write({
                 key:newKey,
                 value:datos
@@ -333,15 +345,30 @@ define(["N/error",'N/runtime', 'N/search', 'N/url', 'N/record', 'N/file', 'N/red
                     }
                 }
                 diotLine += '|'
+                let devolucionesImporte = 0;
                 let extract_devoluciones_response = extract_devoluciones(generalInfo.subsidiaria, generalInfo.periodo, generalInfo.vendorId, generalInfo.transaccionTipoOperacion, codigosReporteIds, generalInfo.vendorRFC);
-                log.debug({ title:'DEVOLUCIONES', details:extract_devoluciones_response });
+                log.debug({ title:'DEVOLUCIONES Creditos', details:extract_devoluciones_response });
                 if (extract_devoluciones_response.success == true) {
-                    diotLine += extract_devoluciones_response.totalDevoluciones
+                    if (extract_devoluciones_response.totalDevoluciones) {
+                        devolucionesImporte = devolucionesImporte + (extract_devoluciones_response.totalDevoluciones*1);
+                    }
                 }else{
                     throw extract_devoluciones_response.error;
                 }
-                diotLine += '|\n'
+                let getJEDevoluciones_response = getJEDevoluciones(values);
+                log.debug({ title:'DEVOLUCIONES JE', details:getJEDevoluciones_response });
+                if (getJEDevoluciones_response.success == true){
+                    if (getJEDevoluciones_response.total != 0) {
+                        devolucionesImporte = (devolucionesImporte*1) + (getJEDevoluciones_response.total*1);
+                    }
+                }else{
+                    throw getJEDevoluciones_response.error;
+                }
+                if (devolucionesImporte != 0) {
+                    diotLine += devolucionesImporte;
+                }
             }
+            diotLine += '|\n';
             // log.debug({ title:'diotLine', details:diotLine });
             let objLine = {
                 linea: diotLine,
@@ -477,13 +504,13 @@ define(["N/error",'N/runtime', 'N/search', 'N/url', 'N/record', 'N/file', 'N/red
             let send_email_status_response = send_email_status(recordID);
         }
         log.debug({ title:'summarize', details:'Fin de procesamiento DIOT' });
-        var otherId = record.submitFields({
-            type: RECORD_INFO.DIOT_RECORD.ID,
-            id: recordID,
-            values: {
-                [RECORD_INFO.DIOT_RECORD.FIELDS.STATUS]: STATUS_LIST_DIOT.ERROR
-            }
-        });
+        // var otherId = record.submitFields({
+        //     type: RECORD_INFO.DIOT_RECORD.ID,
+        //     id: recordID,
+        //     values: {
+        //         [RECORD_INFO.DIOT_RECORD.FIELDS.STATUS]: STATUS_LIST_DIOT.ERROR
+        //     }
+        // });
     }
 
     const generateError = (code, msg, cause) =>{
@@ -960,27 +987,34 @@ define(["N/error",'N/runtime', 'N/search', 'N/url', 'N/record', 'N/file', 'N/red
                     // log.debug({ title:'extractTaxes_factura ' + index_factura, details:factura });
                     const taxes = factura.taxes;
                     taxes.forEach((tax, index_tax) => {
-                        if (tax.taxCode == element_impuesto.value) {
-                            // log.debug({ title:'tax found ' + index_tax, details:tax });
-                            impuestoRate = tax.taxRate;
-                            
-                            if ((factura.transaccionEstado != "open" && !factura.hasOwnProperty('isExpenseReport')) || (factura.transaccionEstado != 'approvedByAcct' && factura.hasOwnProperty('isExpenseReport'))) { 
-                                sumaImpuesto = (sumaImpuesto*1) + (tax.taxBasis*1);
-                            }else{
-                                let pagosObj = factura.payments;
-                                let pagosIds = Object.keys(pagosObj);
-                                let totalpagado = 0;
-                                pagosIds.forEach((element) => {
-                                    let montoApply = pagosObj[element].paymentAmountApply;
-                                    let paymentId = pagosObj[element].paymentId;
-                                    // log.debug({ title:'datos extract', details:{montoApply: montoApply, paymentId: paymentId} });
-                                    totalpagado = (totalpagado*1) + (montoApply*1);
-                                });
-                                totalpagado = totalpagado.toFixed(2);
-                                let equivalentePagado = ((totalpagado*1)*(tax.taxBasis*1))/(factura.transaccionImporte*1);
-                                equivalentePagado = equivalentePagado.toFixed(2);
-                                // log.debug({ title:'finales', details:{totalpagado: totalpagado, equivalentePagado: equivalentePagado} });
-                                sumaImpuesto = (sumaImpuesto*1) + (equivalentePagado*1);
+                        let hasDevolucion = tax.hasOwnProperty('isDevolucion');
+                        let isDevolucion = false;
+                        if (hasDevolucion == true) {
+                            isDevolucion = tax.isDevolucion;
+                        }
+                        if (isDevolucion == false) {
+                            if (tax.taxCode == element_impuesto.value) {
+                                // log.debug({ title:'tax found ' + index_tax, details:tax });
+                                impuestoRate = tax.taxRate;
+                                
+                                if ((factura.transaccionEstado != "open" && !factura.hasOwnProperty('isExpenseReport')) || (factura.transaccionEstado != 'approvedByAcct' && factura.hasOwnProperty('isExpenseReport')) || (factura.transaccionEstado != 'approvedByAcct' && factura.hasOwnProperty('isJournalEntry'))) { 
+                                    sumaImpuesto = (sumaImpuesto*1) + (tax.taxBasis*1);
+                                }else{
+                                    let pagosObj = factura.payments;
+                                    let pagosIds = Object.keys(pagosObj);
+                                    let totalpagado = 0;
+                                    pagosIds.forEach((element) => {
+                                        let montoApply = pagosObj[element].paymentAmountApply;
+                                        let paymentId = pagosObj[element].paymentId;
+                                        // log.debug({ title:'datos extract', details:{montoApply: montoApply, paymentId: paymentId} });
+                                        totalpagado = (totalpagado*1) + (montoApply*1);
+                                    });
+                                    totalpagado = totalpagado.toFixed(2);
+                                    let equivalentePagado = ((totalpagado*1)*(tax.taxBasis*1))/(factura.transaccionImporte*1);
+                                    equivalentePagado = equivalentePagado.toFixed(2);
+                                    // log.debug({ title:'finales', details:{totalpagado: totalpagado, equivalentePagado: equivalentePagado} });
+                                    sumaImpuesto = (sumaImpuesto*1) + (equivalentePagado*1);
+                                }
                             }
                         }
                     });
@@ -1572,6 +1606,211 @@ define(["N/error",'N/runtime', 'N/search', 'N/url', 'N/record', 'N/file', 'N/red
             response.data = expenseReportFounds;
         } catch (error) {
             log.error({ title:'extractExpenseReport', details:error });
+            response.success = false;
+            response.error = error;
+        }
+        return response;
+    }
+
+    function extractJournalEntries(subsidiaria, periodo, recordID) {
+        const response = {success: false, error: '', data: {}};
+        try {
+            log.debug({ title:'extractJournalEntries_params', details:{subsidiaria: subsidiaria, periodo: periodo, recordID: recordID} });
+            var journalentrySearchObj = search.create({
+                type: "journalentry",
+                filters:
+                [
+                   ["subsidiary","anyof",subsidiaria], 
+                   "AND", 
+                   ["postingperiod","abs",periodo], 
+                   "AND", 
+                   ["type","anyof","Journal"], 
+                   "AND", 
+                   ["custcol_fb_diot_rfc_proveedot","isnotempty",""]
+                //    ,"AND", 
+                //    ["internalid","anyof","29931"]
+                ],
+                columns:
+                [
+                    search.createColumn({
+                        name: "internalid",
+                        sort: search.Sort.ASC,
+                        label: "ID interno"
+                     }),
+                     search.createColumn({name: "tranid", label: "Número de documento"}),
+                     search.createColumn({name: "account", label: "Cuenta"}),
+                     search.createColumn({name: "debitamount", label: "Importe (débito)"}),
+                     search.createColumn({name: "creditamount", label: "Importe (crédito)"}),
+                     search.createColumn({name: "taxamount", label: "Importe (impuestos)"}),
+                     search.createColumn({name: "custcol_fb_proveedor", label: "Proveedor"}),
+                     search.createColumn({name: "custcol_fb_diot_prov_type", label: " Tipo de tercero"}),
+                     search.createColumn({name: "custcol_fb_diot_rfc_proveedot", label: "RFC Proveedor"}),
+                     search.createColumn({name: "custcol_fb_diot_operation_type", label: "Tipo de operación"}),
+                     search.createColumn({name: "mainline", label: "*"}),
+                     search.createColumn({
+                        name: "taxcode",
+                        join: "taxDetail",
+                        label: "Código de impuesto"
+                     }),
+                     search.createColumn({
+                        name: "taxamount",
+                        join: "taxDetail",
+                        label: "Tax Amt"
+                     }),
+                     search.createColumn({
+                        name: "taxrate",
+                        join: "taxDetail",
+                        label: "Tax Rate"
+                     }),
+                     search.createColumn({
+                        name: "taxtype",
+                        join: "taxDetail",
+                        label: "Tipo de impuesto"
+                     })
+                ]
+            });
+            var journalEntriesResult = journalentrySearchObj.runPaged({
+                pageSize: 1000
+            });
+            log.debug({ title:'journalEntriesResult.count', details:journalEntriesResult.count });
+            if (journalEntriesResult.count > 0) {
+                let journalEntriesFound = [];
+                journalEntriesResult.pageRanges.forEach(function(pageRange){
+                    var myPage = journalEntriesResult.fetch({index: pageRange.index});
+                    myPage.data.forEach(function(result){
+                        let jeInternalId = result.getValue({name: "internalid"});
+                        let jeTranid = result.getValue({name: 'tranid'});
+                        let jeDebito = result.getValue({name: 'debitamount'});
+                        let jeCredito = result.getValue({name: 'creditamount'});
+                        let jeImpuestos = result.getValue({name: 'taxamount'});
+                        let vendorId = result.getValue({name: 'custcol_fb_proveedor'}) || '';
+                        let vendorRFC = result.getValue({name: 'custcol_fb_diot_rfc_proveedot'}) || '';
+                        let vendorTipoTercero = result.getValue({name: 'custcol_fb_diot_prov_type'});
+                        let vendorTipoTercero_text = result.getText({name: 'custcol_fb_diot_prov_type'}) || '04 - Proveedor Nacional';
+                        let vendorTipoTercero_Code = vendorTipoTercero_text.split(' ');
+                        vendorTipoTercero_Code = vendorTipoTercero_Code[0];
+                        let jeTipoOperacion = result.getValue({name: 'custcol_fb_diot_operation_type'});
+                        let jeTipoOperacion_text = result.getText({name: 'custcol_fb_diot_operation_type'}) || '85 - Otros';
+                        let jeTipoOperacion_Code = jeTipoOperacion_text.split(' ');
+                        jeTipoOperacion_Code = jeTipoOperacion_Code[0];
+                        let taxCode = result.getValue({name: "taxcode", join: "taxDetail"});
+                        let taxType = result.getValue({name: "taxtype", join: "taxDetail"});
+                        let taxAmount = result.getValue({name: "taxamount", join: "taxDetail"});
+                        let taxRate = result.getValue({name: "taxrate", join: "taxDetail"});
+                        let taxBasis;
+                        let isDevolucion = false;
+                        if (jeDebito) {
+                            taxBasis = jeDebito;
+                        }else{
+                            isDevolucion = true;
+                            taxBasis = jeImpuestos;
+                        }
+                        let taxObj = {
+                            taxItem: '',
+                            taxBasis: taxBasis,
+                            taxCode: taxCode,
+                            taxType: taxType,
+                            taxAmount: taxAmount,
+                            taxRate: taxRate,
+                            transaccionDebito: jeDebito,
+                            transaccionCredito: jeCredito,
+                            transaccionImpuesto: jeImpuestos,
+                            isDevolucion: isDevolucion
+                        }
+                        // log.debug({ title:'taxObj', details:taxObj });
+                        let jeFound = journalEntriesFound.findIndex((element) => element.vendorRFC == vendorRFC && element.transaccionTipoOperacion == jeTipoOperacion);
+                        if (jeFound == -1) {
+                            let jeObj = {
+                                diotRecord: recordID,
+                                periodo: periodo,
+                                subsidiaria: subsidiaria,
+                                isJournalEntry: true,
+                                transaccionTranId: jeTranid,
+                                transaccionInternalId: jeInternalId,
+                                transaccionEstado: "paidInFull",
+                                transaccionImporte: 100,
+                                // transaccionDebito: jeDebito,
+                                // transaccionCredito: jeCredito,
+                                // transaccionImpuesto: jeImpuestos,
+                                transaccionTipoOperacion: jeTipoOperacion,
+                                transaccionTipoOperacion_Text: jeTipoOperacion_text,
+                                transaccionTipoOperacion_Code: jeTipoOperacion_Code,
+                                vendorId: vendorId,
+                                vendorRFC: vendorRFC,
+                                vendorTaxId: '',
+                                vendorTipoTercero: vendorTipoTercero,
+                                vendorTipoTercero_Text: vendorTipoTercero_text,
+                                vendorTipoTercero_Code: vendorTipoTercero_Code,
+                                vendorNombreExtranjero: '',
+                                vendorPaisResidencia: '',
+                                vendorPaisResidencia_Text: '',
+                                vendorPaisResidencia_Code: '',
+                                vendorNacionalidad: '',
+                                taxes: [taxObj],
+                                payments: {
+                                    pago_imaginario:{
+                                        paymentId: jeInternalId,
+                                        vendorbillId: jeInternalId,
+                                        vendorbillName: 'Pago Auxiliar',
+                                        paymentAmountApply: 100
+                                    }
+                                }
+                            }
+                            log.debug({ title:'jeObj', details:jeObj });
+                            journalEntriesFound.push(jeObj);
+                        }else{
+                            journalEntriesFound[jeFound].taxes.push(taxObj);
+                        }
+                    });
+                });
+                log.debug({ title:'journalEntriesFound', details:journalEntriesFound });
+                var jeFoundClear = {};
+                journalEntriesFound.forEach((element, index) => {
+                    // log.debug({ title:'element: ' + index, details:element });
+                    let identify = 'JE' + '_' + element.transaccionInternalId + '_' + element.vendorRFC + '_' + element.transaccionTipoOperacion + '_' + element.vendorId;
+                    if (!jeFoundClear.hasOwnProperty(identify)) {
+                        jeFoundClear[identify] = element;   
+                    }
+                });
+                response.success = true;
+                response.data = jeFoundClear;
+            }else{
+                response.success = true;
+            }
+        } catch (error) {
+            log.error({ title:'extractJournalEntries', details:error });
+            response.success = false;
+            response.error = error;
+        }
+        return response;
+    }
+
+    function getJEDevoluciones(values) {
+        const response = { success: false, error: '', total: 0};
+        try {
+            // log.debug({ title:'values', details:values });
+            values.forEach((element, index) => {
+                let transaccion = JSON.parse(element);
+                // log.debug({ title:'values_element: ' + index, details:transaccion });
+                if (transaccion.hasOwnProperty('isJournalEntry') == true) {
+                    const taxes = transaccion.taxes;
+                    // log.debug({ title:'taxes', details:taxes });
+                    taxes.forEach((tax, tax_index) => {
+                        // log.debug({ title:'tax: ' + tax_index, details:tax });
+                        let hasDevolucion = tax.hasOwnProperty('isDevolucion');
+                        if (hasDevolucion == true) {
+                            let isDevolucion = tax.isDevolucion;
+                            if (isDevolucion == true) {
+                                // log.debug({ title:'taxDevolucion: ' + tax_index, details:tax });
+                                response.total = (response.total*1) + (tax.taxBasis*1)
+                            }
+                        }
+                    });
+                }
+            });
+            response.success = true;
+        } catch (error) {
+            log.error({ title:'getJEDevoluciones', details:error });
             response.success = false;
             response.error = error;
         }
