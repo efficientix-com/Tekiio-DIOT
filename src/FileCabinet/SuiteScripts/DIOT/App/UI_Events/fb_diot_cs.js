@@ -53,7 +53,6 @@ function(record, url, currentRecord, message, search, values) {
         }
 
     }
-
     function actualizarPantalla(){
         console.log('entra a funcin de actualizar');
         location.reload();
@@ -80,7 +79,8 @@ function(record, url, currentRecord, message, search, values) {
                     type: RECORD_INFO.DIOT_RECORD.ID,
                     id: origin,
                     values: {
-                        [RECORD_INFO.DIOT_RECORD.FIELDS.STATUS] : 1
+                        [RECORD_INFO.DIOT_RECORD.FIELDS.STATUS] : 1,
+                        [RECORD_INFO.DIOT_RECORD.FIELDS.MESSAGE]:''
                     }
                 });
             }
@@ -143,7 +143,7 @@ function(record, url, currentRecord, message, search, values) {
         }
     }
     
-
+    
     return {
         pageInit: pageInit,
         actualizarPantalla:actualizarPantalla,

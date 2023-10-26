@@ -1,18 +1,22 @@
 <customlist scriptid="customlist_fb_lista_guardado_diot">
   <description></description>
   <isinactive>F</isinactive>
+  <ismatrixoption>F</ismatrixoption>
   <isordered>T</isordered>
   <name>Tipo de guardado DIOT</name>
   <customvalues>
     <customvalue scriptid="val_616602_t2220309_459">
+      <abbreviation>S</abbreviation>
       <isinactive>F</isinactive>
       <value>Subsidiaria</value>
     </customvalue>
     <customvalue scriptid="val_616603_t2220309_610">
+      <abbreviation>P</abbreviation>
       <isinactive>F</isinactive>
       <value>Periodo</value>
     </customvalue>
     <customvalue scriptid="val_616604_t2220309_998">
+      <abbreviation>S</abbreviation>
       <isinactive>F</isinactive>
       <value>Subsidiaria y Periodo</value>
     </customvalue>

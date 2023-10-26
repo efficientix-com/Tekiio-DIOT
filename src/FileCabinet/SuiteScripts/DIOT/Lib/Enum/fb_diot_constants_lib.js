@@ -251,6 +251,7 @@ define([],function(){
     RECORD_INFO.DIOT_RECORD.FIELDS.STATUS = 'custrecord_fb_estado_diot';
     RECORD_INFO.DIOT_RECORD.FIELDS.PERCENTAGE = 'custrecord_fb_porcentaje_diot';
     RECORD_INFO.DIOT_RECORD.FIELDS.ERROR = 'custrecord_fb_errores_diot';
+    RECORD_INFO.DIOT_RECORD.FIELDS.MESSAGE = 'custrecord_fb_diot_mensaje';
     RECORD_INFO.DIOT_RECORD.FIELDS.TASK_ID = 'custrecord_fb_task_id';
     RECORD_INFO.DIOT_RECORD.FIELDS.PROGRESS = 'custrecord_fb_porcentaje_avance';
 
@@ -283,6 +284,7 @@ define([],function(){
     STATUS_LIST_DIOT.BUILDING = 4;
     STATUS_LIST_DIOT.COMPLETE = 5;
     STATUS_LIST_DIOT.ERROR = 6;
+    STATUS_LIST_DIOT.PARTIALLY_COMPLETE = 7;
 
     const LISTS = {};
     LISTS.TIPO_TERCERO = {};

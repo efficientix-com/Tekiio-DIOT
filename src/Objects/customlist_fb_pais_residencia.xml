@@ -1,966 +1,1207 @@
 <customlist scriptid="customlist_fb_pais_residencia">
   <description></description>
   <isinactive>F</isinactive>
+  <ismatrixoption>F</ismatrixoption>
   <isordered>T</isordered>
   <name>Lista País de Residencia</name>
   <customvalues>
     <customvalue scriptid="val_612523_t2220309_788">
+      <abbreviation>A</abbreviation>
       <isinactive>F</isinactive>
       <value>AD - Principado de Andorra</value>
     </customvalue>
     <customvalue scriptid="val_612524_t2220309_966">
+      <abbreviation>A</abbreviation>
       <isinactive>F</isinactive>
       <value>AE - Emiratos Arabes Unidos</value>
     </customvalue>
     <customvalue scriptid="val_612525_t2220309_868">
+      <abbreviation>A</abbreviation>
       <isinactive>F</isinactive>
       <value>AF - Afganistán</value>
     </customvalue>
     <customvalue scriptid="val_612526_t2220309_142">
+      <abbreviation>A</abbreviation>
       <isinactive>F</isinactive>
       <value>AG - Antigua y Barbuda</value>
     </customvalue>
     <customvalue scriptid="val_612527_t2220309_126">
+      <abbreviation>A</abbreviation>
       <isinactive>F</isinactive>
       <value>AI - Isla Anguilla</value>
     </customvalue>
     <customvalue scriptid="val_612528_t2220309_398">
+      <abbreviation>A</abbreviation>
       <isinactive>F</isinactive>
       <value>AL - República de Albania</value>
     </customvalue>
     <customvalue scriptid="val_612529_t2220309_386">
+      <abbreviation>A</abbreviation>
       <isinactive>F</isinactive>
       <value>AN - Antillas Neerlandesas</value>
     </customvalue>
     <customvalue scriptid="val_612530_t2220309_388">
+      <abbreviation>A</abbreviation>
       <isinactive>F</isinactive>
       <value>AO - República de Angola</value>
     </customvalue>
     <customvalue scriptid="val_612531_t2220309_426">
+      <abbreviation>A</abbreviation>
       <isinactive>F</isinactive>
       <value>AQ - Antártica</value>
     </customvalue>
     <customvalue scriptid="val_612532_t2220309_636">
+      <abbreviation>A</abbreviation>
       <isinactive>F</isinactive>
       <value>AR - Argentina</value>
     </customvalue>
     <customvalue scriptid="val_612533_t2220309_400">
+      <abbreviation>A</abbreviation>
       <isinactive>F</isinactive>
       <value>AS - Samoa Americana</value>
     </customvalue>
     <customvalue scriptid="val_612534_t2220309_594">
+      <abbreviation>A</abbreviation>
       <isinactive>F</isinactive>
       <value>AT - Austria</value>
     </customvalue>
     <customvalue scriptid="val_612535_t2220309_480">
+      <abbreviation>A</abbreviation>
       <isinactive>F</isinactive>
       <value>AU - Australia</value>
     </customvalue>
     <customvalue scriptid="val_612536_t2220309_823">
+      <abbreviation>A</abbreviation>
       <isinactive>F</isinactive>
       <value>AW - Aruba</value>
     </customvalue>
     <customvalue scriptid="val_612537_t2220309_859">
+      <abbreviation>A</abbreviation>
       <isinactive>F</isinactive>
       <value>AX - Ascensión</value>
     </customvalue>
     <customvalue scriptid="val_612538_t2220309_683">
+      <abbreviation>A</abbreviation>
       <isinactive>F</isinactive>
       <value>AZ - Islas Azores</value>
     </customvalue>
     <customvalue scriptid="val_612539_t2220309_966">
+      <abbreviation>B</abbreviation>
       <isinactive>F</isinactive>
       <value>BB - Barbados</value>
     </customvalue>
     <customvalue scriptid="val_612540_t2220309_357">
+      <abbreviation>B</abbreviation>
       <isinactive>F</isinactive>
       <value>BD - Bangladesh</value>
     </customvalue>
     <customvalue scriptid="val_612541_t2220309_764">
+      <abbreviation>B</abbreviation>
       <isinactive>F</isinactive>
       <value>BE - Bélgica</value>
     </customvalue>
     <customvalue scriptid="val_612542_t2220309_486">
+      <abbreviation>B</abbreviation>
       <isinactive>F</isinactive>
       <value>BF - Burkina Faso</value>
     </customvalue>
     <customvalue scriptid="val_612543_t2220309_887">
+      <abbreviation>B</abbreviation>
       <isinactive>F</isinactive>
       <value>BG - Bulgaria</value>
     </customvalue>
     <customvalue scriptid="val_612544_t2220309_470">
+      <abbreviation>B</abbreviation>
       <isinactive>F</isinactive>
       <value>BH - Estado de Bahrein</value>
     </customvalue>
     <customvalue scriptid="val_612545_t2220309_161">
+      <abbreviation>B</abbreviation>
       <isinactive>F</isinactive>
       <value>BI - Burundi</value>
     </customvalue>
     <customvalue scriptid="val_612546_t2220309_239">
+      <abbreviation>B</abbreviation>
       <isinactive>F</isinactive>
       <value>BJ - Benin</value>
     </customvalue>
     <customvalue scriptid="val_612547_t2220309_798">
+      <abbreviation>B</abbreviation>
       <isinactive>F</isinactive>
       <value>BL - Belice</value>
     </customvalue>
     <customvalue scriptid="val_612548_t2220309_368">
+      <abbreviation>B</abbreviation>
       <isinactive>F</isinactive>
       <value>BM - Bermudas</value>
     </customvalue>
     <customvalue scriptid="val_612549_t2220309_916">
+      <abbreviation>B</abbreviation>
       <isinactive>F</isinactive>
       <value>BN - Brunei Darussalam</value>
     </customvalue>
     <customvalue scriptid="val_612550_t2220309_804">
+      <abbreviation>B</abbreviation>
       <isinactive>F</isinactive>
       <value>BO - Bolivia</value>
     </customvalue>
     <customvalue scriptid="val_612551_t2220309_952">
+      <abbreviation>B</abbreviation>
       <isinactive>F</isinactive>
       <value>BR - Brasil</value>
     </customvalue>
     <customvalue scriptid="val_612552_t2220309_580">
+      <abbreviation>B</abbreviation>
       <isinactive>F</isinactive>
       <value>BS - Commonwealth de las Bahamas</value>
     </customvalue>
     <customvalue scriptid="val_612553_t2220309_502">
+      <abbreviation>B</abbreviation>
       <isinactive>F</isinactive>
       <value>BT - Buthan</value>
     </customvalue>
     <customvalue scriptid="val_612554_t2220309_430">
+      <abbreviation>B</abbreviation>
       <isinactive>F</isinactive>
       <value>BU - Burma</value>
     </customvalue>
     <customvalue scriptid="val_612555_t2220309_570">
+      <abbreviation>B</abbreviation>
       <isinactive>F</isinactive>
       <value>BV - Isla Bouvet</value>
     </customvalue>
     <customvalue scriptid="val_612556_t2220309_339">
+      <abbreviation>B</abbreviation>
       <isinactive>F</isinactive>
       <value>BW - Botswana</value>
     </customvalue>
     <customvalue scriptid="val_612557_t2220309_468">
+      <abbreviation>B</abbreviation>
       <isinactive>F</isinactive>
       <value>BY - Bielorrusia</value>
     </customvalue>
     <customvalue scriptid="val_612558_t2220309_642">
+      <abbreviation>C</abbreviation>
       <isinactive>F</isinactive>
       <value>CA - Canadá</value>
     </customvalue>
     <customvalue scriptid="val_612559_t2220309_567">
+      <abbreviation>C</abbreviation>
       <isinactive>F</isinactive>
       <value>CC - Isla de Cocos o Kelling</value>
     </customvalue>
     <customvalue scriptid="val_612560_t2220309_263">
+      <abbreviation>C</abbreviation>
       <isinactive>F</isinactive>
       <value>CD - Islas Canarias</value>
     </customvalue>
     <customvalue scriptid="val_612561_t2220309_362">
+      <abbreviation>C</abbreviation>
       <isinactive>F</isinactive>
       <value>CE - Isla de Christmas</value>
     </customvalue>
     <customvalue scriptid="val_612562_t2220309_236">
+      <abbreviation>C</abbreviation>
       <isinactive>F</isinactive>
       <value>CF - República Centro Africana</value>
     </customvalue>
     <customvalue scriptid="val_612563_t2220309_158">
+      <abbreviation>C</abbreviation>
       <isinactive>F</isinactive>
       <value>CG - Congo</value>
     </customvalue>
     <customvalue scriptid="val_612564_t2220309_767">
+      <abbreviation>C</abbreviation>
       <isinactive>F</isinactive>
       <value>CH - Suiza</value>
     </customvalue>
     <customvalue scriptid="val_612565_t2220309_715">
+      <abbreviation>C</abbreviation>
       <isinactive>F</isinactive>
       <value>CI - Costa de Marfil</value>
     </customvalue>
     <customvalue scriptid="val_612566_t2220309_155">
+      <abbreviation>C</abbreviation>
       <isinactive>F</isinactive>
       <value>CK - Islas Cook</value>
     </customvalue>
     <customvalue scriptid="val_612567_t2220309_170">
+      <abbreviation>C</abbreviation>
       <isinactive>F</isinactive>
       <value>CL - Chile</value>
     </customvalue>
     <customvalue scriptid="val_612568_t2220309_100">
+      <abbreviation>C</abbreviation>
       <isinactive>F</isinactive>
       <value>CM - Camerún</value>
     </customvalue>
     <customvalue scriptid="val_612569_t2220309_759">
+      <abbreviation>C</abbreviation>
       <isinactive>F</isinactive>
       <value>CN - China</value>
     </customvalue>
     <customvalue scriptid="val_612570_t2220309_378">
+      <abbreviation>C</abbreviation>
       <isinactive>F</isinactive>
       <value>CO - Colombia</value>
     </customvalue>
     <customvalue scriptid="val_612571_t2220309_492">
+      <abbreviation>C</abbreviation>
       <isinactive>F</isinactive>
       <value>CP - Campione D&apos;Italia</value>
     </customvalue>
     <customvalue scriptid="val_612572_t2220309_806">
+      <abbreviation>C</abbreviation>
       <isinactive>F</isinactive>
       <value>CR - República de Costa Rica</value>
     </customvalue>
     <customvalue scriptid="val_612573_t2220309_234">
+      <abbreviation>C</abbreviation>
       <isinactive>F</isinactive>
       <value>CS - República Checa y República Eslovaca</value>
     </customvalue>
     <customvalue scriptid="val_612574_t2220309_754">
+      <abbreviation>C</abbreviation>
       <isinactive>F</isinactive>
       <value>CU - Cuba</value>
     </customvalue>
     <customvalue scriptid="val_612575_t2220309_695">
+      <abbreviation>C</abbreviation>
       <isinactive>F</isinactive>
       <value>CV - República de Cabo Verde</value>
     </customvalue>
     <customvalue scriptid="val_612576_t2220309_140">
+      <abbreviation>C</abbreviation>
       <isinactive>F</isinactive>
       <value>CX - Isla de Navidad</value>
     </customvalue>
     <customvalue scriptid="val_612577_t2220309_951">
+      <abbreviation>C</abbreviation>
       <isinactive>F</isinactive>
       <value>CY - República de Chipre</value>
     </customvalue>
     <customvalue scriptid="val_612578_t2220309_448">
+      <abbreviation>D</abbreviation>
       <isinactive>F</isinactive>
       <value>DD - Alemania</value>
     </customvalue>
     <customvalue scriptid="val_612579_t2220309_882">
+      <abbreviation>D</abbreviation>
       <isinactive>F</isinactive>
       <value>DJ - República de Djibouti</value>
     </customvalue>
     <customvalue scriptid="val_612580_t2220309_504">
+      <abbreviation>D</abbreviation>
       <isinactive>F</isinactive>
       <value>DK - Dinamarca</value>
     </customvalue>
     <customvalue scriptid="val_612581_t2220309_214">
+      <abbreviation>D</abbreviation>
       <isinactive>F</isinactive>
       <value>DM - República Dominicana</value>
     </customvalue>
     <customvalue scriptid="val_612582_t2220309_912">
+      <abbreviation>D</abbreviation>
       <isinactive>F</isinactive>
       <value>DN - Commonwealth de Dominica</value>
     </customvalue>
     <customvalue scriptid="val_612583_t2220309_493">
+      <abbreviation>D</abbreviation>
       <isinactive>F</isinactive>
       <value>DZ - Argelia</value>
     </customvalue>
     <customvalue scriptid="val_612584_t2220309_317">
+      <abbreviation>E</abbreviation>
       <isinactive>F</isinactive>
       <value>EC - Ecuador</value>
     </customvalue>
     <customvalue scriptid="val_612585_t2220309_592">
+      <abbreviation>E</abbreviation>
       <isinactive>F</isinactive>
       <value>EG - Egipto</value>
     </customvalue>
     <customvalue scriptid="val_612586_t2220309_671">
+      <abbreviation>E</abbreviation>
       <isinactive>F</isinactive>
       <value>EH - Sahara del Oeste</value>
     </customvalue>
     <customvalue scriptid="val_612587_t2220309_715">
+      <abbreviation>E</abbreviation>
       <isinactive>F</isinactive>
       <value>EO - Estado Independiente de Samoa Occidental</value>
     </customvalue>
     <customvalue scriptid="val_612588_t2220309_892">
+      <abbreviation>E</abbreviation>
       <isinactive>F</isinactive>
       <value>ES - España</value>
     </customvalue>
     <customvalue scriptid="val_612589_t2220309_516">
+      <abbreviation>E</abbreviation>
       <isinactive>F</isinactive>
       <value>ET - Etiopía</value>
     </customvalue>
     <customvalue scriptid="val_612590_t2220309_545">
+      <abbreviation>F</abbreviation>
       <isinactive>F</isinactive>
       <value>FI - Finlandia</value>
     </customvalue>
     <customvalue scriptid="val_612591_t2220309_624">
+      <abbreviation>F</abbreviation>
       <isinactive>F</isinactive>
       <value>FJ - Fiji</value>
     </customvalue>
     <customvalue scriptid="val_612592_t2220309_955">
+      <abbreviation>F</abbreviation>
       <isinactive>F</isinactive>
       <value>FK - Islas Malvinas</value>
     </customvalue>
     <customvalue scriptid="val_612593_t2220309_428">
+      <abbreviation>F</abbreviation>
       <isinactive>F</isinactive>
       <value>FM - Micronesia</value>
     </customvalue>
     <customvalue scriptid="val_612594_t2220309_929">
+      <abbreviation>F</abbreviation>
       <isinactive>F</isinactive>
       <value>FO - Islas Faroe</value>
     </customvalue>
     <customvalue scriptid="val_612595_t2220309_186">
+      <abbreviation>F</abbreviation>
       <isinactive>F</isinactive>
       <value>FR - Francia</value>
     </customvalue>
     <customvalue scriptid="val_612596_t2220309_384">
+      <abbreviation>G</abbreviation>
       <isinactive>F</isinactive>
       <value>GA - Gabón</value>
     </customvalue>
     <customvalue scriptid="val_612597_t2220309_303">
+      <abbreviation>G</abbreviation>
       <isinactive>F</isinactive>
       <value>GB - Gran Bretaña (Reino Unido)</value>
     </customvalue>
     <customvalue scriptid="val_612598_t2220309_998">
+      <abbreviation>G</abbreviation>
       <isinactive>F</isinactive>
       <value>GD - Granada</value>
     </customvalue>
     <customvalue scriptid="val_612599_t2220309_948">
+      <abbreviation>G</abbreviation>
       <isinactive>F</isinactive>
       <value>GF - Guyana Francesa</value>
     </customvalue>
     <customvalue scriptid="val_612600_t2220309_658">
+      <abbreviation>G</abbreviation>
       <isinactive>F</isinactive>
       <value>GH - Ghana</value>
     </customvalue>
     <customvalue scriptid="val_612601_t2220309_703">
+      <abbreviation>G</abbreviation>
       <isinactive>F</isinactive>
       <value>GI - Gibraltar</value>
     </customvalue>
     <customvalue scriptid="val_612602_t2220309_327">
+      <abbreviation>G</abbreviation>
       <isinactive>F</isinactive>
       <value>GJ - Groenlandia</value>
     </customvalue>
     <customvalue scriptid="val_612603_t2220309_501">
+      <abbreviation>G</abbreviation>
       <isinactive>F</isinactive>
       <value>GM - Gambia</value>
     </customvalue>
     <customvalue scriptid="val_612604_t2220309_675">
+      <abbreviation>G</abbreviation>
       <isinactive>F</isinactive>
       <value>GN - Guinea</value>
     </customvalue>
     <customvalue scriptid="val_612605_t2220309_831">
+      <abbreviation>G</abbreviation>
       <isinactive>F</isinactive>
       <value>GP - Guadalupe</value>
     </customvalue>
     <customvalue scriptid="val_612606_t2220309_764">
+      <abbreviation>G</abbreviation>
       <isinactive>F</isinactive>
       <value>GQ - Guinea Ecuatorial</value>
     </customvalue>
     <customvalue scriptid="val_612607_t2220309_156">
+      <abbreviation>G</abbreviation>
       <isinactive>F</isinactive>
       <value>GR - Grecia</value>
     </customvalue>
     <customvalue scriptid="val_612608_t2220309_784">
+      <abbreviation>G</abbreviation>
       <isinactive>F</isinactive>
       <value>GT - Guatemala</value>
     </customvalue>
     <customvalue scriptid="val_612609_t2220309_890">
+      <abbreviation>G</abbreviation>
       <isinactive>F</isinactive>
       <value>GU - Guam</value>
     </customvalue>
     <customvalue scriptid="val_612610_t2220309_593">
+      <abbreviation>G</abbreviation>
       <isinactive>F</isinactive>
       <value>GW - Guinea Bissau</value>
     </customvalue>
     <customvalue scriptid="val_612611_t2220309_743">
+      <abbreviation>G</abbreviation>
       <isinactive>F</isinactive>
       <value>GY - República de Guyana</value>
     </customvalue>
     <customvalue scriptid="val_612612_t2220309_101">
+      <abbreviation>G</abbreviation>
       <isinactive>F</isinactive>
       <value>GZ - Islas de Guernesey, Jersey, Alderney, Isla Great Sark, Herm, Little Sark, Berchou, Jethou, Lihou (Islas del Canal)</value>
     </customvalue>
     <customvalue scriptid="val_612613_t2220309_212">
+      <abbreviation>H</abbreviation>
       <isinactive>F</isinactive>
       <value>HK - Hong Kong</value>
     </customvalue>
     <customvalue scriptid="val_612614_t2220309_846">
+      <abbreviation>H</abbreviation>
       <isinactive>F</isinactive>
       <value>HM - Islas Heard and Mc Donald</value>
     </customvalue>
     <customvalue scriptid="val_612615_t2220309_993">
+      <abbreviation>H</abbreviation>
       <isinactive>F</isinactive>
       <value>HN - República de Honduras</value>
     </customvalue>
     <customvalue scriptid="val_612616_t2220309_224">
+      <abbreviation>H</abbreviation>
       <isinactive>F</isinactive>
       <value>HT - Haití</value>
     </customvalue>
     <customvalue scriptid="val_612617_t2220309_315">
+      <abbreviation>H</abbreviation>
       <isinactive>F</isinactive>
       <value>HU - Hungría</value>
     </customvalue>
     <customvalue scriptid="val_612618_t2220309_164">
+      <abbreviation>I</abbreviation>
       <isinactive>F</isinactive>
       <value>ID - Indonesia</value>
     </customvalue>
     <customvalue scriptid="val_612619_t2220309_742">
+      <abbreviation>I</abbreviation>
       <isinactive>F</isinactive>
       <value>IE - Irlanda</value>
     </customvalue>
     <customvalue scriptid="val_612620_t2220309_134">
+      <abbreviation>I</abbreviation>
       <isinactive>F</isinactive>
       <value>IH - Isla del Hombre</value>
     </customvalue>
     <customvalue scriptid="val_612621_t2220309_399">
+      <abbreviation>I</abbreviation>
       <isinactive>F</isinactive>
       <value>IL - Israel</value>
     </customvalue>
     <customvalue scriptid="val_612622_t2220309_459">
+      <abbreviation>I</abbreviation>
       <isinactive>F</isinactive>
       <value>IN - India</value>
     </customvalue>
     <customvalue scriptid="val_612623_t2220309_863">
+      <abbreviation>I</abbreviation>
       <isinactive>F</isinactive>
       <value>IO - Territorio Británico en el Océano Indico</value>
     </customvalue>
     <customvalue scriptid="val_612624_t2220309_416">
+      <abbreviation>I</abbreviation>
       <isinactive>F</isinactive>
       <value>IP - Islas Pacífico</value>
     </customvalue>
     <customvalue scriptid="val_612625_t2220309_132">
+      <abbreviation>I</abbreviation>
       <isinactive>F</isinactive>
       <value>IQ - Iraq</value>
     </customvalue>
     <customvalue scriptid="val_612626_t2220309_465">
+      <abbreviation>I</abbreviation>
       <isinactive>F</isinactive>
       <value>IR - Irán</value>
     </customvalue>
     <customvalue scriptid="val_612627_t2220309_626">
+      <abbreviation>I</abbreviation>
       <isinactive>F</isinactive>
       <value>IS - Islandia</value>
     </customvalue>
     <customvalue scriptid="val_612628_t2220309_523">
+      <abbreviation>I</abbreviation>
       <isinactive>F</isinactive>
       <value>IT - Italia</value>
     </customvalue>
     <customvalue scriptid="val_612629_t2220309_994">
+      <abbreviation>J</abbreviation>
       <isinactive>F</isinactive>
       <value>JM - Jamaica</value>
     </customvalue>
     <customvalue scriptid="val_612630_t2220309_976">
+      <abbreviation>J</abbreviation>
       <isinactive>F</isinactive>
       <value>JO - Reino Hachemita de Jordania</value>
     </customvalue>
     <customvalue scriptid="val_612631_t2220309_484">
+      <abbreviation>J</abbreviation>
       <isinactive>F</isinactive>
       <value>JP - Japón</value>
     </customvalue>
     <customvalue scriptid="val_612632_t2220309_588">
+      <abbreviation>K</abbreviation>
       <isinactive>F</isinactive>
       <value>KE - Kenia</value>
     </customvalue>
     <customvalue scriptid="val_612633_t2220309_668">
+      <abbreviation>K</abbreviation>
       <isinactive>F</isinactive>
       <value>KH - Campuchea Democrática</value>
     </customvalue>
     <customvalue scriptid="val_612634_t2220309_532">
+      <abbreviation>K</abbreviation>
       <isinactive>F</isinactive>
       <value>KI - Kiribati</value>
     </customvalue>
     <customvalue scriptid="val_612635_t2220309_990">
+      <abbreviation>K</abbreviation>
       <isinactive>F</isinactive>
       <value>KM - Comoros</value>
     </customvalue>
     <customvalue scriptid="val_612636_t2220309_701">
+      <abbreviation>K</abbreviation>
       <isinactive>F</isinactive>
       <value>KN - San Kitts</value>
     </customvalue>
     <customvalue scriptid="val_612637_t2220309_535">
+      <abbreviation>K</abbreviation>
       <isinactive>F</isinactive>
       <value>KP - República Democrática de Corea</value>
     </customvalue>
     <customvalue scriptid="val_612638_t2220309_722">
+      <abbreviation>K</abbreviation>
       <isinactive>F</isinactive>
       <value>KR - República de Corea</value>
     </customvalue>
     <customvalue scriptid="val_612639_t2220309_671">
+      <abbreviation>K</abbreviation>
       <isinactive>F</isinactive>
       <value>KW - Estado de Kuwait</value>
     </customvalue>
     <customvalue scriptid="val_612640_t2220309_891">
+      <abbreviation>K</abbreviation>
       <isinactive>F</isinactive>
       <value>KY - Islas Caimán</value>
     </customvalue>
     <customvalue scriptid="val_612641_t2220309_262">
+      <abbreviation>L</abbreviation>
       <isinactive>F</isinactive>
       <value>LA - República Democrática de Laos</value>
     </customvalue>
     <customvalue scriptid="val_612642_t2220309_357">
+      <abbreviation>L</abbreviation>
       <isinactive>F</isinactive>
       <value>LB - Líbano</value>
     </customvalue>
     <customvalue scriptid="val_612643_t2220309_210">
+      <abbreviation>L</abbreviation>
       <isinactive>F</isinactive>
       <value>LC - Santa Lucía</value>
     </customvalue>
     <customvalue scriptid="val_612644_t2220309_936">
+      <abbreviation>L</abbreviation>
       <isinactive>F</isinactive>
       <value>LI - Principado de Liechtenstein</value>
     </customvalue>
     <customvalue scriptid="val_612645_t2220309_846">
+      <abbreviation>L</abbreviation>
       <isinactive>F</isinactive>
       <value>LK - República Socialista Democrática de Sri Lanka</value>
     </customvalue>
     <customvalue scriptid="val_612646_t2220309_520">
+      <abbreviation>L</abbreviation>
       <isinactive>F</isinactive>
       <value>LN - Labuán</value>
     </customvalue>
     <customvalue scriptid="val_612647_t2220309_431">
+      <abbreviation>L</abbreviation>
       <isinactive>F</isinactive>
       <value>LR - República de Liberia</value>
     </customvalue>
     <customvalue scriptid="val_612648_t2220309_306">
+      <abbreviation>L</abbreviation>
       <isinactive>F</isinactive>
       <value>LS - Lesotho</value>
     </customvalue>
     <customvalue scriptid="val_612649_t2220309_523">
+      <abbreviation>L</abbreviation>
       <isinactive>F</isinactive>
       <value>LU - Gran Ducado de Luxemburgo</value>
     </customvalue>
     <customvalue scriptid="val_612650_t2220309_941">
+      <abbreviation>L</abbreviation>
       <isinactive>F</isinactive>
       <value>LY - Libia</value>
     </customvalue>
     <customvalue scriptid="val_612651_t2220309_887">
+      <abbreviation>M</abbreviation>
       <isinactive>F</isinactive>
       <value>MA - Marruecos</value>
     </customvalue>
     <customvalue scriptid="val_612652_t2220309_384">
+      <abbreviation>M</abbreviation>
       <isinactive>F</isinactive>
       <value>MC - Principado de Mónaco</value>
     </customvalue>
     <customvalue scriptid="val_612653_t2220309_546">
+      <abbreviation>M</abbreviation>
       <isinactive>F</isinactive>
       <value>MD - Madeira</value>
     </customvalue>
     <customvalue scriptid="val_612654_t2220309_300">
+      <abbreviation>M</abbreviation>
       <isinactive>F</isinactive>
       <value>MG - Madagascar</value>
     </customvalue>
     <customvalue scriptid="val_612655_t2220309_977">
+      <abbreviation>M</abbreviation>
       <isinactive>F</isinactive>
       <value>MH - República de las Islas Marshall</value>
     </customvalue>
     <customvalue scriptid="val_612656_t2220309_960">
+      <abbreviation>M</abbreviation>
       <isinactive>F</isinactive>
       <value>ML - Malí</value>
     </customvalue>
     <customvalue scriptid="val_612657_t2220309_385">
+      <abbreviation>M</abbreviation>
       <isinactive>F</isinactive>
       <value>MN - Mongolia</value>
     </customvalue>
     <customvalue scriptid="val_612658_t2220309_115">
+      <abbreviation>M</abbreviation>
       <isinactive>F</isinactive>
       <value>MO - Macao</value>
     </customvalue>
     <customvalue scriptid="val_612659_t2220309_448">
+      <abbreviation>M</abbreviation>
       <isinactive>F</isinactive>
       <value>MP - Islas Marianas del Noreste</value>
     </customvalue>
     <customvalue scriptid="val_612660_t2220309_357">
+      <abbreviation>M</abbreviation>
       <isinactive>F</isinactive>
       <value>MQ - Martinica</value>
     </customvalue>
     <customvalue scriptid="val_612661_t2220309_870">
+      <abbreviation>M</abbreviation>
       <isinactive>F</isinactive>
       <value>MR - Mauritania</value>
     </customvalue>
     <customvalue scriptid="val_612662_t2220309_925">
+      <abbreviation>M</abbreviation>
       <isinactive>F</isinactive>
       <value>MS - Monserrat</value>
     </customvalue>
     <customvalue scriptid="val_612663_t2220309_442">
+      <abbreviation>M</abbreviation>
       <isinactive>F</isinactive>
       <value>MT - Malta</value>
     </customvalue>
     <customvalue scriptid="val_612664_t2220309_257">
+      <abbreviation>M</abbreviation>
       <isinactive>F</isinactive>
       <value>MU - República de Mauricio</value>
     </customvalue>
     <customvalue scriptid="val_612665_t2220309_846">
+      <abbreviation>M</abbreviation>
       <isinactive>F</isinactive>
       <value>MV - República de Maldivas</value>
     </customvalue>
     <customvalue scriptid="val_612666_t2220309_461">
+      <abbreviation>M</abbreviation>
       <isinactive>F</isinactive>
       <value>MW - Malawi</value>
     </customvalue>
     <customvalue scriptid="val_612667_t2220309_435">
+      <abbreviation>M</abbreviation>
       <isinactive>F</isinactive>
       <value>MY - Malasia</value>
     </customvalue>
     <customvalue scriptid="val_612668_t2220309_713">
+      <abbreviation>M</abbreviation>
       <isinactive>F</isinactive>
       <value>MZ - Mozambique</value>
     </customvalue>
     <customvalue scriptid="val_612669_t2220309_399">
+      <abbreviation>N</abbreviation>
       <isinactive>F</isinactive>
       <value>NA - República de Namibia</value>
     </customvalue>
     <customvalue scriptid="val_612670_t2220309_817">
+      <abbreviation>N</abbreviation>
       <isinactive>F</isinactive>
       <value>NC - Nueva Caledonia</value>
     </customvalue>
     <customvalue scriptid="val_612671_t2220309_963">
+      <abbreviation>N</abbreviation>
       <isinactive>F</isinactive>
       <value>NE - Níger</value>
     </customvalue>
     <customvalue scriptid="val_612672_t2220309_467">
+      <abbreviation>N</abbreviation>
       <isinactive>F</isinactive>
       <value>NF - Isla de Norfolk</value>
     </customvalue>
     <customvalue scriptid="val_612673_t2220309_374">
+      <abbreviation>N</abbreviation>
       <isinactive>F</isinactive>
       <value>NG - Nigeria</value>
     </customvalue>
     <customvalue scriptid="val_612674_t2220309_721">
+      <abbreviation>N</abbreviation>
       <isinactive>F</isinactive>
       <value>NI - Nicaragua</value>
     </customvalue>
     <customvalue scriptid="val_612675_t2220309_149">
+      <abbreviation>N</abbreviation>
       <isinactive>F</isinactive>
       <value>NL - Holanda</value>
     </customvalue>
     <customvalue scriptid="val_612676_t2220309_482">
+      <abbreviation>N</abbreviation>
       <isinactive>F</isinactive>
       <value>NO - Noruega</value>
     </customvalue>
     <customvalue scriptid="val_612677_t2220309_846">
+      <abbreviation>N</abbreviation>
       <isinactive>F</isinactive>
       <value>NP - Nepal</value>
     </customvalue>
     <customvalue scriptid="val_612678_t2220309_275">
+      <abbreviation>N</abbreviation>
       <isinactive>F</isinactive>
       <value>NR - República de Nauru</value>
     </customvalue>
     <customvalue scriptid="val_612679_t2220309_925">
+      <abbreviation>N</abbreviation>
       <isinactive>F</isinactive>
       <value>NT - Zona Neutral</value>
     </customvalue>
     <customvalue scriptid="val_612680_t2220309_527">
+      <abbreviation>N</abbreviation>
       <isinactive>F</isinactive>
       <value>NU - Niue</value>
     </customvalue>
     <customvalue scriptid="val_612681_t2220309_750">
+      <abbreviation>N</abbreviation>
       <isinactive>F</isinactive>
       <value>NV - Nevis</value>
     </customvalue>
     <customvalue scriptid="val_612682_t2220309_756">
+      <abbreviation>N</abbreviation>
       <isinactive>F</isinactive>
       <value>NZ - Nueva Zelandia</value>
     </customvalue>
     <customvalue scriptid="val_612683_t2220309_590">
+      <abbreviation>O</abbreviation>
       <isinactive>F</isinactive>
       <value>OM - Sultanía de Omán</value>
     </customvalue>
     <customvalue scriptid="val_612684_t2220309_865">
+      <abbreviation>P</abbreviation>
       <isinactive>F</isinactive>
       <value>PA - República de Panamá</value>
     </customvalue>
     <customvalue scriptid="val_612685_t2220309_791">
+      <abbreviation>P</abbreviation>
       <isinactive>F</isinactive>
       <value>PE - Perú</value>
     </customvalue>
     <customvalue scriptid="val_612686_t2220309_683">
+      <abbreviation>P</abbreviation>
       <isinactive>F</isinactive>
       <value>PF - Polinesia Francesa</value>
     </customvalue>
     <customvalue scriptid="val_612687_t2220309_423">
+      <abbreviation>P</abbreviation>
       <isinactive>F</isinactive>
       <value>PG - Papúa Nueva Guinea</value>
     </customvalue>
     <customvalue scriptid="val_612688_t2220309_647">
+      <abbreviation>P</abbreviation>
       <isinactive>F</isinactive>
       <value>PH - Filipinas</value>
     </customvalue>
     <customvalue scriptid="val_612894_t2220309_286">
+      <abbreviation>P</abbreviation>
       <isinactive>F</isinactive>
       <value>PK - Pakistán</value>
     </customvalue>
     <customvalue scriptid="val_612895_t2220309_865">
+      <abbreviation>P</abbreviation>
       <isinactive>F</isinactive>
       <value>PL - Polonia</value>
     </customvalue>
     <customvalue scriptid="val_612896_t2220309_400">
+      <abbreviation>P</abbreviation>
       <isinactive>F</isinactive>
       <value>PM - Isla de San Pedro y Miguelón</value>
     </customvalue>
     <customvalue scriptid="val_612897_t2220309_417">
+      <abbreviation>P</abbreviation>
       <isinactive>F</isinactive>
       <value>PN - Pitcairn</value>
     </customvalue>
     <customvalue scriptid="val_612898_t2220309_593">
+      <abbreviation>P</abbreviation>
       <isinactive>F</isinactive>
       <value>PR - Estado Libre Asociado de Puerto Rico</value>
     </customvalue>
     <customvalue scriptid="val_612899_t2220309_601">
+      <abbreviation>P</abbreviation>
       <isinactive>F</isinactive>
       <value>PT - Portugal</value>
     </customvalue>
     <customvalue scriptid="val_612900_t2220309_893">
+      <abbreviation>P</abbreviation>
       <isinactive>F</isinactive>
       <value>PU - Patau</value>
     </customvalue>
     <customvalue scriptid="val_612901_t2220309_857">
+      <abbreviation>P</abbreviation>
       <isinactive>F</isinactive>
       <value>PW - Palau</value>
     </customvalue>
     <customvalue scriptid="val_612902_t2220309_990">
+      <abbreviation>P</abbreviation>
       <isinactive>F</isinactive>
       <value>PY - Paraguay</value>
     </customvalue>
     <customvalue scriptid="val_612903_t2220309_909">
+      <abbreviation>Q</abbreviation>
       <isinactive>F</isinactive>
       <value>QA - Estado de Quatar</value>
     </customvalue>
     <customvalue scriptid="val_612904_t2220309_230">
+      <abbreviation>Q</abbreviation>
       <isinactive>F</isinactive>
       <value>QB - Isla Qeshm</value>
     </customvalue>
     <customvalue scriptid="val_612905_t2220309_120">
+      <abbreviation>R</abbreviation>
       <isinactive>F</isinactive>
       <value>RE - Reunión</value>
     </customvalue>
     <customvalue scriptid="val_612906_t2220309_366">
+      <abbreviation>R</abbreviation>
       <isinactive>F</isinactive>
       <value>RO - Rumania</value>
     </customvalue>
     <customvalue scriptid="val_612907_t2220309_571">
+      <abbreviation>R</abbreviation>
       <isinactive>F</isinactive>
       <value>RW - Rhuanda</value>
     </customvalue>
     <customvalue scriptid="val_612908_t2220309_579">
+      <abbreviation>S</abbreviation>
       <isinactive>F</isinactive>
       <value>SA - Arabia Saudita</value>
     </customvalue>
     <customvalue scriptid="val_612909_t2220309_849">
+      <abbreviation>S</abbreviation>
       <isinactive>F</isinactive>
       <value>SB - Islas Salomón</value>
     </customvalue>
     <customvalue scriptid="val_612910_t2220309_415">
+      <abbreviation>S</abbreviation>
       <isinactive>F</isinactive>
       <value>SC - Seychelles Islas</value>
     </customvalue>
     <customvalue scriptid="val_612911_t2220309_909">
+      <abbreviation>S</abbreviation>
       <isinactive>F</isinactive>
       <value>SD - Sudán</value>
     </customvalue>
     <customvalue scriptid="val_612912_t2220309_388">
+      <abbreviation>S</abbreviation>
       <isinactive>F</isinactive>
       <value>SE - Suecia</value>
     </customvalue>
     <customvalue scriptid="val_612913_t2220309_975">
+      <abbreviation>S</abbreviation>
       <isinactive>F</isinactive>
       <value>SG - Singapur</value>
     </customvalue>
     <customvalue scriptid="val_612914_t2220309_352">
+      <abbreviation>S</abbreviation>
       <isinactive>F</isinactive>
       <value>SH - Santa Elena</value>
     </customvalue>
     <customvalue scriptid="val_612915_t2220309_455">
+      <abbreviation>S</abbreviation>
       <isinactive>F</isinactive>
       <value>SI - Archipiélago de Svalbard</value>
     </customvalue>
     <customvalue scriptid="val_612916_t2220309_885">
+      <abbreviation>S</abbreviation>
       <isinactive>F</isinactive>
       <value>SJ - Islas Svalbard and Jan Mayen</value>
     </customvalue>
     <customvalue scriptid="val_612917_t2220309_611">
+      <abbreviation>S</abbreviation>
       <isinactive>F</isinactive>
       <value>SK - Sark</value>
     </customvalue>
     <customvalue scriptid="val_612918_t2220309_516">
+      <abbreviation>S</abbreviation>
       <isinactive>F</isinactive>
       <value>SL - Sierra Leona</value>
     </customvalue>
     <customvalue scriptid="val_612919_t2220309_998">
+      <abbreviation>S</abbreviation>
       <isinactive>F</isinactive>
       <value>SM - Serenísima República de San Marino</value>
     </customvalue>
     <customvalue scriptid="val_612920_t2220309_184">
+      <abbreviation>S</abbreviation>
       <isinactive>F</isinactive>
       <value>SN - Senegal</value>
     </customvalue>
     <customvalue scriptid="val_612921_t2220309_939">
+      <abbreviation>S</abbreviation>
       <isinactive>F</isinactive>
       <value>SO - Somalia</value>
     </customvalue>
     <customvalue scriptid="val_612922_t2220309_828">
+      <abbreviation>S</abbreviation>
       <isinactive>F</isinactive>
       <value>SR - Surinam</value>
     </customvalue>
     <customvalue scriptid="val_612923_t2220309_732">
+      <abbreviation>S</abbreviation>
       <isinactive>F</isinactive>
       <value>ST - Sao Tome and Príncipe</value>
     </customvalue>
     <customvalue scriptid="val_612924_t2220309_726">
+      <abbreviation>S</abbreviation>
       <isinactive>F</isinactive>
       <value>SU - Países de la Ex-U.R.S.S., excepto Ucrania y Bielorusia</value>
     </customvalue>
     <customvalue scriptid="val_612925_t2220309_294">
+      <abbreviation>S</abbreviation>
       <isinactive>F</isinactive>
       <value>SV - El Salvador</value>
     </customvalue>
     <customvalue scriptid="val_612926_t2220309_447">
+      <abbreviation>S</abbreviation>
       <isinactive>F</isinactive>
       <value>SW - República de Seychelles</value>
     </customvalue>
     <customvalue scriptid="val_612927_t2220309_688">
+      <abbreviation>S</abbreviation>
       <isinactive>F</isinactive>
       <value>SY - Siria</value>
     </customvalue>
     <customvalue scriptid="val_612928_t2220309_827">
+      <abbreviation>S</abbreviation>
       <isinactive>F</isinactive>
       <value>SZ - Reino de Swazilandia</value>
     </customvalue>
     <customvalue scriptid="val_612929_t2220309_566">
+      <abbreviation>T</abbreviation>
       <isinactive>F</isinactive>
       <value>TC - Islas Turcas y Caicos</value>
     </customvalue>
     <customvalue scriptid="val_612930_t2220309_936">
+      <abbreviation>T</abbreviation>
       <isinactive>F</isinactive>
       <value>TD - Chad</value>
     </customvalue>
     <customvalue scriptid="val_612931_t2220309_200">
+      <abbreviation>T</abbreviation>
       <isinactive>F</isinactive>
       <value>TF - Territorios Franceses del Sureste</value>
     </customvalue>
     <customvalue scriptid="val_612932_t2220309_543">
+      <abbreviation>T</abbreviation>
       <isinactive>F</isinactive>
       <value>TG - Togo</value>
     </customvalue>
     <customvalue scriptid="val_612933_t2220309_468">
+      <abbreviation>T</abbreviation>
       <isinactive>F</isinactive>
       <value>TH - Thailandia</value>
     </customvalue>
     <customvalue scriptid="val_612934_t2220309_846">
+      <abbreviation>T</abbreviation>
       <isinactive>F</isinactive>
       <value>TK - Tokelau</value>
     </customvalue>
     <customvalue scriptid="val_612935_t2220309_313">
+      <abbreviation>T</abbreviation>
       <isinactive>F</isinactive>
       <value>TN - República de Túnez</value>
     </customvalue>
     <customvalue scriptid="val_612936_t2220309_882">
+      <abbreviation>T</abbreviation>
       <isinactive>F</isinactive>
       <value>TO - Reino de Tonga</value>
     </customvalue>
     <customvalue scriptid="val_612937_t2220309_905">
+      <abbreviation>T</abbreviation>
       <isinactive>F</isinactive>
       <value>TP - Timor Este</value>
     </customvalue>
     <customvalue scriptid="val_612938_t2220309_363">
+      <abbreviation>T</abbreviation>
       <isinactive>F</isinactive>
       <value>TR - Trieste</value>
     </customvalue>
     <customvalue scriptid="val_612939_t2220309_553">
+      <abbreviation>T</abbreviation>
       <isinactive>F</isinactive>
       <value>TS - Tristán Da Cunha</value>
     </customvalue>
     <customvalue scriptid="val_612940_t2220309_926">
+      <abbreviation>T</abbreviation>
       <isinactive>F</isinactive>
       <value>TT - República de Trinidad y Tobago</value>
     </customvalue>
     <customvalue scriptid="val_612941_t2220309_330">
+      <abbreviation>T</abbreviation>
       <isinactive>F</isinactive>
       <value>TU - Turquía</value>
     </customvalue>
     <customvalue scriptid="val_612942_t2220309_386">
+      <abbreviation>T</abbreviation>
       <isinactive>F</isinactive>
       <value>TV - Tuvalu</value>
     </customvalue>
     <customvalue scriptid="val_612943_t2220309_112">
+      <abbreviation>T</abbreviation>
       <isinactive>F</isinactive>
       <value>TW - Taiwán</value>
     </customvalue>
     <customvalue scriptid="val_612944_t2220309_236">
+      <abbreviation>T</abbreviation>
       <isinactive>F</isinactive>
       <value>TZ - Tanzania</value>
     </customvalue>
     <customvalue scriptid="val_612945_t2220309_978">
+      <abbreviation>U</abbreviation>
       <isinactive>F</isinactive>
       <value>UA - Ucrania</value>
     </customvalue>
     <customvalue scriptid="val_612946_t2220309_721">
+      <abbreviation>U</abbreviation>
       <isinactive>F</isinactive>
       <value>UG - Uganda</value>
     </customvalue>
     <customvalue scriptid="val_612947_t2220309_167">
+      <abbreviation>U</abbreviation>
       <isinactive>F</isinactive>
       <value>UM - Islas menores alejadas de los Estados Unidos</value>
     </customvalue>
     <customvalue scriptid="val_612948_t2220309_993">
+      <abbreviation>U</abbreviation>
       <isinactive>F</isinactive>
       <value>US - Estados Unidos de América</value>
     </customvalue>
     <customvalue scriptid="val_612949_t2220309_336">
+      <abbreviation>U</abbreviation>
       <isinactive>F</isinactive>
       <value>UY - República Oriental del Uruguay</value>
     </customvalue>
     <customvalue scriptid="val_612950_t2220309_908">
+      <abbreviation>V</abbreviation>
       <isinactive>F</isinactive>
       <value>VA - El Vaticano</value>
     </customvalue>
     <customvalue scriptid="val_612951_t2220309_543">
+      <abbreviation>V</abbreviation>
       <isinactive>F</isinactive>
       <value>VC - San Vicente y Las Granadinas</value>
     </customvalue>
     <customvalue scriptid="val_612952_t2220309_955">
+      <abbreviation>V</abbreviation>
       <isinactive>F</isinactive>
       <value>VE - Venezuela</value>
     </customvalue>
     <customvalue scriptid="val_612953_t2220309_153">
+      <abbreviation>V</abbreviation>
       <isinactive>F</isinactive>
       <value>VG - Islas Vírgenes Británicas</value>
     </customvalue>
     <customvalue scriptid="val_612954_t2220309_152">
+      <abbreviation>V</abbreviation>
       <isinactive>F</isinactive>
       <value>VI - Islas Vírgenes de Estados Unidos de América</value>
     </customvalue>
     <customvalue scriptid="val_612955_t2220309_298">
+      <abbreviation>V</abbreviation>
       <isinactive>F</isinactive>
       <value>VN - Vietnam</value>
     </customvalue>
     <customvalue scriptid="val_612956_t2220309_102">
+      <abbreviation>V</abbreviation>
       <isinactive>F</isinactive>
       <value>VU - República de Vanuatu</value>
     </customvalue>
     <customvalue scriptid="val_612957_t2220309_943">
+      <abbreviation>W</abbreviation>
       <isinactive>F</isinactive>
       <value>WF - Islas Wallis y Funtuna</value>
     </customvalue>
     <customvalue scriptid="val_612958_t2220309_409">
+      <abbreviation>X</abbreviation>
       <isinactive>F</isinactive>
       <value>XX - Otro</value>
     </customvalue>
     <customvalue scriptid="val_612959_t2220309_728">
+      <abbreviation>Y</abbreviation>
       <isinactive>F</isinactive>
       <value>YD - Yemen Democrática</value>
     </customvalue>
     <customvalue scriptid="val_612960_t2220309_709">
+      <abbreviation>Y</abbreviation>
       <isinactive>F</isinactive>
       <value>YE - República del Yemen</value>
     </customvalue>
     <customvalue scriptid="val_612961_t2220309_236">
+      <abbreviation>Y</abbreviation>
       <isinactive>F</isinactive>
       <value>YU - Países de la Ex-Yugoslavia</value>
     </customvalue>
     <customvalue scriptid="val_612962_t2220309_669">
+      <abbreviation>Z</abbreviation>
       <isinactive>F</isinactive>
       <value>ZA - Sudáfrica</value>
     </customvalue>
     <customvalue scriptid="val_612963_t2220309_291">
+      <abbreviation>Z</abbreviation>
       <isinactive>F</isinactive>
       <value>ZC - Zona Especial Canaria</value>
     </customvalue>
     <customvalue scriptid="val_612964_t2220309_197">
+      <abbreviation>Z</abbreviation>
       <isinactive>F</isinactive>
       <value>ZM - Zambia</value>
     </customvalue>
     <customvalue scriptid="val_612965_t2220309_820">
+      <abbreviation>Z</abbreviation>
       <isinactive>F</isinactive>
       <value>ZO - Zona Libre Ostrava</value>
     </customvalue>
     <customvalue scriptid="val_612966_t2220309_587">
+      <abbreviation>Z</abbreviation>
       <isinactive>F</isinactive>
       <value>ZR - Zaire</value>
     </customvalue>
     <customvalue scriptid="val_612967_t2220309_624">
+      <abbreviation>Z</abbreviation>
       <isinactive>F</isinactive>
       <value>ZW - Zimbawe</value>
     </customvalue>

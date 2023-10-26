@@ -1,18 +1,22 @@
 <customlist scriptid="customlist_fb_diot_tipo_tercero">
   <description></description>
   <isinactive>F</isinactive>
+  <ismatrixoption>F</ismatrixoption>
   <isordered>T</isordered>
   <name>Tipo de Tercero</name>
   <customvalues>
     <customvalue scriptid="val_606902_t2220309_240">
+      <abbreviation>0</abbreviation>
       <isinactive>F</isinactive>
       <value>04 - Proveedor Nacional</value>
     </customvalue>
     <customvalue scriptid="val_606903_t2220309_624">
+      <abbreviation>0</abbreviation>
       <isinactive>F</isinactive>
       <value>05 - Proveedor Extranjero</value>
     </customvalue>
     <customvalue scriptid="val_606904_t2220309_779">
+      <abbreviation>1</abbreviation>
       <isinactive>F</isinactive>
       <value>15 - Proveedor Global</value>
     </customvalue>

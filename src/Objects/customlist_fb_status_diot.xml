@@ -1,32 +1,44 @@
 <customlist scriptid="customlist_fb_status_diot">
   <description></description>
   <isinactive>F</isinactive>
+  <ismatrixoption>F</ismatrixoption>
   <isordered>T</isordered>
   <name>Estados DIOT</name>
   <customvalues>
     <customvalue scriptid="val_621479_t2220309_134">
+      <abbreviation>P</abbreviation>
       <isinactive>F</isinactive>
       <value>Pendiente</value>
     </customvalue>
     <customvalue scriptid="val_621480_t2220309_412">
+      <abbreviation>O</abbreviation>
       <isinactive>F</isinactive>
       <value>Obteniendo Datos</value>
     </customvalue>
     <customvalue scriptid="val_621481_t2220309_654">
+      <abbreviation>V</abbreviation>
       <isinactive>F</isinactive>
       <value>Validando Datos</value>
     </customvalue>
     <customvalue scriptid="val_621482_t2220309_279">
+      <abbreviation>C</abbreviation>
       <isinactive>F</isinactive>
       <value>Construyendo DIOT</value>
     </customvalue>
     <customvalue scriptid="val_621483_t2220309_544">
+      <abbreviation>C</abbreviation>
       <isinactive>F</isinactive>
       <value>Completado</value>
     </customvalue>
     <customvalue scriptid="val_621484_t2220309_192">
+      <abbreviation>E</abbreviation>
       <isinactive>F</isinactive>
       <value>Error</value>
+    </customvalue>
+    <customvalue scriptid="val_256616_t2269267_940">
+      <abbreviation>P</abbreviation>
+      <isinactive>F</isinactive>
+      <value>Parcialmente Completado</value>
     </customvalue>
   </customvalues>
 </customlist>

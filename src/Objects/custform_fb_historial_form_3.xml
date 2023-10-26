@@ -1,16 +1,25 @@
-<entryForm scriptid="custform_fb_diot_form" standard="STANDARDCUSTOMRECORD_FB_DIOTFORM">
-  <name>Standard Historial DIOT Form 2</name>
+<entryForm scriptid="custform_fb_historial_form_3" standard="STANDARDCUSTOMRECORD_FB_DIOTFORM">
+  <name>Standard Historial DIOT Form 3</name>
   <recordType>[scriptid=customrecord_fb_diot]</recordType>
   <inactive>F</inactive>
   <preferred>T</preferred>
   <storedWithRecord>F</storedWithRecord>
   <mainFields>
-    <fieldGroup scriptid="fieldgroup_2_t2220309_640">
+    <fieldGroup scriptid="fieldgroup_2_t2269267_883">
       <label>Información General</label>
       <visible>T</visible>
       <showTitle>T</showTitle>
       <singleColumn>F</singleColumn>
       <fields position="MIDDLE">
+        <field>
+          <id>ISINACTIVE</id>
+          <label>Inactive</label>
+          <visible>T</visible>
+          <mandatory>F</mandatory>
+          <displayType>NORMAL</displayType>
+          <columnBreak>F</columnBreak>
+          <sameRowAsPrevious>F</sameRowAsPrevious>
+        </field>
         <field>
           <id>RECORDID</id>
           <label>ID</label>
@@ -76,7 +85,7 @@
         </field>
       </fields>
     </fieldGroup>
-    <fieldGroup scriptid="fieldgroup_3_t2220309_681">
+    <fieldGroup scriptid="fieldgroup_3_t2269267_922">
       <label>Información del Sistema</label>
       <visible>T</visible>
       <showTitle>T</showTitle>
@@ -110,11 +119,20 @@
           <sameRowAsPrevious>F</sameRowAsPrevious>
         </field>
         <field>
-          <id>ISINACTIVE</id>
-          <label>Inactive</label>
-          <visible>T</visible>
+          <id>CUSTOMFORM</id>
+          <label>Custom Form</label>
+          <visible>F</visible>
+          <mandatory>T</mandatory>
+          <displayType>DISABLED</displayType>
+          <columnBreak>F</columnBreak>
+          <sameRowAsPrevious>F</sameRowAsPrevious>
+        </field>
+        <field>
+          <id>[scriptid=customrecord_fb_diot.custrecord_fb_task_id]</id>
+          <label>Task ID</label>
+          <visible>F</visible>
           <mandatory>F</mandatory>
-          <displayType>NORMAL</displayType>
+          <displayType>DISABLED</displayType>
           <columnBreak>F</columnBreak>
           <sameRowAsPrevious>F</sameRowAsPrevious>
         </field>
@@ -122,15 +140,6 @@
     </fieldGroup>
     <defaultFieldGroup>
       <fields position="MIDDLE">
-        <field>
-          <id>CUSTOMFORM</id>
-          <label>Custom Form</label>
-          <visible>F</visible>
-          <mandatory>T</mandatory>
-          <displayType>NORMAL</displayType>
-          <columnBreak>F</columnBreak>
-          <sameRowAsPrevious>F</sameRowAsPrevious>
-        </field>
         <field>
           <id>NAME</id>
           <label>Name</label>
@@ -149,10 +158,69 @@
           <columnBreak>F</columnBreak>
           <sameRowAsPrevious>F</sameRowAsPrevious>
         </field>
+        <field>
+          <id>[scriptid=customrecord_fb_diot.custrecord_fb_diot_mensaje]</id>
+          <label>Mensaje</label>
+          <visible>T</visible>
+          <mandatory>F</mandatory>
+          <displayType>DISABLED</displayType>
+          <columnBreak>F</columnBreak>
+          <sameRowAsPrevious>F</sameRowAsPrevious>
+        </field>
       </fields>
     </defaultFieldGroup>
   </mainFields>
   <tabs>
+    <tab>
+      <id>[scriptid=customrecord_fb_diot.tab_684_t2220309_518]</id>
+      <label>Errores</label>
+      <visible>T</visible>
+      <fieldGroups>
+        <defaultFieldGroup>
+          <fields position="MIDDLE">
+            <field>
+              <id>[scriptid=customrecord_fb_diot.custrecord_fb_errores_diot]</id>
+              <label>Errores</label>
+              <visible>F</visible>
+              <mandatory>F</mandatory>
+              <displayType>NORMAL</displayType>
+              <columnBreak>F</columnBreak>
+              <sameRowAsPrevious>F</sameRowAsPrevious>
+            </field>
+          </fields>
+        </defaultFieldGroup>
+      </fieldGroups>
+      <subItems>
+        <subList>
+          <id>[scriptid=customrecord_fb_diot.sublist_147_t2269267_443]</id>
+          <label>Errores DIOT</label>
+          <visible>T</visible>
+          <neverEmpty>F</neverEmpty>
+        </subList>
+      </subItems>
+    </tab>
+    <tab>
+      <id>RECORDNOTES</id>
+      <label>Notes</label>
+      <visible>T</visible>
+      <fieldGroups>
+        <defaultFieldGroup/>
+      </fieldGroups>
+      <subItems>
+        <subList>
+          <id>RECORDUSERNOTES</id>
+          <label>User Notes</label>
+          <visible>T</visible>
+          <neverEmpty>F</neverEmpty>
+        </subList>
+        <subList>
+          <id>RECORDSYSTEMNOTES</id>
+          <label>System Notes</label>
+          <visible>T</visible>
+          <neverEmpty>F</neverEmpty>
+        </subList>
+      </subItems>
+    </tab>
     <tab>
       <id>RECORDMEDIA</id>
       <label>Files</label>
@@ -208,73 +276,13 @@
       </subItems>
     </tab>
     <tab>
-      <id>[scriptid=customrecord_fb_diot.tab_684_t2220309_518]</id>
-      <label>Errores DIOT</label>
-      <visible>T</visible>
-      <fieldGroups>
-        <fieldGroup scriptid="fieldgroup_4_t2220309_773">
-          <label>Lista de Errores</label>
-          <visible>T</visible>
-          <showTitle>T</showTitle>
-          <singleColumn>F</singleColumn>
-          <fields position="MIDDLE">
-            <field>
-              <id>[scriptid=customrecord_fb_diot.custrecord_fb_errores_diot]</id>
-              <label>Errores</label>
-              <visible>T</visible>
-              <mandatory>F</mandatory>
-              <displayType>NORMAL</displayType>
-              <columnBreak>F</columnBreak>
-              <sameRowAsPrevious>F</sameRowAsPrevious>
-            </field>
-          </fields>
-        </fieldGroup>
-        <defaultFieldGroup/>
-      </fieldGroups>
-      <subItems/>
-    </tab>
-    <tab>
       <id>RECORDCUSTOM</id>
       <label>Custom</label>
       <visible>T</visible>
       <fieldGroups>
-        <defaultFieldGroup>
-          <fields position="MIDDLE">
-            <field>
-              <id>[scriptid=customrecord_fb_diot.custrecord_fb_task_id]</id>
-              <label>Task ID</label>
-              <visible>T</visible>
-              <mandatory>F</mandatory>
-              <displayType>NORMAL</displayType>
-              <columnBreak>F</columnBreak>
-              <sameRowAsPrevious>F</sameRowAsPrevious>
-            </field>
-          </fields>
-        </defaultFieldGroup>
-      </fieldGroups>
-      <subItems/>
-    </tab>
-    <tab>
-      <id>RECORDNOTES</id>
-      <label>Notes</label>
-      <visible>T</visible>
-      <fieldGroups>
         <defaultFieldGroup/>
       </fieldGroups>
-      <subItems>
-        <subList>
-          <id>RECORDUSERNOTES</id>
-          <label>User Notes</label>
-          <visible>T</visible>
-          <neverEmpty>F</neverEmpty>
-        </subList>
-        <subList>
-          <id>RECORDSYSTEMNOTES</id>
-          <label>System Notes</label>
-          <visible>T</visible>
-          <neverEmpty>F</neverEmpty>
-        </subList>
-      </subItems>
+      <subItems/>
     </tab>
   </tabs>
   <actionbar>

@@ -34,6 +34,7 @@ define(['N/log', 'N/ui/serverWidget', 'N/search', 'N/task', 'N/runtime', '../../
                 response.writePage({
                     pageObject: form
                 });
+
                 switch(parameters.action){
                     case 'ejecuta':
                         generaDIOT(parameters);
@@ -63,6 +64,286 @@ define(['N/log', 'N/ui/serverWidget', 'N/search', 'N/task', 'N/runtime', '../../
             configEntorno.updateDisplayType({
                 displayType: serverWidget.FieldDisplayType.HIDDEN
             });
+            // Modificación de estilos
+            var html_fld = form.addField({
+                id: "custpage_html",
+                label: "html",
+                type: serverWidget.FieldType.INLINEHTML,
+            });
+            html_fld.defaultValue = '';
+            html_fld.defaultValue+=`
+                <script>
+                document.getElementById("${INTERFACE.FORM.BUTTONS.GENERAR.ID}").style.setProperty('color', 'white', 'important');
+                document.getElementById("${INTERFACE.FORM.BUTTONS.GENERAR.ID}").style.setProperty('background-color', '#42d078', 'important');
+                document.getElementById("${INTERFACE.FORM.BUTTONS.GENERAR.ID}").style.setProperty('border', '1px solid #42d078', 'important');
+                document.getElementById("tdbody_${INTERFACE.FORM.BUTTONS.GENERAR.ID}").style.setProperty('border', '1px solid #42d078', 'important');
+                    document.getElementById("tdbody_${INTERFACE.FORM.BUTTONS.GENERAR.ID}").style.setProperty('border-radius', '3px', 'important');
+                    document.getElementById("tdbody_${INTERFACE.FORM.BUTTONS.GENERAR.ID}").style.setProperty('box-shadow', '-1px 3px 20px -3px rgba(0,0,0,0.20)', 'important');
+                </script>
+            `;
+
+            html_fld.defaultValue += '<script>';
+            html_fld.defaultValue += 'console.log("User event is being triggered");';
+            html_fld.defaultValue += `var listener4Events=document.querySelectorAll('.uir-header-buttons [id^="custpage"]');`;
+            html_fld.defaultValue += "for(var i=0;i<listener4Events.length;i++){"
+
+            html_fld.defaultValue += 'listener4Events[i].addEventListener("click", ()=>{';
+
+            html_fld.defaultValue += 'var mascaraDialog=document.getElementsByTagName("body")[0];'
+            html_fld.defaultValue += 'function cargarEstiloDialog(mutations){'
+            html_fld.defaultValue += 'for(let mutationD of mutations){'
+            html_fld.defaultValue += 'if(mutationD.type==="childList"){'
+            html_fld.defaultValue += 'var addedNodeD= mutationD.addedNodes;'
+            html_fld.defaultValue += 'console.log("Detectado de cambios",addedNodeD);'
+            html_fld.defaultValue += 'for(var i=0;i<addedNodeD.length;i++){'
+
+            html_fld.defaultValue += 'var addedNodeClassNameD= addedNodeD[i].className;'
+            html_fld.defaultValue += 'console.log("ClassName",addedNodeClassNameD);'
+            html_fld.defaultValue += 'if(addedNodeClassNameD=="x-window x-layer x-window-default x-border-box x-focus x-window-focus x-window-default-focus"){'
+
+            html_fld.defaultValue += 'console.log("Dialog was triggered");'
+
+            // Código de renderización de dialog
+            html_fld.defaultValue += `var dialog=document.querySelector('[role="dialog"] .uir-message-header');`;
+            html_fld.defaultValue += "if(dialog){"
+            html_fld.defaultValue += `var dialogHeader=document.querySelector('[role="dialog"] .x-window-header-title-default');`;
+            html_fld.defaultValue += `var dialogAll=document.querySelector('[role="dialog"].x-window-default');`;
+            html_fld.defaultValue += `var dialogButton=document.querySelector('[role="dialog"] .uir-message-buttons button');`;
+            html_fld.defaultValue += 'dialog.classList.remove("x-window-header-default");';
+            html_fld.defaultValue += `dialog.style.backgroundColor='white';`;
+            html_fld.defaultValue += "dialog.style.borderTop='10px solid #0077be';"
+            html_fld.defaultValue += "dialog.style.borderRadius='3px';"
+
+            html_fld.defaultValue += `dialogHeader.style.color='#0077be';`;
+
+
+            html_fld.defaultValue += `dialogButton.style.backgroundColor='#0077be';`;
+            html_fld.defaultValue += `dialogButton.style.color='white';`;
+            html_fld.defaultValue += "dialogButton.style.border='2px solid #0077be';"
+
+            html_fld.defaultValue += "dialogAll.style.borderRadius='3px';"
+
+            html_fld.defaultValue += "}"
+            // Fin de código de renderización de dialog
+
+            html_fld.defaultValue += '}'
+            html_fld.defaultValue += '}'
+            html_fld.defaultValue += '}'
+            html_fld.defaultValue += '}'
+            html_fld.defaultValue += '}'
+            html_fld.defaultValue += 'var observadorD=new MutationObserver(cargarEstiloDialog);'
+
+            html_fld.defaultValue += 'observadorD.observe(mascaraDialog,{childList: true});'
+            html_fld.defaultValue += '});';
+            html_fld.defaultValue += '}';
+
+            html_fld.defaultValue += '</script>';
+
+            // Código de render de mensajes
+            // Código de Observer
+            html_fld.defaultValue += '<script>';
+            html_fld.defaultValue += 'var mascara=document.getElementById("body");'
+
+            html_fld.defaultValue += 'function defineTipoAlert(mutations){'
+            html_fld.defaultValue += 'for(let mutation of mutations){'
+            html_fld.defaultValue += 'if(mutation.type==="childList"){'
+            html_fld.defaultValue += 'var addedNode= mutation.addedNodes;'
+            html_fld.defaultValue += 'for(var i=0;i<addedNode.length;i++){'
+            html_fld.defaultValue += 'var addedNodeClassName= addedNode[i].className;'
+            html_fld.defaultValue += 'console.log("ClassName child nuevo:",addedNodeClassName);'
+            html_fld.defaultValue += 'console.log("nuevo DE DIV__ALERT:",mutation.addedNodes);'
+            html_fld.defaultValue += 'var prevClassName= mutation.previousSibling.className;'
+            html_fld.defaultValue += 'var prevChild= mutation.previousSibling;'
+            html_fld.defaultValue += 'console.log("ClassName child anterior:",prevClassName);'
+            html_fld.defaultValue += 'if(addedNodeClassName.includes("error")){'
+            // Inicia ERROR
+            html_fld.defaultValue += "var cDiv = addedNode[0].children;"
+            html_fld.defaultValue += "for (var inf = 0; inf < cDiv.length; inf++) {"
+            html_fld.defaultValue += "if (cDiv[inf].tagName == 'DIV') { "
+            html_fld.defaultValue += "var cDivChildren=cDiv[inf].children;"
+            html_fld.defaultValue += "for (var j = 0; j < cDivChildren.length; j++) {"
+            html_fld.defaultValue += "if (cDivChildren[j].tagName == 'DIV') { "
+            html_fld.defaultValue += "cDivChildren[j].style.color = '#ac003e';"
+
+            html_fld.defaultValue += "}"
+            html_fld.defaultValue += "}"
+            html_fld.defaultValue += "}"
+            html_fld.defaultValue += " }"
+            html_fld.defaultValue += "addedNode[0].style.background='white';"
+            html_fld.defaultValue += "addedNode[0].style.borderTop='10px solid #ac003e';"
+            html_fld.defaultValue += "addedNode[0].style.borderRadius='3px';"
+
+
+            html_fld.defaultValue += '}'
+            // Inicia CONFIRMATION SUCCESS
+            html_fld.defaultValue += 'if(addedNodeClassName.includes("confirmation")){'
+            html_fld.defaultValue += "var cDiv = addedNode[0].children;"
+            html_fld.defaultValue += "for (var inf = 0; inf < cDiv.length; inf++) {"
+            html_fld.defaultValue += "if (cDiv[inf].tagName == 'DIV') { "
+            html_fld.defaultValue += "var cDivChildren=cDiv[inf].children;"
+            html_fld.defaultValue += "for (var j = 0; j < cDivChildren.length; j++) {"
+            html_fld.defaultValue += "if (cDivChildren[j].tagName == 'DIV') { "
+            html_fld.defaultValue += "cDivChildren[j].style.color = '#52bf90';"
+
+            html_fld.defaultValue += "}"
+            html_fld.defaultValue += "}"
+            html_fld.defaultValue += "}"
+            html_fld.defaultValue += " }"
+            html_fld.defaultValue += "addedNode[0].style.background='white';"
+            html_fld.defaultValue += "addedNode[0].style.borderTop='10px solid #52bf90';"
+            html_fld.defaultValue += "addedNode[0].style.borderRadius='3px';"
+
+            html_fld.defaultValue += '}'
+            // IniciaINFOOO
+            html_fld.defaultValue += 'if(addedNodeClassName.includes("info")){'
+            html_fld.defaultValue += "var cDiv = addedNode[0].children;"
+            html_fld.defaultValue += "for (var inf = 0; inf < cDiv.length; inf++) {"
+            html_fld.defaultValue += "if (cDiv[inf].tagName == 'DIV') { "
+            html_fld.defaultValue += "var cDivChildren=cDiv[inf].children;"
+            html_fld.defaultValue += "for (var j = 0; j < cDivChildren.length; j++) {"
+            html_fld.defaultValue += "if (cDivChildren[j].tagName == 'DIV') { "
+            html_fld.defaultValue += "cDivChildren[j].style.color = '#0077be';"
+
+            html_fld.defaultValue += "}"
+            html_fld.defaultValue += "}"
+            html_fld.defaultValue += "}"
+            html_fld.defaultValue += " }"
+            html_fld.defaultValue += "addedNode[0].style.background='white';"
+            html_fld.defaultValue += "addedNode[0].style.borderTop='10px solid #0077be';"
+            html_fld.defaultValue += "addedNode[0].style.borderRadius='3px';"
+            html_fld.defaultValue += '}'
+
+
+
+
+            html_fld.defaultValue += '}'
+            html_fld.defaultValue += '}'
+            html_fld.defaultValue += '}'
+            html_fld.defaultValue += '}'
+
+
+
+            html_fld.defaultValue += 'function cargarFuncion(mutations){'
+            html_fld.defaultValue += 'for(let mutation of mutations){'
+            html_fld.defaultValue += 'if(mutation.type==="childList"){'
+            html_fld.defaultValue += 'var addedNode= mutation.addedNodes;'
+            html_fld.defaultValue += 'console.log("Detectado de cambios VIEW:",addedNode);'
+            html_fld.defaultValue += 'for(var i=0;i<addedNode.length;i++){'
+
+            html_fld.defaultValue += 'var addedNodeClassName= addedNode[i].id;'
+            html_fld.defaultValue += 'console.log("ClassName",addedNodeClassName);'
+            html_fld.defaultValue += 'if(addedNodeClassName==="div__alert"){'
+
+            html_fld.defaultValue += 'console.log("Alert was triggered: ",addedNode);'
+            // html_fld.defaultValue += 'var addedNodechild= addedNode[i].children;'
+            // html_fld.defaultValue += 'console.log("Parent child",addedNodechild);';
+            html_fld.defaultValue += 'var tipoAlert=document.getElementById("div__alert");'
+
+            html_fld.defaultValue += 'var observadorTipo=new MutationObserver(defineTipoAlert);'
+
+            html_fld.defaultValue += 'observadorTipo.observe(addedNode[i],{childList: true});'
+            // Renderización de Messages
+            html_fld.defaultValue += "var hideElement=document.getElementById('div__alert');";
+            html_fld.defaultValue += "if(hideElement){"
+            // Inicia caso de mensaje INFO
+            // html_fld.defaultValue += `var infoMessage=document.querySelectorAll('#div__alert .uir-alert-box.info');`;
+            html_fld.defaultValue += `var messageChild=addedNode[i].children;`;
+            // inicio for de messageChild
+            html_fld.defaultValue += 'for ( mc in messageChild){'
+            html_fld.defaultValue += `var messageChildClassName=messageChild[0].className;`;
+            html_fld.defaultValue += 'console.log("child className: ",messageChildClassName);'
+
+            html_fld.defaultValue += "if(messageChildClassName){"
+            html_fld.defaultValue += "if(messageChildClassName.includes('info')){"
+
+            html_fld.defaultValue += "var cDiv = messageChild[0].children;"
+            html_fld.defaultValue += "for (var inf = 0; inf < cDiv.length; inf++) {"
+            html_fld.defaultValue += "if (cDiv[inf].tagName == 'DIV') { "
+            html_fld.defaultValue += "var cDivChildren=cDiv[inf].children;"
+            html_fld.defaultValue += "for (var j = 0; j < cDivChildren.length; j++) {"
+            html_fld.defaultValue += "if (cDivChildren[j].tagName == 'DIV') { "
+            html_fld.defaultValue += "cDivChildren[j].style.color = '#0077be';"
+
+            html_fld.defaultValue += "}"
+            html_fld.defaultValue += "}"
+            html_fld.defaultValue += "}"
+            html_fld.defaultValue += " }"
+            html_fld.defaultValue += "messageChild[0].style.background='white';"
+            html_fld.defaultValue += "messageChild[0].style.borderTop='10px solid #0077be';"
+            html_fld.defaultValue += "messageChild[0].style.borderRadius='3px';"
+            html_fld.defaultValue += "}"
+            // Termina if de si incluye info
+
+
+
+
+            // // // Inicia render de error
+            html_fld.defaultValue += "if(messageChildClassName.includes('error')){"
+
+            html_fld.defaultValue += "var cDiv = messageChild[0].children;"
+            html_fld.defaultValue += "for (var inf = 0; inf < cDiv.length; inf++) {"
+            html_fld.defaultValue += "if (cDiv[inf].tagName == 'DIV') { "
+            html_fld.defaultValue += "var cDivChildren=cDiv[inf].children;"
+            html_fld.defaultValue += "for (var j = 0; j < cDivChildren.length; j++) {"
+            html_fld.defaultValue += "if (cDivChildren[j].tagName == 'DIV') { "
+            html_fld.defaultValue += "cDivChildren[j].style.color = '#ac003e';"
+
+            html_fld.defaultValue += "}"
+            html_fld.defaultValue += "}"
+            html_fld.defaultValue += "}"
+            html_fld.defaultValue += " }"
+            html_fld.defaultValue += "messageChild[0].style.background='white';"
+            html_fld.defaultValue += "messageChild[0].style.borderTop='10px solid #ac003e';"
+            html_fld.defaultValue += "messageChild[0].style.borderRadius='3px';"
+            html_fld.defaultValue += "}"
+            // // // Termina render de error
+            // // Inicia render de success
+            html_fld.defaultValue += "if(messageChildClassName.includes('confirmation')){"
+
+            html_fld.defaultValue += "var cDiv = messageChild[0].children;"
+            html_fld.defaultValue += "for (var inf = 0; inf < cDiv.length; inf++) {"
+            html_fld.defaultValue += "if (cDiv[inf].tagName == 'DIV') { "
+            html_fld.defaultValue += "var cDivChildren=cDiv[inf].children;"
+            html_fld.defaultValue += "for (var j = 0; j < cDivChildren.length; j++) {"
+            html_fld.defaultValue += "if (cDivChildren[j].tagName == 'DIV') { "
+            html_fld.defaultValue += "cDivChildren[j].style.color = '#52bf90';"
+
+            html_fld.defaultValue += "}"
+            html_fld.defaultValue += "}"
+            html_fld.defaultValue += "}"
+            html_fld.defaultValue += " }"
+            html_fld.defaultValue += "messageChild[0].style.background='white';"
+            html_fld.defaultValue += "messageChild[0].style.borderTop='10px solid #52bf90';"
+            html_fld.defaultValue += "messageChild[0].style.borderRadius='3px';"
+            html_fld.defaultValue += "}"
+            // Termina render de success
+
+
+
+            html_fld.defaultValue += "}"
+            // Fin de for de messageChild
+            html_fld.defaultValue += "}"
+            // Termina caso de mensaje INFO
+
+
+
+
+            html_fld.defaultValue += "hideElement.style.paddingTop='20px'"
+            html_fld.defaultValue += "}"
+
+
+            html_fld.defaultValue += '}'
+            html_fld.defaultValue += '}'
+            html_fld.defaultValue += '}'
+            html_fld.defaultValue += '}'
+            html_fld.defaultValue += '}'
+            html_fld.defaultValue += 'var observador=new MutationObserver(cargarFuncion);'
+
+            html_fld.defaultValue += 'observador.observe(mascara,{childList: true});'
+
+            html_fld.defaultValue += '</script>';
+            // Finaliza Código de observer
+
             if (oneWorldFeature == true && suitetax == true) {
                 try {
                     /**
